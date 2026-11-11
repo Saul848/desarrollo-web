@@ -21,6 +21,8 @@ Describir las actividades desarrolladas desde el último reporte.
 
 | Actividad | Integrante responsable | Enlace a commit |
 |------------|------------------------|-----------------|
+| Requerimientos del sistema | Gabriel Maldonado López |
+https://github.com/Saul848/desarrollo-web/commit/befc46a1028ed72822884fd658688814e9009a73
 | historias de usuario| Saul Ortiz Zarate |  https://github.com/Saul848/desarrollo-web/commit/c4159a43f742b75b040a87a65dc56f80bd41c836|
 | prototipo del sistema| Montserrat Rojas Martinez | https://github.com/Saul848/desarrollo-web/commit/2c0d4c7a09c260208164a97efc4dc5dad735de59 |
 |esquema de la base de datos | Tania Ketzel Gómez Velásquez |  |
@@ -78,6 +80,7 @@ No se hizo uso de IA generativa, el esquema de la base de datos se realizó toma
 No se hizo uso de IA generativa, me base de otros diseños que habia hecho anteriormente, utilizando una paleta de colores que habiamos designado con el equipo.
 
 * Gabriel
+No se hizo uso de IA generativa, dentro de los requerimientos necesarios me base en la plataforma de eminus y además la colaboración de mis compañeros de equipo
 
 ---
 
@@ -99,7 +102,9 @@ Creación de historias de usuario.
 Contribución para la creación de requisitos y restricciones, además de realizar las historias de usuario.
 Diseño de las pantallas: Panel de actividades como profesor, panel de exámenes como profesor  
 
-- **Integrante 4:**
+- **Integrante 4: Gabriel Maldonado López**
+Elaboración de los requerimientos con ayuda de los demás compañeros y aportación al diseño de pantallas
+
 
 ---
 
