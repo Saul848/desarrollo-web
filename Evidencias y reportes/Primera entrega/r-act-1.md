@@ -22,7 +22,7 @@ Describir las actividades desarrolladas desde el último reporte.
 | Actividad | Integrante responsable | Enlace a commit |
 |------------|------------------------|-----------------|
 | historias de usuario| Saul Ortiz Zarate |  https://github.com/Saul848/desarrollo-web/commit/c4159a43f742b75b040a87a65dc56f80bd41c836|
-| | | |
+| prototipo del sistema| Montserrat Rojas Martinez | https://github.com/Saul848/desarrollo-web/commit/2c0d4c7a09c260208164a97efc4dc5dad735de59 |
 |esquema de la base de datos | Tania Ketzel Gómez Velásquez |  |
 | | | |
 | | | |
@@ -33,7 +33,7 @@ Describir las actividades desarrolladas desde el último reporte.
 
 Describir los problemas técnicos encontrados y cómo fueron solucionados.
 1. Definir los requisitos realmente prioritarios, evitar ambigüedades, redundancias y contrariedades. Para esto se revisó con cuidado la lista completa con la cooperación de todos los miembros.
-
+2. Se realizaron los prototipos del sistema, no teníamos la idea del todo clara pero se hablo como equipo y llegamos a un acuerdo de como queriamos representar el sistema
 3. Se definieron las tablas de la base de datos, sin embargo algunas nos causaban conflicto porque fueran muy rebuscadas durante la ejecución de la lógica.
 ---
 
@@ -73,7 +73,9 @@ Documentar el uso de herramientas de inteligencia artificial durante el desarrol
 
 * Tania
 No se hizo uso de IA generativa, el esquema de la base de datos se realizó tomando en cuenta una base de datos realizada en otro proyecto.
+
 * Monse
+No se hizo uso de IA generativa, me base de otros diseños que habia hecho anteriormente, utilizando una paleta de colores que habiamos designado con el equipo.
 
 * Gabriel
 
@@ -92,7 +94,11 @@ Describir brevemente la contribución de cada integrante.
 - **Integrante 2: Tania Ketzel Gómez Velásquez**
 Realización del esquema de la base de datos, con la ayuda de los demás compañeros mediante una lluvia de ideas.
 Creación de historias de usuario.
-- **Integrante 3:**
+
+- **Integrante 3: Montserrat Rojas Martinez**
+Contribución para la creación de requisitos y restricciones, además de realizar las historias de usuario.
+Diseño de las pantallas: Panel de actividades como profesor, panel de exámenes como profesor  
+
 - **Integrante 4:**
 
 ---
