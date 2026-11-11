@@ -23,7 +23,7 @@ Describir las actividades desarrolladas desde el último reporte.
 |------------|------------------------|-----------------|
 | historias de usuario| Saul Ortiz Zarate |  https://github.com/Saul848/desarrollo-web/commit/c4159a43f742b75b040a87a65dc56f80bd41c836|
 | | | |
-| | | |
+|esquema de la base de datos | Tania Ketzel Gómez Velásquez |  |
 | | | |
 | | | |
 
@@ -34,7 +34,7 @@ Describir las actividades desarrolladas desde el último reporte.
 Describir los problemas técnicos encontrados y cómo fueron solucionados.
 1. Definir los requisitos realmente prioritarios, evitar ambigüedades, redundancias y contrariedades. Para esto se revisó con cuidado la lista completa con la cooperación de todos los miembros.
 
-
+3. Se definieron las tablas de la base de datos, sin embargo algunas nos causaban conflicto porque fueran muy rebuscadas durante la ejecución de la lógica.
 ---
 
 # 4. Avance funcional
@@ -49,7 +49,8 @@ Indicar qué funcionalidades ya se encuentran operativas y cuáles están pendie
 ==Funcionalidades pendientes==
 1. Se tienen pendiente algunas pantallas del prototipo que aún se deben diseñar
 ---
-
+2. De acuerdo con la realización de las historias de usuario, algunas tablas pueden cambiar o agregarse las necesarias.
+---
 # 5. Uso de IA generativa
 
 Documentar el uso de herramientas de inteligencia artificial durante el desarrollo del proyecto.
@@ -71,7 +72,7 @@ Documentar el uso de herramientas de inteligencia artificial durante el desarrol
 - **Forma en que se verificó el resultado:** Mediante el criterio visual en la herramienta figma
 
 * Tania
-
+No se hizo uso de IA generativa, el esquema de la base de datos se realizó tomando en cuenta una base de datos realizada en otro proyecto.
 * Monse
 
 * Gabriel
@@ -88,7 +89,9 @@ Describir brevemente la contribución de cada integrante.
 * Distribución de las historias de usuario a cada uno de los miembros en base a las horas estimadas de trabajo manteniendo un promedio de 20 hrs de trabajo promedio por integrante
 * Colaboración de ideas para el diseño de la base de datos
 
-- **Integrante 2:**
+- **Integrante 2: Tania Ketzel Gómez Velásquez**
+Realización del esquema de la base de datos, con la ayuda de los demás compañeros mediante una lluvia de ideas.
+Creación de historias de usuario.
 - **Integrante 3:**
 - **Integrante 4:**
 
