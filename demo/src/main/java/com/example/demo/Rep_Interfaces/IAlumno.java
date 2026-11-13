@@ -8,6 +8,11 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface IAlumno extends CrudRepository<Alumno, Integer> {
 
+    /**
+     * Método para encontrar un Alumno por su nombre
+     * @param nombre Nombre del Alumno a buscar
+     * @return Alumno encontrado o null si no se encuentra
+     */
     Alumno findByNombre(String nombre);
     
 }
