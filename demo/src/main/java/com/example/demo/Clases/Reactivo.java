@@ -18,7 +18,15 @@ public class Reactivo {
     private Integer valor;
     private Integer respuesta;
 
-    //getters y setters -------------------
+    /**
+     * Constructor
+     */
+    public Reactivo() {
+    }
+
+    /**
+     * Getters y setters de Reactivo
+     */
     public Integer getId_reactivo() {
         return id_reactivo;
     }
