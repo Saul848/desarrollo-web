@@ -23,7 +23,7 @@ Pruebas mediante CURL
 |-----------------------------------------------------------------------------|----------------------|------------------------------------------|
 | Conexión con base de datos remota y Entidades Profesor (actualmente usuario)| Saul                 | 13d55ac93e7a5a71903e47dca7a5d89060cd11c3 |
 | Entidades Usuario completa y Examen                                         | Saul                 | 60cbed50582b70ee5d36e6a59499d841224a3940 |
-| | | |
+| creacion de clases, controladores, interfaces y clases de Equipo y Entrega | Montserrat | https://github.com/Saul848/desarrollo-web/commit/1eb9caa9423aedc62e2f438e1a72fafeda3d2e4d |
 | | | |
 | | | |
 
@@ -36,7 +36,8 @@ SAUL-------------
 Las tablas Profesor y Alumno en la base de datos se convirtieron en una única tabla llamada Usuario, por lo que sus Entidades, repositorios y controladores del 
 sistema se tuvieron que adaptar a estos cambios en sus nombres, métodos, etc.
 La solución fue revisar estos mismos nombres y que, asímismo, los atributos tuvieran los nombres correctos
-
+Montse------------
+Hubo un conflicto mientras se subían mis cambios en git, ya que mi compañero hizo cambios y yo no había hecho pull, para solucionarlo se compararon ambos códigos hasta determinar el correcto.
 
 ---
 
@@ -47,6 +48,9 @@ Saul------------
 *Funciones operativas*
 Entidades, repositorios y controladores de: Usuario y Examen
 *Funciones pendientes*
+Montse------------
+*Funciones operativas*
+clases, interfaces y controladores de: Entrega y Equipo
 
 
 ---
@@ -70,7 +74,7 @@ Documentar el uso de herramientas de inteligencia artificial durante el desarrol
 Describir brevemente la contribución de cada integrante.
 
 - **Saúl Ortiz Zarate:** delegación de responsabilidades, creación y conexión con la base de datos remota, creación de Entity, repositorios y controladores de algunas de las tablas, deciciones de diseño de la base de datos y del flujo del proyecto
-- **Integrante 2:**
+- **Montserrat Rojas Martinez:** Creación de las clases, controladores e interfaces para las entidades Entrega y Equipo
 - **Integrante 3:**
 - **Integrante 4:**
 
@@ -81,7 +85,7 @@ Describir brevemente la contribución de cada integrante.
 Indicar las tareas que se realizarán antes del siguiente reporte.
 
 - Actividad 1 - Saul : trabajar las entidades previas con sus métodos PUT y DELETE y pruebas con solicitudes http
-- Actividad 2
+- Actividad 2 - Montse : integrar los métodos faltantes PUT y DELETE para las entidades Entrega y Equipo
 - Actividad 3
 - Actividad 4
 - Actividad 5
