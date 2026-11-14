@@ -9,6 +9,7 @@ import com.example.demo.Rep_Interfaces.ITarea;
  * Controlador de Tarea
  */
 @RestController
+@RequestMapping("/tareas")
 public class TareaControlador {
     
     @Autowired 

@@ -1,17 +1,13 @@
 package com.example.demo.Controladores;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.Clases.Usuario;
 import com.example.demo.Clases.Reactivo;
 import com.example.demo.Rep_Interfaces.IReactivo;
 
 /**
- * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Profesores
- * ProfesorControlador
+ * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Reactivos
+ * ReactivoControlador
  */
 @RestController
 @RequestMapping("/reactivos")
@@ -21,14 +17,33 @@ public class ReactivoControlador {
 	@Autowired
 	private IReactivo ireactivo;
 
-    //POST /profesores -> crear
-	@PostMapping
-	public ResponseEntity<?> crearProfesor(@RequestBody Reactivo newReactivo){
-		if(ireactivo.existsById(newReactivo.getId_reactivo())){
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un reactivo con este id");
-		}
-
-		Reactivo reactivoGuardado = ireactivo.save(newReactivo);
-		return ResponseEntity.status(HttpStatus.CREATED).body(reactivoGuardado);
+	/**
+	 * Método que permite guardar un reactivo en la base de datos
+	 * @param reactivo
+	 * @return
+	 */
+	@PostMapping 
+	public Reactivo guardarReactivo(@RequestBody Reactivo reactivo) {
+		return ireactivo.save(reactivo);
 	}
+
+	/**
+	 * Método que permite obtener todos los reactivos de la base de datos
+	 * @return
+	 */
+	@GetMapping
+	public Iterable<Reactivo> obtenerReactivos() {
+		return ireactivo.findAll();
+	}
+
+	/**
+	 * Método que permite obtener un reactivo por su id
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/{id}")
+	public Reactivo obtenerReactivoPorId(@PathVariable Integer id) {
+		return ireactivo.findById(id).orElse(null);
+	}
+
 }
