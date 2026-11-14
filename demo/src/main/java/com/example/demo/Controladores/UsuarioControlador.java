@@ -64,8 +64,9 @@ public class UsuarioControlador {
 		return iusuario.findByNombreContainingIgnoreCase(nombre);
 	}
 
-	// POST /usuarios/login  -> validar credenciales
-	public ResponseEntity<?> login(@Valid @RequestBody Usuario datos){
+	// POST /usuarios/login/usuario1  -> validar credenciales
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody Usuario datos){
 		Optional<Usuario> usuario = iusuario.findByCorreo(datos.getCorreo());
 		//compara la contraseña presentada con la buscada en la BD
 		if (usuario.isPresent() && encoder.matches(datos.getPassword(), usuario.get().getPassword())){
@@ -86,12 +87,12 @@ public class UsuarioControlador {
 	//GET /usuarios/profesores -> todos los profesores
 	@GetMapping("/profesores")
 	public List<Usuario> listarProfesores(){
-		return iusuario.findByRol(Rol.PROFESOR);
+		return iusuario.findByRol(Rol.profesor);
 	}
 	
 	//GET /usuarios/alumnos -> todos los alumnos
 	@GetMapping("/alumnos")
 	public List<Usuario> listarAlumnos(){
-		return iusuario.findByRol(Rol.ALUMNO);
+		return iusuario.findByRol(Rol.alumno);
 	}
 }
