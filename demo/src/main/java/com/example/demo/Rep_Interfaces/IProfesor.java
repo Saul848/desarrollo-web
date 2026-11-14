@@ -3,11 +3,11 @@ package com.example.demo.Rep_Interfaces;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import com.example.demo.Clases.Profesor;
 
-public interface IProfesor extends JpaRepository<Profesor, Integer>{
+public interface IProfesor extends CrudRepository<Profesor, Integer>{
     //Devuelve una lista de profesores. En caso de encontrar a alguno con un nombre repetido, lo devuelve también
     List<Profesor> findByNombreContainingIgnoreCase(String nombre);
 
