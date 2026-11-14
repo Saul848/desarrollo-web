@@ -24,8 +24,8 @@ Pruebas mediante CURL
 | Conexión con base de datos remota y Entidades Profesor (actualmente usuario)| Saul                 | 13d55ac93e7a5a71903e47dca7a5d89060cd11c3 |
 | Entidades Usuario completa y Examen                                         | Saul                 | 60cbed50582b70ee5d36e6a59499d841224a3940 |
 | creacion de clases, controladores, interfaces y clases de Equipo y Entrega | Montserrat | https://github.com/Saul848/desarrollo-web/commit/1eb9caa9423aedc62e2f438e1a72fafeda3d2e4d |
-| | | |
-| | | |
+| creación de clase, controlador e interfaz de alumno | Tania | https://github.com/Saul848/desarrollo-web/commit/c68fdffa5a6ad157284711f78d1cec8091d244d6 |
+| creación de clase, controlador e interfaz de alumno | Tania | https://github.com/Saul848/desarrollo-web/commit/733fc7f153f3800754cb35de16eae2f9eea61bba |
 
 ---
 
@@ -38,7 +38,8 @@ sistema se tuvieron que adaptar a estos cambios en sus nombres, métodos, etc.
 La solución fue revisar estos mismos nombres y que, asímismo, los atributos tuvieran los nombres correctos
 Montse------------
 Hubo un conflicto mientras se subían mis cambios en git, ya que mi compañero hizo cambios y yo no había hecho pull, para solucionarlo se compararon ambos códigos hasta determinar el correcto.
-
+Tania-------------
+Se unificó la tabla de alumno y profesor, asimismo se realizaron cambios sobre los atributos en las tablas de la base de datos, para mejorar el esquema.
 ---
 
 # 4. Avance funcional
@@ -51,6 +52,9 @@ Entidades, repositorios y controladores de: Usuario y Examen
 Montse------------
 *Funciones operativas*
 clases, interfaces y controladores de: Entrega y Equipo
+Tania------------
+*Funciones operativas*
+Clases, repositorios y controladores de: Tarea y Reactivo
 
 
 ---
@@ -75,7 +79,7 @@ Describir brevemente la contribución de cada integrante.
 
 - **Saúl Ortiz Zarate:** delegación de responsabilidades, creación y conexión con la base de datos remota, creación de Entity, repositorios y controladores de algunas de las tablas, deciciones de diseño de la base de datos y del flujo del proyecto
 - **Montserrat Rojas Martinez:** Creación de las clases, controladores e interfaces para las entidades Entrega y Equipo
-- **Integrante 3:**
+- **Tania Ketzel Gómez Velásquez:** Creación de las tablas de la base de datos, asimismo poblarla con datos ficticios para ñas pruebas, se realizó el controlado, la clase y la interfaz para las clases Alumno (eliminada), Tarea y Reactivo.
 - **Integrante 4:**
 
 ---
@@ -86,7 +90,8 @@ Indicar las tareas que se realizarán antes del siguiente reporte.
 
 - Actividad 1 - Saul : trabajar las entidades previas con sus métodos PUT y DELETE y pruebas con solicitudes http
 - Actividad 2 - Montse : integrar los métodos faltantes PUT y DELETE para las entidades Entrega y Equipo
-- Actividad 3
+- Actividad 3 - Tania : trabajar los métodos PUT y DELETE para las entidades tarea y reactivo
+
 - Actividad 4
 - Actividad 5
 
