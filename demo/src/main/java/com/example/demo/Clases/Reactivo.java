@@ -1,5 +1,6 @@
 package com.example.demo.Clases;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -7,6 +8,7 @@ import jakarta.persistence.Id;
 /**
  * Reactivo
  */
+@Entity
 public class Reactivo {
     @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
