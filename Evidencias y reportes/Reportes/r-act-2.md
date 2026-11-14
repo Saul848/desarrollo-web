@@ -22,7 +22,7 @@ Pruebas mediante CURL
 | Actividad                                                                   |Integrante responsable| Enlace a commit                          |
 |-----------------------------------------------------------------------------|----------------------|------------------------------------------|
 | Conexión con base de datos remota y Entidades Profesor (actualmente usuario)| Saul                 | 13d55ac93e7a5a71903e47dca7a5d89060cd11c3 |
-| Entidades Usuario completa y Examen                                         | Saul                 | |
+| Entidades Usuario completa y Examen                                         | Saul                 | 60cbed50582b70ee5d36e6a59499d841224a3940 |
 | | | |
 | | | |
 | | | |
