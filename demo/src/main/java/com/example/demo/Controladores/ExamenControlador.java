@@ -1,6 +1,7 @@
 package com.example.demo.Controladores;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Clases.Examen;
+import com.example.demo.Clases.Usuario;
 import com.example.demo.Rep_Interfaces.IExamen;
 
 /**
@@ -22,6 +24,7 @@ public class ExamenControlador {
 	@Autowired
 	private IExamen iexamen;
 
+    //Métodos POST-----------------------------------------------------------
     // POST /examenes -> crear examen
     @PostMapping
     public ResponseEntity<Examen> crearExamen(@RequestBody Examen nuevo) {
@@ -30,6 +33,7 @@ public class ExamenControlador {
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 
+    //Métodos GET-----------------------------------------------------------
     // GET /examenes -> todos los examenes 
     @GetMapping
     public Iterable<Examen> listarExamenes() {
@@ -48,5 +52,36 @@ public class ExamenControlador {
     @GetMapping("/grupo/{idGrupo}")
     public List<Examen> listarPorGrupo(@PathVariable Integer idGrupo) {
         return iexamen.buscarPorGrupo(idGrupo);
+    }
+
+    //Métodos PUT-----------------------------------------------------------
+     // PUT /examenes/3
+    @PutMapping("/{id}")
+    public ResponseEntity<Examen> actualizarExamen(@PathVariable Integer id, @RequestBody Examen datos) {
+        Optional<Examen> encontrado = iexamen.findById(id);
+        //Verificamos que sí haya un examen buscado
+		if(encontrado.isPresent()){
+            Examen existente = encontrado.get();
+			existente.setId_grupo(datos.getId_grupo());
+            existente.setTitulo(datos.getTitulo());
+            existente.setCalificacion(datos.getCalificacion());
+            existente.setFecha_limite(datos.getFecha_limite());
+            existente.setIntentos(datos.getIntentos());
+            existente.setTiempo_limite(datos.getTiempo_limite());
+            return ResponseEntity.ok(iexamen.save(existente));
+		}
+
+        return ResponseEntity.notFound().build();
+    }
+
+    //Métodos DELETE-----------------------------------------------------------
+    // DELETE /examenes/3
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarExamen(@PathVariable Integer id) {
+        if (!iexamen.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        iexamen.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

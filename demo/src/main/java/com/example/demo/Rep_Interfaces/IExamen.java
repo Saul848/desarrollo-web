@@ -1,6 +1,7 @@
 package com.example.demo.Rep_Interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -13,4 +14,7 @@ public interface IExamen  extends CrudRepository<Examen, Integer>{
     //al usar atributos con guiones bajos, se utiliza query para no confundir a spring
     @Query("SELECT e FROM Examen e WHERE e.id_grupo = :idGrupo")
     List<Examen> buscarPorGrupo(@Param("idGrupo") Integer idGrupo);
+
+    //Devuelve una lista de examenes. En caso de encontrar a alguno con un nombre repetido, lo devuelve también
+    Optional<Examen> findById(Integer id);
 }
