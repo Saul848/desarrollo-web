@@ -22,10 +22,10 @@ Prompt original | Sí, la solución que me diste funcionó para poder ver a ese 
 Respuesta de IA | [Respuesta](#Respuesta-de-IA)
 Código anterior | Commit (48d2b5d)
 Código posterior | Commit (0897eef)
-Diferencias entre versiones | git diff --numstat 48d2b5d 0897eez (copiar la salida)
+Diferencias entre versiones | [Salida del comando](#Salida-comando)
 Prueba de funcionamiento | CURL o captura imagen del resultado
-Código de uso | Generación / Modificación / Depuración / Explicación / Diseño / Revisión / Documentación / Pruebas
-Reflexión del estudiante | Texto breve que describe lo obtenido u ocurrido y lo aprendido por parte del estudiante
+Código de uso | Generación / Modificación / Pruebas
+Reflexión del estudiante | Pude notar leves modificaciones en mis métodos con parte de código enfocado a una mayor optimización, prevenir errores o cosas por el estilo, pero, al final el comportamiento es similar
 
 
 > El prompt y la respuesta pueden ser copiados como una subsección y enlazados
@@ -172,3 +172,11 @@ curl -i -X DELETE $BASE/examenes/1
 ```
 
 El rol va en minúsculas (`"profesor"`, `"alumno"`) por el enum que ajustamos para coincidir con tu base. Prueba el `DELETE` con un usuario de prueba, como uno que hayas creado tú, para no borrar los datos de ejemplo de la tabla.
+
+#### Salida comando
+$ git diff --numstat c3968e5ea76b37038de223f64bc898f08df8d68a b967a3cf18402bca239dde4ba7d2f826d0a563d5
+174     0       Evidencias y reportes/Reportes-IA/Saul/r-ia-dev-2.md
+0       36      Evidencias y reportes/Reportes-IA/Saul/r-ia-dev-zz.md
+0       32      Evidencias y reportes/Reportes-IA/Saul/r-ia-doc-2.md
+1       1       Evidencias y reportes/Reportes/{r-act-xx.md => r-act-3.md}
+22      18      demo/src/main/java/com/example/demo/Controladores/ExamenControlador.java

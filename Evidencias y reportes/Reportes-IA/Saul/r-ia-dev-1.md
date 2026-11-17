@@ -21,8 +21,8 @@ Herramienta | Claude
 Modelo/temperatura | Somnet 5.5 / esfuerzo medio
 Prompt original | [Prompt origina](#prompt-original)
 Respuesta de IA | [Respuesta prompt](#Respuesta-prompt)
-Código anterior | Commit (e6aebda)
-Código posterior | Commit (c3b8b7c)
+Código anterior | Commit (c3968e5ea76b37038de223f64bc898f08df8d68a)
+Código posterior | Commit (b967a3cf18402bca239dde4ba7d2f826d0a563d5)
 Diferencias entre versiones | git diff --numstat e6aebda c3b8b7c (copiar la salida) [Ver la salida del comando](#Salida-del-comando) 
 Prueba de funcionamiento | CURL o captura imagen del resultado [imagenes de resultados](#Imagenes)
 Código de uso | Generación / Modificación / Revisión / Pruebas
