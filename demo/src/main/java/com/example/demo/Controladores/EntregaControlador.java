@@ -1,5 +1,6 @@
 package com.example.demo.Controladores;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -7,9 +8,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -80,5 +83,46 @@ public class EntregaControlador {
     @GetMapping("/alumno")
     public List<Entrega> obtenerPorAlumno(@RequestParam String idAlumno) {
         return ientrega.findByIdAlumno(idAlumno);
+    }
+
+    //métodos put
+
+    //PUT /entregas/{id}/calificar -> el profesor asigna calificación y retroalimentación
+    @PutMapping("/{id}/calificar")
+    public ResponseEntity<?> calificarEntrega(@PathVariable Integer id, @RequestBody Entrega datos) {
+        Optional<Entrega> entregaExistente = ientrega.findById(id);
+        if (entregaExistente.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró la entrega con id " + id);
+        }
+
+        //la calificación es obligatoria y no puede ser negativa
+        if (datos.getCalificacionObtenida() == null
+                || datos.getCalificacionObtenida().compareTo(BigDecimal.ZERO) < 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Se requiere una calificación válida (mayor o igual a 0)");
+        }
+
+        //solo se actualizan estos dos campos, el resto de la entrega no se modifica
+        Entrega entrega = entregaExistente.get();
+        entrega.setCalificacionObtenida(datos.getCalificacionObtenida());
+        entrega.setRetroalimentacion(datos.getRetroalimentacion());
+
+        Entrega entregaActualizada = ientrega.save(entrega);
+        return ResponseEntity.ok(entregaActualizada);
+    }
+
+    //métodos delete
+    
+    //DELETE /entregas/{id} -> eliminar una entrega
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarEntrega(@PathVariable Integer id) {
+        if (!ientrega.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró la entrega con id " + id);
+        }
+
+        ientrega.deleteById(id);
+        return ResponseEntity.ok("Entrega con id " + id + " eliminada correctamente");
     }
 }
