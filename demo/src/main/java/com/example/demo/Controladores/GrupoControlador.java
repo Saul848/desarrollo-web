@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import com.example.demo.Rep_Interfaces.IGrupo;
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Grupos
  * GrupoControlador
  */
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/grupos")
 public class GrupoControlador {
@@ -46,11 +48,12 @@ public class GrupoControlador {
         return ResponseEntity.status(HttpStatus.CREATED).body(grupoGuardado);
     }
 
-    //Listar todos los grupos registrados
+    // Listar todos los grupos registrados
     @GetMapping
     public Iterable<Grupo> obtenerGrupos() {
         return igrupo.findAll();
     }
+
     // Buscar un grupo en específico por su ID
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerGrupoPorId(@PathVariable Integer id) {
@@ -61,6 +64,7 @@ public class GrupoControlador {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("No se encontró el grupo con el ID especificado.");
     }
+
     // Listar los grupos impartidos por un profesor específico
     @GetMapping("/profesor/{idProfesor}")
     public List<Grupo> obtenerGruposPorProfesor(@PathVariable Integer idProfesor) {
@@ -75,6 +79,7 @@ public class GrupoControlador {
         if (grupoExistente.isPresent()) {
             Grupo grupo = grupoExistente.get();
             grupo.setIdMateria(datosActualizados.getIdMateria());
+            grupo.setMatriculaProfesor(datosActualizados.getMatriculaProfesor());
             grupo.setIdProfesor(datosActualizados.getIdProfesor());
             grupo.setFechaInicio(datosActualizados.getFechaInicio());
             grupo.setFechaFin(datosActualizados.getFechaFin());
@@ -120,5 +125,11 @@ public class GrupoControlador {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Error al inscribir al alumno: " + e.getMessage());
         }
+    }
+
+    // Listar los grupos impartidos por un profesor según su matrícula
+    @GetMapping("/profesor/matricula/{matriculaProfesor}")
+    public List<Grupo> obtenerGruposPorMatriculaProfesor(@PathVariable String matriculaProfesor) {
+        return igrupo.findByMatriculaProfesor(matriculaProfesor);
     }
 }

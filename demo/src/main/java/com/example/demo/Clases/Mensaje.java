@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 public class Mensaje {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_mensaje")
     private Integer id;
 
     private String remitente;
@@ -22,9 +23,6 @@ public class Mensaje {
     @Column(nullable = false)
     private LocalDateTime fecha;
 
-    /**
-     * Constructor vacío de Mensaje
-     */
     public Mensaje() {
     }
 
