@@ -22,7 +22,7 @@ Implementar observaciones
 
 | Actividad                                                     | Integrante responsable | Enlace a commit |
 |---------------------------------------------------------------|------------------------|-----------------|
-| Implementación de métodos PUT Y DELETE clases Usuario y examen| Saúl                   ||
+| Implementación de métodos PUT Y DELETE clases Usuario y examen| Saúl                   |c3968e5ea76b37038de223f64bc898f08df8d68a|
 | | | |
 | | | |
 | | | |

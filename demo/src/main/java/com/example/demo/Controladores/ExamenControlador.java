@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,33 +56,36 @@ public class ExamenControlador {
     }
 
     //Métodos PUT-----------------------------------------------------------
-     // PUT /examenes/3
+    // PUT /examenes/3
     @PutMapping("/{id}")
-    public ResponseEntity<Examen> actualizarExamen(@PathVariable Integer id, @RequestBody Examen datos) {
-        Optional<Examen> encontrado = iexamen.findById(id);
-        //Verificamos que sí haya un examen buscado
-		if(encontrado.isPresent()){
-            Examen existente = encontrado.get();
-			existente.setId_grupo(datos.getId_grupo());
-            existente.setTitulo(datos.getTitulo());
-            existente.setCalificacion(datos.getCalificacion());
-            existente.setFecha_limite(datos.getFecha_limite());
-            existente.setIntentos(datos.getIntentos());
-            existente.setTiempo_limite(datos.getTiempo_limite());
-            return ResponseEntity.ok(iexamen.save(existente));
-		}
-
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Examen> actualizarExamen(@PathVariable Integer id,
+                                                @RequestBody Examen datos) {
+        return iexamen.findById(id)
+                .map(existente -> {
+                    existente.setId_grupo(datos.getId_grupo());
+                    existente.setTitulo(datos.getTitulo());
+                    existente.setCalificacion(datos.getCalificacion());
+                    existente.setFecha_limite(datos.getFecha_limite());
+                    existente.setIntentos(datos.getIntentos());
+                    existente.setTiempo_limite(datos.getTiempo_limite());
+                    return ResponseEntity.ok(iexamen.save(existente));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     //Métodos DELETE-----------------------------------------------------------
     // DELETE /examenes/3
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarExamen(@PathVariable Integer id) {
+    public ResponseEntity<?> eliminarExamen(@PathVariable Integer id) {
         if (!iexamen.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        iexamen.deleteById(id);
+        try {
+            iexamen.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("No se puede eliminar: el examen tiene registros relacionados");
+        }
         return ResponseEntity.noContent().build();
     }
 }
