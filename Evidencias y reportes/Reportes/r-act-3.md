@@ -23,11 +23,11 @@ Implementar observaciones
 | Actividad                                                     | Integrante responsable | Enlace a commit |
 |---------------------------------------------------------------|------------------------|-----------------|
 | Implementación de métodos PUT Y DELETE clases Usuario y examen| Saúl                   |c3968e5ea76b37038de223f64bc898f08df8d68a|
+| Implementación de métodos PUT Y DELETE clases Entrega y Equipo | Montse | https://github.com/Saul848/desarrollo-web/commit/2be10a2530d4052ac3c69518e4f27f50978279d1 |
 | | | |
 | | | |
-| | | |
-| | | |
-
+| Implementación de métodos PUT Y DELETE, validación de peticiones en Tareas | Tania | https://github.com/Saul848/desarrollo-web/commit/1443bf61ff2c284caf7a38767e14e2d4cd8225f4 |
+| Implementación de métodos PUT Y DELETE, validación de peticiones en Reactivos | Tania | https://github.com/Saul848/desarrollo-web/commit/f0866d9b985c3807a34dd7a11c2def9db1fa3854 |
 ---
 
 # 3. Problemas encontrados
@@ -49,11 +49,12 @@ Métodos GET y DELETE de las clases REST.
 
 Documentar el uso de herramientas de inteligencia artificial durante el desarrollo del proyecto.
 
-- **Herramienta utilizada:** Claude
-- **Actividad para la que se utilizó:** Dudas sobre las etiquetas de la librería de Annotations. Aclaraciones sobre la conexión de la base de datos en el entorno Spring.
+- **Herramienta utilizada:** Claude, Gemini
+- **Actividad para la que se utilizó:** Dudas sobre las etiquetas de la librería de Annotations. Aclaraciones sobre la conexión de la base de datos en el entorno Spring. Ejemplos de validación de peticiones http en el backend.
 - **Código o contenido generado:**  Métodos corregidos de la clase REST. corrección de bugs y sugerencias de mejoras o eficiencia sobre los métodos ya planteados
 - **Modificaciones realizadas por el equipo:** Correción de nombres de variables, adaptaciones a las rutas del proyecto, optar por librerías más o menos complejas o necesarias
 - **Forma en que se verificó el resultado:** códificación en pares analizando los promts, verificación individual y en equipo durante los pull request además de votación por sugerencias que dió la herramienta sobre el proyecto.
+- **Actividad para la que se utilizó:** Dudas sobre la estructura de los métodos PUT y DELETE, qué validaciones y códigos HTTP usar, cómo probarlos con CURL y cómo interpretar errores de arranque en Maven/Spring.
 
 > Si no se utilizó IA, indicarlo expresamente.
 
@@ -64,9 +65,9 @@ Documentar el uso de herramientas de inteligencia artificial durante el desarrol
 Describir brevemente la contribución de cada integrante.
 
 - **Saúl Ortiz Zarate:** Se implementó en los verbos PUT y DELETE en las clases Usuario y Examen. 
-- **Integrante 2:**
+- **Montserrat Rojas Martinez:** Se implementaron los métodos PUT y DELETE en las clases Entrega y Equipo
 - **Integrante 3:**
-- **Integrante 4:**
+- **Tania:** Se implementaron los verbos faltantes PUT y DELETE en Tarea y Reactivo, además de que se actualizaron los métodos para implementar la validación de peticiones HTTP.
 
 ---
 
@@ -75,9 +76,9 @@ Describir brevemente la contribución de cada integrante.
 Indicar las tareas que se realizarán antes del siguiente reporte.
 
 - Actividad 1 - Saul: Construcción inicial del frontend, estructura y distribución de responsabilidades. Implementar funciones fetch para las clases Usuario y Examen
-- Actividad 2
+- Actividad 2 - Montse: Construcción del frontend, implementar funciones fetch para las clases Entrega y Equipo
 - Actividad 3
-- Actividad 4
+- Actividad 4 - Tania: construcción del frontend, conectarlo con el backend, además de implementar funciones fetch para Tareas y Reactivos.
 - Actividad 5
 
 ---

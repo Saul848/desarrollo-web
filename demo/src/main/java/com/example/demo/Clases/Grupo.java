@@ -8,11 +8,15 @@ import java.time.LocalDate;
 public class Grupo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_grupo")
     private Integer id;
 
     @Column(name = "id_materia")
     private Integer idMateria;
+
+    @Column(name = "matricula_profesor", length = 15)
+    private String matriculaProfesor;
 
     @Column(name = "id_profesor")
     private Integer idProfesor;
@@ -26,13 +30,9 @@ public class Grupo {
     @Column(nullable = false)
     private Boolean activo;
 
-    /**
-     * Constructor vacío de Grupo
-     */
     public Grupo() {
     }
 
-    // Getters y setters de grupo
     public Integer getId() {
         return id;
     }
@@ -47,6 +47,14 @@ public class Grupo {
 
     public void setIdMateria(Integer idMateria) {
         this.idMateria = idMateria;
+    }
+
+    public String getMatriculaProfesor() {
+        return matriculaProfesor;
+    }
+
+    public void setMatriculaProfesor(String matriculaProfesor) {
+        this.matriculaProfesor = matriculaProfesor;
     }
 
     public Integer getIdProfesor() {

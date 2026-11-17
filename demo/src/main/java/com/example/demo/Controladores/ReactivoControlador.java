@@ -1,9 +1,11 @@
 package com.example.demo.Controladores;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.Clases.Reactivo;
 import com.example.demo.Rep_Interfaces.IReactivo;
+import jakarta.validation.Valid;
 
 /**
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Reactivos
@@ -23,8 +25,10 @@ public class ReactivoControlador {
 	 * @return
 	 */
 	@PostMapping 
-	public Reactivo guardarReactivo(@RequestBody Reactivo reactivo) {
-		return ireactivo.save(reactivo);
+	public ResponseEntity<Reactivo> guardarReactivo(@Valid @RequestBody Reactivo reactivo) {
+		reactivo.setId_reactivo(null);
+		Reactivo reactivoGuardado = ireactivo.save(reactivo);
+		return ResponseEntity.ok(reactivoGuardado);
 	}
 
 	/**
@@ -32,8 +36,9 @@ public class ReactivoControlador {
 	 * @return
 	 */
 	@GetMapping
-	public Iterable<Reactivo> obtenerReactivos() {
-		return ireactivo.findAll();
+	public ResponseEntity<Iterable<Reactivo>> obtenerReactivos() {
+		Iterable<Reactivo> reactivos = ireactivo.findAll();
+		return ResponseEntity.ok(reactivos);
 	}
 
 	/**
@@ -42,8 +47,44 @@ public class ReactivoControlador {
 	 * @return
 	 */
 	@GetMapping("/{id}")
-	public Reactivo obtenerReactivoPorId(@PathVariable Integer id) {
-		return ireactivo.findById(id).orElse(null);
+	public ResponseEntity<Reactivo> obtenerReactivoPorId(@PathVariable Integer id) {
+		return ireactivo.findById(id)
+			.map(reactivo -> ResponseEntity.ok(reactivo))
+			.orElse(ResponseEntity.notFound().build());
 	}
 
+	/**
+	 * Método que permite actualizar un reactivo en la base de datos
+	 * @param id
+	 * @param reactivoActualizado
+	 * @return
+	 */
+	@PutMapping("/{id}")
+	public ResponseEntity<Reactivo> actualizarReactivo(@PathVariable Integer id, @Valid @RequestBody Reactivo reactivoActualizado) {
+		return ireactivo.findById(id)
+			.map(reactivoExistente -> {
+				reactivoExistente.setId_examen(reactivoActualizado.getId_examen());
+				reactivoExistente.setValor(reactivoActualizado.getValor());
+				reactivoExistente.setRespuesta(reactivoActualizado.getRespuesta());
+
+				Reactivo guardado = ireactivo.save(reactivoExistente);
+				return ResponseEntity.ok(guardado);
+			})
+			.orElseGet(() -> ResponseEntity.notFound().build());
+	}
+
+	/**
+	 * Método que permite eliminar un reactivo de la base de datos
+	 * @param id
+	 * @return
+	 */
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> eliminarReactivo(@PathVariable Integer id) {
+		if (ireactivo.existsById(id)) {
+			ireactivo.deleteById(id);
+			return ResponseEntity.noContent().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }

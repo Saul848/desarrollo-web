@@ -24,6 +24,7 @@ import com.example.demo.Rep_Interfaces.IMensaje;
  * Clase para gestionar Mensajes
  * MensajeControlador
  */
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/mensajes")
 public class MensajeControlador {

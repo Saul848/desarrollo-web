@@ -6,9 +6,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -80,5 +82,56 @@ public class EquipoControlador {
     @GetMapping("/buscar")
     public List<Equipo> buscarPorNombre(@RequestParam String nombre) {
         return iequipo.findByNombreEquipoContainingIgnoreCase(nombre);
+    }
+
+    //métodos put
+    //PUT /equipos/{id} -> actualizar nombre e integrantes de un equipo
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarEquipo(@PathVariable Integer id, @RequestBody Equipo datos) {
+        Optional<Equipo> equipoExistente = iequipo.findById(id);
+        if (equipoExistente.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró el equipo con id " + id);
+        }
+
+        //Validaciones de los campos que se pueden modificar
+        if (datos.getNombreEquipo() == null || datos.getNombreEquipo().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Se requiere el nombre del equipo");
+        }
+        if (datos.getIntegrantes() == null || datos.getIntegrantes() < 1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("El número de integrantes debe ser mayor a 0");
+        }
+
+        Equipo equipo = equipoExistente.get();
+
+        //Si cambia el nombre, verificamos que no exista otro equipo con ese nombre en la misma tarea
+        boolean cambioNombre = !equipo.getNombreEquipo().equalsIgnoreCase(datos.getNombreEquipo());
+        if (cambioNombre
+                && iequipo.existsByIdTareaAndNombreEquipo(equipo.getIdTarea(), datos.getNombreEquipo())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Ya existe un equipo con ese nombre en esta tarea");
+        }
+
+        //Solo se actualizan nombre e integrantes; la tarea a la que pertenece no se modifica
+        equipo.setNombreEquipo(datos.getNombreEquipo());
+        equipo.setIntegrantes(datos.getIntegrantes());
+
+        Equipo equipoActualizado = iequipo.save(equipo);
+        return ResponseEntity.ok(equipoActualizado);
+    }
+
+    //métodos delete
+    //DELETE /equipos/{id} -> eliminar un equipo
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarEquipo(@PathVariable Integer id) {
+        if (!iequipo.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró el equipo con id " + id);
+        }
+
+        iequipo.deleteById(id);
+        return ResponseEntity.ok("Equipo con id " + id + " eliminado correctamente");
     }
 }

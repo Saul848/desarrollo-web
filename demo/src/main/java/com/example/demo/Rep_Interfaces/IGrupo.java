@@ -10,8 +10,11 @@ import com.example.demo.Clases.Grupo;
 
 public interface IGrupo extends JpaRepository<Grupo, Integer> {
 
-    // Devuelve una lista de grupos impartidos por un profesor específico según su ID
+    // Devuelve una lista de grupos impartidos por un profesor específico según su ID numérico
     List<Grupo> findByIdProfesor(Integer idProfesor);
+
+    // Devuelve una lista de grupos impartidos por un profesor según su matrícula (ej. "P001")
+    List<Grupo> findByMatriculaProfesor(String matriculaProfesor);
 
     // Devuelve una lista de grupos asociados a una materia específica
     List<Grupo> findByIdMateria(Integer idMateria);
@@ -19,13 +22,11 @@ public interface IGrupo extends JpaRepository<Grupo, Integer> {
     // Devuelve una lista con todos los grupos que se encuentren activos o inactivos
     List<Grupo> findByActivo(Boolean activo);
 
-    // Método para decir que un alumno esta en un grupo
+    // Método para inscribir a un alumno en la tabla intermedia esta_en_grupo
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO desweb.esta_en_grupo (id_grupo, matricula_alumno, rol) VALUES (:idGrupo, :matriculaAlumno, :rol)", nativeQuery = true)
     void inscribirAlumnoEnGrupo(@Param("idGrupo") Integer idGrupo, 
                                 @Param("matriculaAlumno") String matriculaAlumno, 
                                 @Param("rol") String rol);
-
-
 }
