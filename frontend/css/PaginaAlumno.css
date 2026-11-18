@@ -1,0 +1,132 @@
+/* ===== Variables de la maqueta ===== */
+:root {
+    --turquesa: #21a3a3;
+    --fondo: #efefef;
+    --gris-boton: #d9d9d9;
+    --gris-borde: #c2c2c2;
+    --gris-linea: #b5b5b5;
+    --morado: #7b77a3;
+    --morado-hover: #6a6692;
+    --texto-placeholder: #c2c2c2;
+}
+
+/* ===== Base ===== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--fondo);
+    font-family: "Montserrat", Arial, sans-serif;
+}
+
+/* ===== Cabecera ===== */
+#cabecera {
+    height: 96px;
+    background: var(--turquesa);
+}
+
+#contenedor-botones {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    padding: 0 40px 0 24px;
+}
+
+#contenedor-botones h1 {
+    margin: 0 auto 0 0;          /* empuja los botones a la derecha */
+    font-family: "Archivo Black", "Arial Black", sans-serif;
+    font-weight: normal;
+    font-size: 36px;
+    color: #000;
+}
+
+#btnCorreo,
+#btnPerfil {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+}
+
+#btnCorreo {
+    background: var(--gris-boton);
+    border: 3px solid var(--gris-borde);
+    color: #f0f0f0;              /* color del sobre */
+}
+
+#btnPerfil {
+    background: #fff;
+    border: none;
+    color: var(--gris-boton);    /* color de la silueta */
+}
+
+/* ===== Área de trabajo ===== */
+#areaTrabajo {
+    padding: 22px 30px;
+}
+
+/* Barra de búsqueda */
+#contenedor-busqueda {
+    margin: 0 12px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 6px 0 15px;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 24px;
+}
+
+#contenedor-busqueda:focus-within {
+    box-shadow: 0 0 0 2px var(--turquesa);
+}
+
+#barra-busqueda {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 300;
+}
+
+#barra-busqueda::placeholder {
+    color: var(--texto-placeholder);
+}
+
+#btnBuscar {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--gris-boton);
+    color: #8a8a8a;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+}
+
+#btnBuscar:hover {
+    background: var(--gris-borde);
+}
+
+/* Área principal: separador + cursos */
+#areaPrincipal {
+    margin-top: 22px;
+    border-top: 3px solid var(--gris-linea);
+}
+
+#contenedorCursos {
+    padding: 20px 12px;
+}
