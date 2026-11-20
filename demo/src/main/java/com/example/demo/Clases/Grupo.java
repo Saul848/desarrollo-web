@@ -12,14 +12,11 @@ public class Grupo {
     @Column(name = "id_grupo")
     private Integer id;
 
-    @Column(name = "id_materia")
-    private Integer idMateria;
-
-    @Column(name = "matricula_profesor", length = 15)
+    @Column(name = "matricula_creador", length = 8)
     private String matriculaProfesor;
 
-    @Column(name = "id_profesor")
-    private Integer idProfesor;
+    @Column(name = "nombre", nullable = false)
+    private String nombre_grupo;
 
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fechaInicio;
@@ -41,14 +38,6 @@ public class Grupo {
         this.id = id;
     }
 
-    public Integer getIdMateria() {
-        return idMateria;
-    }
-
-    public void setIdMateria(Integer idMateria) {
-        this.idMateria = idMateria;
-    }
-
     public String getMatriculaProfesor() {
         return matriculaProfesor;
     }
@@ -56,13 +45,13 @@ public class Grupo {
     public void setMatriculaProfesor(String matriculaProfesor) {
         this.matriculaProfesor = matriculaProfesor;
     }
-
-    public Integer getIdProfesor() {
-        return idProfesor;
+    
+    public String getNombre_grupo() {
+        return nombre_grupo;
     }
 
-    public void setIdProfesor(Integer idProfesor) {
-        this.idProfesor = idProfesor;
+    public void setNombre_grupo(String nombre_grupo) {
+        this.nombre_grupo = nombre_grupo;
     }
 
     public LocalDate getFechaInicio() {

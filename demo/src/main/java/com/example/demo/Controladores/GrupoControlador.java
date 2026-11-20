@@ -65,12 +65,6 @@ public class GrupoControlador {
                 .body("No se encontró el grupo con el ID especificado.");
     }
 
-    // Listar los grupos impartidos por un profesor específico
-    @GetMapping("/profesor/{idProfesor}")
-    public List<Grupo> obtenerGruposPorProfesor(@PathVariable Integer idProfesor) {
-        return igrupo.findByIdProfesor(idProfesor);
-    }
-
     // Actualizar datos de un grupo existente
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarGrupo(@PathVariable Integer id, @RequestBody Grupo datosActualizados) {
@@ -78,9 +72,9 @@ public class GrupoControlador {
         
         if (grupoExistente.isPresent()) {
             Grupo grupo = grupoExistente.get();
-            grupo.setIdMateria(datosActualizados.getIdMateria());
+            grupo.setNombre_grupo(datosActualizados.getNombre_grupo());
             grupo.setMatriculaProfesor(datosActualizados.getMatriculaProfesor());
-            grupo.setIdProfesor(datosActualizados.getIdProfesor());
+            grupo.setMatriculaProfesor(datosActualizados.getMatriculaProfesor());
             grupo.setFechaInicio(datosActualizados.getFechaInicio());
             grupo.setFechaFin(datosActualizados.getFechaFin());
             grupo.setActivo(datosActualizados.getActivo());

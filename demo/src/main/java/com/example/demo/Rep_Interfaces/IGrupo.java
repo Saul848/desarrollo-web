@@ -10,14 +10,8 @@ import com.example.demo.Clases.Grupo;
 
 public interface IGrupo extends JpaRepository<Grupo, Integer> {
 
-    // Devuelve una lista de grupos impartidos por un profesor específico según su ID numérico
-    List<Grupo> findByIdProfesor(Integer idProfesor);
-
     // Devuelve una lista de grupos impartidos por un profesor según su matrícula (ej. "P001")
     List<Grupo> findByMatriculaProfesor(String matriculaProfesor);
-
-    // Devuelve una lista de grupos asociados a una materia específica
-    List<Grupo> findByIdMateria(Integer idMateria);
 
     // Devuelve una lista con todos los grupos que se encuentren activos o inactivos
     List<Grupo> findByActivo(Boolean activo);
