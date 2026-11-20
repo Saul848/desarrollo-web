@@ -8,6 +8,7 @@
     --morado: #7b77a3;
     --morado-hover: #6a6692;
     --texto-placeholder: #c2c2c2;
+    --turquesa-oscuro: #115e59;
 }
 
 /* ===== Base ===== */
@@ -151,4 +152,161 @@ body {
 
 .modal-class{
     display: none;
+}
+
+
+/*Estilos del modal de perfil*/
+#contenedor-perfil {
+    position: relative;          /* ancla del modal */
+}
+
+#modal-perfil {
+    position: absolute;
+    top: calc(100% + 12px);      /* justo debajo del botón */
+    right: 0;                    /* alineado a su borde derecho */
+    z-index: 10;
+    width: min(280px, 90vw);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: var(--fondo);
+    border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* Sin esto, el display:flex anula el atributo hidden */
+#modal-perfil[hidden] {
+    display: none;
+}
+
+#perfil-nombre {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+#perfil-matricula {
+    font-size: 18px;
+    font-weight: 300;
+}
+
+#logout {
+    align-self: flex-end;
+    margin-top: 10px;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 14px;
+    background: var(--turquesa);
+    color: #000;
+    font-family: inherit;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#logout:hover {
+    filter: brightness(0.92);
+}
+
+
+/*Estilos del modal de dentro de un curso--------------*/
+#barra-opciones-profesor {
+    background: var(--fondo);
+}
+
+/* Franja gris con el nombre del curso */
+#nombre-curso {
+    display: block;
+    padding: 18px 36px 12px;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+/* Franja blanca con las opciones */
+#barra-botones {
+    padding: 0 36px;
+    background: #fff;
+    overflow-x: auto;              /* si no caben, se desplazan en lugar de romper el diseño */
+}
+
+#barra-botones ul {
+    display: flex;
+    gap: 36px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#barra-botones button {
+    padding: 14px 11px 10px;
+    border: none;
+    border-bottom: 4px solid transparent;   /* la línea de la opción activa */
+    background: transparent;
+    color: #000;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 400;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#barra-botones button:hover {
+    border-bottom-color: var(--gris-boton);
+}
+
+#barra-botones button.activo {
+    border-bottom-color: var(--morado);
+}
+
+#barra-botones button:focus-visible {
+    outline: 2px solid var(--turquesa);
+    outline-offset: -2px;
+}
+
+/*Estilos de los filtros*/
+/* Espaciado común de todas las áreas del curso (Actividades, Exámenes, Alumnos...) */
+.seccion-grupo {
+    padding: 18px 36px;
+    display: none;
+}
+
+.filtros ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.filtros button {
+    padding: 6px 16px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 4px;
+    background: #f7f7f7;
+    color: #000;
+    font-family: inherit;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.filtros button:hover {
+    background: #fff;
+    border-color: #8a8a8a;
+}
+
+.filtros button.activo {
+    background: var(--turquesa-oscuro);
+    border-color: var(--turquesa-oscuro);
+    color: #fff;
+}
+
+.filtros button:focus-visible {
+    outline: 2px solid var(--turquesa);
+    outline-offset: 2px;
+}
+
+#contenedor-actividades,
+#contenedor-examenes {
+    margin-top: 20px;
 }

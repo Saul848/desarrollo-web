@@ -8,7 +8,7 @@
     <!-- Tipografías de la maqueta: Archivo Black (título) y Montserrat (resto) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/PaginaAlumno.css">
 </head>
 <body>
@@ -24,12 +24,22 @@
                 </svg>
             </button>
 
-            <button id="btnPerfil" type="button" aria-label="Perfil" title="Perfil">
-                <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4"></circle>
-                    <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"></path>
-                </svg>
-            </button>
+            <div id="contenedor-perfil">
+                <button id="btnPerfil" type="button" aria-label="Perfil" title="Perfil">
+                    <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"></path>
+                    </svg>
+                </button>
+
+                <!--Modal flotante para el botón de perfil-->
+                <div id="modal-perfil" hidden>
+                    <span id="perfil-nombre">Nombre de usuario</span>
+                    <span id="perfil-matricula">Matricula</span>
+                    <button id="logout" type="button">Cerrar sesión</button>
+                </div>
+            </div>
+
         </div>
     </section>
     <section id="areaTrabajo">
@@ -71,19 +81,14 @@
                 <div id="barra-botones">
                     <ul>
                         <li>
-                            <button>Actividades</button>
-                        </li>
-                        
-                        <li>
-                            <button>Examenes</button>
-                        </li>
-                        
-                        <li>
-                            <button>Anuncios</button>
+                            <button type="button" class="activo" data-seccion="actividades">Actividades</button>
                         </li>
 
                         <li>
-                            <button>Contenido</button>
+                            <button type="button" data-seccion="examenes">Exámenes</button>
+                        </li>
+                        <li>
+                            <button type="button" data-seccion="alumnos">Alumnos</button>
                         </li>
                     </ul>
                 </div>
@@ -91,18 +96,16 @@
 
             <div id="seccion-actividades" class="seccion-grupo">
                 <div id="actividades">
-                    <div id="filtros-actividades">
+                    <div id="filtros-actividades" class="filtros">
                         <ul>
                             <li>
-                                <button>Actuales</button>
+                                <button type="button" class="activo" data-filtro="actuales">Actuales</button>
                             </li>
-                            
                             <li>
-                                <button>Concluidas</button>
+                                <button type="button" data-filtro="concluidas">Concluidas</button>
                             </li>
-
                             <li>
-                                <button>Con prorroga</button>
+                                <button type="button" data-filtro="prorroga">Con prorroga</button>
                             </li>
                         </ul>
                     </div>
@@ -120,22 +123,18 @@
             
             <div id="seccion-examenes" class="seccion-grupo">
                 <div id="Examenes">
-                    <div id="filtros-examenes">
-                        <div id="filtros-actividades">
-                            <ul>
-                                <li>
-                                    <button>Actuales</button>
-                                </li>
-                                
-                                <li>
-                                    <button>Concluidas</button>
-                                </li>
-
-                                <li>
-                                    <button>Con prorroga</button>
-                                </li>
-                            </ul>
-                        </div>
+                    <div id="filtros-examenes" class="filtros">
+                        <ul>
+                            <li>
+                                <button type="button" class="activo" data-filtro="actuales">Actuales</button>
+                            </li>
+                            <li>
+                                <button type="button" data-filtro="concluidas">Concluidas</button>
+                            </li>
+                            <li>
+                                <button type="button" data-filtro="prorroga">Con prorroga</button>
+                            </li>
+                        </ul>
                     </div>
 
                     <div id="contenedor-examenes">
