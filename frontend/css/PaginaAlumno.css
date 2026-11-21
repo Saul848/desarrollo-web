@@ -147,13 +147,43 @@ body {
 }
 
 #contenedorCursos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
     padding: 20px 12px;
+}
+
+.tarjeta-curso {
+    width: 180px;
+    padding: 14px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.tarjeta-curso:hover {
+    filter: brightness(0.95);
+}
+
+.tarjeta-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tarjeta-iniciales {
+    background: #ff5a5a;
+    font-family: "Archivo Black", sans-serif;
+    padding: 12px 8px;
+    border-radius: 6px;
+}
+
+.tarjeta-nombre {
+    font-size: 14px;
 }
 
 .modal-class{
     display: none;
 }
-
 
 /*Estilos del modal de perfil*/
 #contenedor-perfil {
@@ -209,7 +239,7 @@ body {
 
 
 /*Estilos del modal de dentro de un curso--------------*/
-#barra-opciones-profesor {
+#barra-opciones-alumno {
     background: var(--fondo);
 }
 
