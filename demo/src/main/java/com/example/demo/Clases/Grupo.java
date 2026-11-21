@@ -30,11 +30,11 @@ public class Grupo {
     public Grupo() {
     }
 
-    public Integer getId() {
+    public Integer getIdGrupo() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setIdGrupo(Integer id) {
         this.id = id;
     }
 
