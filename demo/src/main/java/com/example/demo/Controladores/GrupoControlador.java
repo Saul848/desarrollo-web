@@ -113,15 +113,14 @@ public class GrupoControlador {
     @PostMapping("/{idGrupo}/inscribir")
     public ResponseEntity<?> inscribirAlumno(
             @PathVariable Integer idGrupo, 
-            @RequestParam String matriculaAlumno, 
-            @RequestParam String rol) {
+            @RequestParam String matriculaAlumno) {
         
         try {
             if (!igrupo.existsById(idGrupo)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("No se encontró el grupo especificado.");
             }
-            igrupo.inscribirAlumnoEnGrupo(idGrupo, matriculaAlumno, rol);
+            igrupo.inscribirAlumnoEnGrupo(idGrupo, matriculaAlumno);
             
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body("Alumno inscrito en el grupo exitosamente.");

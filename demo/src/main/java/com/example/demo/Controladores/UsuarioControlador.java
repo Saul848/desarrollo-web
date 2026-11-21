@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Usuarios
  * UsuarioControlador
  */
-
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/usuarios")

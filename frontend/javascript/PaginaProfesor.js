@@ -397,8 +397,7 @@ formCrearGrupo.addEventListener("submit", async (e) => {
         const fallidos = [];
         for (const miembro of miembros) {
             const params = new URLSearchParams({
-                matriculaAlumno: miembro.value,
-                rol: miembro.dataset.rol
+                matriculaAlumno: miembro.value
             });
             const r = await fetch(`${API}/grupos/${idGrupo}/inscribir?${params}`, { method: "POST" });
             if (!r.ok) fallidos.push(miembro.value);
