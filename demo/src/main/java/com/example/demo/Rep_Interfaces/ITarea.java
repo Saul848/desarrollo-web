@@ -1,6 +1,10 @@
 package com.example.demo.Rep_Interfaces;
 
+import com.example.demo.Clases.Grupo;
 import com.example.demo.Clases.Tarea;
+
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -14,4 +18,7 @@ public interface ITarea extends CrudRepository<Tarea, Integer> {
      * @return Tarea encontrada o null si no se encuentra
      */
     Tarea findByTitulo(String titulo);
+
+    
+    List<Tarea> findByIdGrupo(Integer idGrupo);
 }  

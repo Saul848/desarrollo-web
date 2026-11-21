@@ -268,12 +268,18 @@ const inputBuscarMiembros = document.getElementById("buscar-miembros");
 const listaMiembros = document.getElementById("lista-miembros");
 const errorCrearGrupo = document.getElementById("error-crear-grupo");
 const btnConfirmarGrupo = document.getElementById("btnConfirmarGrupo");
+const inputFechaInicio = document.getElementById("fecha-inicio");
+const inputFechaFin = document.getElementById("fecha-fin");
+inputFechaInicio.addEventListener("change", () => {
+    inputFechaFin.min = inputFechaInicio.value;
+});
 
 document.getElementById("btnCrearCurso").addEventListener("click", abrirModalCrearGrupo);
 document.getElementById("btnCancelarGrupo").addEventListener("click", cerrarModalCrearGrupo);
 
 async function abrirModalCrearGrupo() {
     formCrearGrupo.reset();
+    inputFechaFin.min = "";
     ocultarError();
     modalCrearGrupo.style.display = "flex";
     inputNombreGrupo.focus();
@@ -371,10 +377,17 @@ formCrearGrupo.addEventListener("submit", async (e) => {
 
     const miembros = [...listaMiembros.querySelectorAll("input:checked")];
 
-    // Provisional: la maqueta no pide fechas, pero el backend las exige.
-    const inicio = new Date();
-    const fin = new Date();
-    fin.setMonth(fin.getMonth() + 6);
+    const inicio = inputFechaInicio.value;   // formato "2026-08-10"
+    const fin = inputFechaFin.value;
+
+    if (!inicio || !fin) {
+        mostrarError("Selecciona la fecha de inicio y la fecha de fin.");
+        return;
+    }
+    if (fin < inicio) {
+        mostrarError("La fecha de fin no puede ser anterior a la de inicio.");
+        return;
+    }
 
     btnConfirmarGrupo.disabled = true;
     try {
@@ -384,8 +397,8 @@ formCrearGrupo.addEventListener("submit", async (e) => {
             body: JSON.stringify({
                 nombre_grupo: nombre,
                 matriculaProfesor: MATRICULA_PROFESOR,
-                fechaInicio: fechaLocalISO(inicio),
-                fechaFin: fechaLocalISO(fin),
+                fechaInicio: `${inicio}T00:00:00`,
+                fechaFin: `${fin}T23:59:59`,
                 activo: true
             })
         });
@@ -417,3 +430,79 @@ formCrearGrupo.addEventListener("submit", async (e) => {
     }
 });
 
+/**
+ * Checar para cargar las tareas ------------------------------------------------------------
+ */
+
+let tareasCargadas = [];  
+
+async function listarTareasGrupo(idGrupo) {
+    try {
+        const r = await fetch(`${API}/tareas/obtenerTareas/${idGrupo}`, {method: "GET"});
+        if (!r.ok) throw new Error("HTTP " + res.status);
+
+        const tareas = await res.json();
+        tareasCargadas = tareas.map((grupo) => ({ grupo, texto: textoBusqueda(grupo) }));
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+function crearTarjetaTarea(tarea) {
+    const id = tarea.id ?? tarea.id;
+    const nombre = tarea.titulo ?? "Sin nombre";
+
+    const tarjeta = crearElemento("button", `tarjeta-tarea`);
+    tarjeta.type = "button";
+    tarjeta.dataset.idTarea = id;
+
+    // Cuerpo
+    const titulo = crearElemento("span", "tarea-nombre");
+    titulo.append(crearElemento("span", "tarea-numero", `Grupo: `), nombre);
+
+    const fechas = crearElemento("span", "curso-fechas",
+        `${formatearFecha(tarea.fecha_inicio)} – ${formatearFecha(tarea.fecha_termino)}`);
+
+    const datos = crearElemento("span", "curso-datos");
+    datos.append(titulo, fechas);
+
+    const estado = crearElemento("span",
+        "estado-curso" + (tarea.estado ? "" : " inactivo"),
+        (tarea.estado ? "Prorroga" : "prorroga"),
+        tarea.activo ? "Activo" : "Inactivo" , "Prorroga"
+    );
+
+    const cuerpo = crearElemento("span", "tarjeta-cuerpo");
+    cuerpo.append(datos, estado);
+
+    tarjeta.append(cuerpo);
+    tarjeta.addEventListener("click", () => abrirActividad(id, nombre));
+    return tarjeta;
+}
+
+function abrirActividad(idTarea) {
+    console.log("Tarea seleccionada")
+}
+
+async function cargarTareas(idGrupo) {
+    try {
+        const res = listarTareasGrupo(idGrupo);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+
+        const grupos = await res.json();
+        gruposCargados = grupos.map((grupo) => ({ grupo, texto: textoBusqueda(grupo) }));
+
+        if (gruposCargados.length === 0) {
+            mostrarMensaje("Aún no tienes grupos. Crea el primero con «+ Crear nuevo grupo».");
+            return;
+        }
+        aplicarBusqueda();   // respeta lo que ya esté escrito en la barra
+    } catch (error) {
+        console.error(error);
+        gruposCargados = [];
+        mostrarMensaje("No se pudieron cargar los grupos. Verifica que el servidor esté en ejecución.");
+    }
+}
+
+cargarGrupos(MATRICULA_PROFESOR);

@@ -1,5 +1,7 @@
 package com.example.demo.Controladores;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,17 @@ public class TareaControlador {
     @GetMapping ("/obtenerTareas")
     public ResponseEntity<Iterable<Tarea>> obtenerTareas() {
         Iterable<Tarea> tareas = itarea.findAll();
+        return ResponseEntity.ok(tareas);
+    }
+
+    @GetMapping("/obtenerTareas/{idGrupo}")
+    public ResponseEntity<List<Tarea>> obtenerTareasGrupo(@PathVariable Integer idGrupo){
+        List<Tarea> tareas= itarea.findByIdGrupo(idGrupo);
+
+        if(tareas == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
         return ResponseEntity.ok(tareas);
     }
 
