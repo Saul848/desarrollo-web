@@ -9,7 +9,7 @@ import jakarta.validation.constraints.*;
  * Reactivo
  */
 @Entity
-@Table(name = "reactivo")
+@Table(name = "reactivo", schema = "desweb")
 public class Reactivo {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

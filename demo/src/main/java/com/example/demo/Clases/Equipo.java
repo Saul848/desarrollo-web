@@ -4,11 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * Clase Equipo que representa un equipo dentro de un grupo
  */
-@Entity 
+@Entity
+@Table(name = "grupo", schema = "desweb")
 public class Equipo {
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO) 

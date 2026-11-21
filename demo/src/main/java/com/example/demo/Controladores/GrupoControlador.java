@@ -54,6 +54,17 @@ public class GrupoControlador {
         return igrupo.findAll();
     }
 
+    // GET /grupos/creador/20230001
+    // GET /grupos/creador/20230001?activo=true
+    @GetMapping("/creador/{matricula}")
+    public List<Grupo> obtenerPorCreador(@PathVariable String matricula,
+                                        @RequestParam(required = false) Boolean activo) {
+        if (activo == null) {
+            return igrupo.findByMatriculaProfesor(matricula);
+        }
+        return igrupo.findByMatriculaProfesorAndActivo(matricula, activo);
+    }
+
     // Buscar un grupo en específico por su ID
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerGrupoPorId(@PathVariable Integer id) {

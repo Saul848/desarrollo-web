@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "grupo")
+@Table(name = "grupo", schema = "desweb")
 public class Grupo {
 
     @Id

@@ -13,6 +13,8 @@ public interface IGrupo extends JpaRepository<Grupo, Integer> {
     // Devuelve una lista de grupos impartidos por un profesor según su matrícula (ej. "P001")
     List<Grupo> findByMatriculaProfesor(String matriculaProfesor);
 
+    List<Grupo> findByMatriculaProfesorAndActivo(String matriculaProfesor, Boolean activo);
+
     // Devuelve una lista con todos los grupos que se encuentren activos o inactivos
     List<Grupo> findByActivo(Boolean activo);
 

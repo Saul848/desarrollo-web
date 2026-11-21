@@ -19,7 +19,7 @@ import org.hibernate.annotations.ColumnTransformer;
  * Clase Tarea que representa una tarea asignada
  */
 @Entity
-@Table (name = "tarea")
+@Table (name = "tarea", schema = "desweb")
 public class Tarea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

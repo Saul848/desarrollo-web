@@ -8,7 +8,8 @@ import jakarta.persistence.*;
 /**
  * Clase Entrega que representa la entrega de una tarea.
  */
-@Entity 
+@Entity
+@Table(name = "grupo", schema = "desweb")
 public class Entrega {
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO)

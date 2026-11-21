@@ -122,3 +122,8 @@ function mostrarSeccion(nombre) {
         seccion.style.display = "block";
     }
 }
+
+
+async function recuperarCursosActivos(id_creador) {
+    cursos = fetch(`/grupos/creador/${id_creador}?activo=true`)
+}
