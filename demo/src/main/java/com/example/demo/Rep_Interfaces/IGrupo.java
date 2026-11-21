@@ -21,8 +21,14 @@ public interface IGrupo extends JpaRepository<Grupo, Integer> {
     // Método para inscribir a un alumno en la tabla intermedia esta_en_grupo
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO desweb.esta_en_grupo (id_grupo, matricula_alumno, rol) VALUES (:idGrupo, :matriculaAlumno, :rol)", nativeQuery = true)
-    void inscribirAlumnoEnGrupo(@Param("idGrupo") Integer idGrupo, 
-                                @Param("matriculaAlumno") String matriculaAlumno, 
-                                @Param("rol") String rol);
+    @Query(value = "INSERT INTO desweb.esta_en_grupo (id_grupo, matricula_alumno) VALUES (:idGrupo, :matriculaAlumno)", nativeQuery = true)
+    void inscribirAlumnoEnGrupo(@Param("idGrupo") Integer idGrupo,
+                                @Param("matriculaAlumno") String matriculaAlumno);
+
+    // Grupos a los que pertenece un alumno
+    @Query(value = "SELECT g.* FROM desweb.grupo g " +
+                    "JOIN desweb.esta_en_grupo e ON g.id_grupo = e.id_grupo " +
+                    "WHERE e.matricula_alumno = :matricula",
+            nativeQuery = true)
+    List<Grupo> findGruposByAlumno(@Param("matricula") String matricula);
 }
