@@ -5,12 +5,15 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "mensajes", schema = "desweb")
+
 public class Mensaje {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_mensaje")
     private Integer id;
+    @Column (name = "destinatario")
+    private String idDestinatario;
 
     private String remitente;
     private String asunto;
@@ -18,7 +21,7 @@ public class Mensaje {
     @Column(columnDefinition = "TEXT")
     private String cuerpo;
 
-    private Boolean leido;
+    private Boolean leido = false;
 
     @Column(nullable = false)
     private LocalDateTime fecha;
@@ -40,6 +43,14 @@ public class Mensaje {
 
     public void setRemitente(String remitente) {
         this.remitente = remitente;
+    }
+
+    public String getIdDestinatario() {
+        return idDestinatario;
+    }
+
+    public void setIdDestinatario(String idDestinatario) {
+        this.idDestinatario = idDestinatario;
     }
 
     public String getAsunto() {

@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,13 +37,21 @@ public class MensajeControlador {
     private IMensaje imensaje;
 
     // Enviar/Crear un nuevo mensaje
-    @PostMapping
+    @PostMapping("/enviarMensaje")
     public ResponseEntity<?> enviarMensaje(@RequestBody Mensaje nuevoMensaje) {
+        if (nuevoMensaje.getIdDestinatario() == null || nuevoMensaje.getIdDestinatario().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("El destinatario no puede estar vacío.");
+        }
         if (nuevoMensaje.getCuerpo() == null || nuevoMensaje.getCuerpo().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("El cuerpo del mensaje no puede estar vacío.");
         }
 
+        if (nuevoMensaje.getRemitente() != null) {
+            nuevoMensaje.setRemitente(nuevoMensaje.getRemitente().trim());
+        }
+        nuevoMensaje.setIdDestinatario(nuevoMensaje.getIdDestinatario().trim());
         nuevoMensaje.setFecha(LocalDateTime.now());
         if (nuevoMensaje.getLeido() == null) {
             nuevoMensaje.setLeido(false);
@@ -73,6 +84,12 @@ public class MensajeControlador {
         return imensaje.findByRemitente(correo);
     }
 
+    // Buscar mensajes recibidos por un destinatario
+    @GetMapping("/destinatario")
+    public List<Mensaje>obtenerMensajePorDestinatario(@RequestParam String idDestinatario) {
+        return imensaje.findByIdDestinatario(idDestinatario);
+    }
+
     // Marcar un mensaje como leído
     @PutMapping("/{id}/leido")
     public ResponseEntity<?> marcarComoLeido(@PathVariable Integer id) {
@@ -97,4 +114,17 @@ public class MensajeControlador {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("No se encontró el mensaje que deseas eliminar.");
     }
+
+    // Buscar mensajes por palabra clave en el asunto
+    @GetMapping("/buscar")
+    public ResponseEntity<?> buscarMensajes(@RequestParam(required = false) String asunto) {
+        if (asunto == null || asunto.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Debes ingresar una palabra clave para buscar.");
+        }
+        List<Mensaje> resultados = imensaje.findByAsuntoContainingIgnoreCase(asunto.trim());
+        return ResponseEntity.ok(resultados);
+    }
+
+
 }

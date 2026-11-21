@@ -9,9 +9,13 @@ public interface IMensaje extends JpaRepository<Mensaje, Integer> {
     // Devuelve los mensajes enviados por un remitente específico (correo o identificador)
     List<Mensaje> findByRemitente(String remitente);
 
-    // Devuelve una lista con los mensajes filtrados por su estado de lectura (ej. no leídos = false)
+    // Mensajes recibidos por un destinatario (bandeja de entrada)
+    List<Mensaje> findByIdDestinatario(String idDestinatario);
+
+    // Devuelve una lista con los mensajes filtrados por su estado de lectura 
     List<Mensaje> findByLeido(Boolean leido);
 
     // Búsqueda de mensajes que contengan una palabra clave en el asunto
     List<Mensaje> findByAsuntoContainingIgnoreCase(String asunto);
+
 }

@@ -1,0 +1,381 @@
+/*Este css no va ser el resultado final ahun falta mejorar algunos detalles*/
+/*css general */
+:root {
+    --morado: #7375A5;
+    --turquesa: #21A3A3;
+    --verde-agua: #13CBB5;
+    --menta: #6CF3D5;
+    --rosa: #F45B85;
+    --fondo: #F1F1F1;
+    --blanco: #FFFFFF;
+    --texto: #252525;
+    --gris: #D8D8D8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    grid-template-rows: 65px 65px minmax(400px, 1fr);
+
+    max-width: 1100px;
+    min-height: 650px;
+    margin: 30px auto;
+    padding: 0 15px;
+    gap: 0 15px;
+}
+
+/* Para el encabezado*/
+
+header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+
+    background: var(--turquesa);
+    color: var(--blanco);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 25px;
+    border-radius: 10px 10px 0 0;
+}
+
+header h1 {
+    font-size: 25px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/*Para el panel de buscar*/
+
+body > section:not(#panelNuevoCorreo):not(#panelDetalleCorreo) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: var(--blanco);
+    padding: 10px 15px;
+}
+
+#inputBuscar {
+    flex: 1;
+    height: 38px;
+
+    border: 1px solid var(--gris);
+    border-radius: 20px;
+    padding: 0 15px;
+
+    outline: none;
+    font-size: 14px;
+}
+
+#inputBuscar:focus {
+    border-color: var(--turquesa);
+    box-shadow: 0 0 4px var(--menta);
+}
+
+/* para los botones */
+
+button {
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s ease;
+}
+
+button:hover {
+    filter: brightness(0.92);
+    transform: translateY(-1px);
+}
+
+#btnBuscar {
+    background: var(--verde-agua);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+/* menu de alado*/
+
+aside {
+    grid-column: 1;
+    grid-row: 3;
+
+    background: #E1E1E1;
+    padding: 20px 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    border-radius: 10px;
+}
+
+aside button {
+    padding: 12px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+#btnNuevoCorreo {
+    background: var(--morado);
+    color: white;
+}
+
+#btnBandeja {
+    background: var(--verde-agua);
+    color: white;
+}
+
+/* correo resividos */
+
+main {
+    grid-column: 2;
+    grid-row: 3;
+
+    background: #E1E1E1;
+    padding: 15px;
+
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+thead {
+    background: var(--turquesa);
+    color: white;
+}
+
+th {
+    padding: 14px 10px;
+    font-size: 13px;
+    text-align: left;
+}
+
+td {
+    padding: 15px 10px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--gris);
+}
+
+tbody tr {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+tbody tr:hover {
+    background: #E5FAF6;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+td:first-child,
+th:first-child {
+    text-align: center;
+    width: 65px;
+}
+
+td input[type="checkbox"] {
+    accent-color: var(--turquesa);
+    cursor: pointer;
+}
+
+td strong {
+    color: var(--morado);
+}
+
+/* Nuevo correo creo ay que mejorarla ahun */
+
+#panelNuevoCorreo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: min(90%, 500px);
+    padding: 25px;
+
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 35px rgba(0,0,0,0.25);
+
+    z-index: 1000;
+}
+
+#panelNuevoCorreo h3 {
+    background: var(--turquesa);
+    color: white;
+
+    padding: 15px;
+    margin: -25px -25px 20px;
+    border-radius: 12px 12px 0 0;
+}
+
+#formNuevoCorreo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#formNuevoCorreo input,
+#formNuevoCorreo textarea {
+    width: 100%;
+    padding: 12px;
+
+    border: 1px solid var(--gris);
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+#formNuevoCorreo input:focus,
+#formNuevoCorreo textarea:focus {
+    border-color: var(--turquesa);
+}
+
+#formNuevoCorreo textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+#formNuevoCorreo button {
+    padding: 12px;
+    border-radius: 20px;
+    background: var(--verde-agua);
+    color: white;
+}
+
+#formNuevoCorreo #btnCancelarEnvio {
+    background: var(--morado);
+}
+
+/* panel de los detalles del correo */
+
+#panelDetalleCorreo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: min(90%, 650px);
+    min-height: 300px;
+    padding: 25px;
+
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 35px rgba(0,0,0,0.25);
+
+    z-index: 1001;
+}
+
+#detalleAsunto {
+    font-size: 19px;
+    margin-bottom: 15px;
+    color: var(--texto);
+}
+
+#panelDetalleCorreo p {
+    margin: 12px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+#detalleCuerpo {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    min-height: 100px;
+}
+
+/* Botón eliminar */
+
+#btnEliminarCorreo {
+    background: var(--verde-agua);
+    color: white;
+    padding: 9px 15px;
+    border-radius: 8px;
+
+    position: absolute;
+    top: 15px;
+    right: 55px;
+}
+
+/* cerrar ahun no funciona*/
+
+#btnCerrarDetalle {
+    background: var(--rosa);
+    color: white;
+
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+/* Respo */
+
+@media (max-width: 650px) {
+
+    body {
+        display: flex;
+        flex-direction: column;
+        margin: 10px auto;
+        padding: 0 10px;
+        gap: 10px;
+    }
+
+    header {
+        min-height: 60px;
+        border-radius: 10px;
+    }
+
+    aside {
+        flex-direction: row;
+        padding: 10px;
+    }
+
+    aside button {
+        flex: 1;
+    }
+
+    main {
+        min-height: 350px;
+        padding: 8px;
+    }
+
+    th, td {
+        padding: 10px 5px;
+        font-size: 11px;
+    }
+
+    #panelDetalleCorreo {
+        width: 94%;
+    }
+}
