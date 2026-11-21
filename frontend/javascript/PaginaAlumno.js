@@ -1,6 +1,17 @@
+const API_URL = "http://localhost:8080";
+const matriculaAlumno = sessionStorage.getItem("matricula") || "20230002";
+
+const contenedorCursos = document.getElementById("contenedorCursos");
+const barraBusqueda = document.getElementById("barra-busqueda");
+const botonesCurso = document.querySelectorAll("#barra-botones button");
+let grupos = [];
+
+const COLORES = ["#d3d3d3", "#12cdb5", "#7673a1"];
+
 //Cuando se carga la página se muestra el listado de los cursos
 document.addEventListener('DOMContentLoaded', ()=>{
     mostrarModal('areaCursos')
+    cargarGrupos();
 })
 
 function mostrarModal(idModal){
@@ -21,6 +32,62 @@ document.getElementById("tituloPagina").addEventListener("click", () => {
     mostrarModal("areaCursos")
 });
 
+/* ---------- Grupos del alumno ---------- */
+async function cargarGrupos() {
+    try {
+        const resp = await fetch(`${API_URL}/grupos/alumno/${matriculaAlumno}`);
+        if (!resp.ok) throw new Error("Error " + resp.status);
+        grupos = await resp.json();
+        mostrarGrupos(grupos);
+    } catch (err) {
+        console.error(err);
+        contenedorCursos.innerHTML = "<p>No se pudieron cargar los grupos.</p>";
+    }
+}
+
+function mostrarGrupos(lista) {
+    contenedorCursos.innerHTML = "";
+
+    if (lista.length === 0) {
+        contenedorCursos.innerHTML = "<p>Aún no perteneces a ningún grupo.</p>";
+        return;
+    }
+
+    lista.forEach((g, i) => {
+        const nombre = g.nombre_grupo ?? "Sin nombre";
+        const iniciales = nombre.substring(0, 2).toUpperCase();
+
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "tarjeta-curso";
+        tarjeta.style.backgroundColor = COLORES[i % COLORES.length];
+        tarjeta.innerHTML = `
+            <div class="tarjeta-info">
+                <span class="tarjeta-iniciales">${iniciales}</span>
+                <span class="tarjeta-nombre"></span>
+            </div>`;
+        // textContent evita inyectar HTML si el nombre trae caracteres raros
+        tarjeta.querySelector(".tarjeta-nombre").textContent = nombre;
+
+        tarjeta.addEventListener("click", () => abrirGrupo(g));
+        contenedorCursos.appendChild(tarjeta);
+    });
+}
+
+function abrirGrupo(grupo) {
+    document.getElementById("nombre-curso").textContent = grupo.nombre_grupo;
+    sessionStorage.setItem("idGrupoActual", grupo.id);
+    mostrarModal("areaActividad");
+    mostrarSeccion("actividades");
+}
+
+barraBusqueda.addEventListener("input", () => {
+    const texto = barraBusqueda.value.toLowerCase();
+    mostrarGrupos(grupos.filter(g =>
+        (g.nombre_grupo ?? "").toLowerCase().includes(texto)
+    ));
+});
+
+/* ---------- Perfil ---------- */
 const btnPerfil = document.getElementById("btnPerfil");
 const modalPerfil = document.getElementById("modal-perfil");
 
@@ -48,7 +115,7 @@ document.addEventListener("click", (e) => {
     }
 });
 
-
+/* ---------- Botones dentro de un curso ---------- */
 /**
  * Método que cambia el estado de los botones dentro de un curso
  */
@@ -65,6 +132,7 @@ botonesCurso.forEach((btn) => {
     });
 });
 
+/* ---------- Filtros ---------- */
 /**
  * Lógica para los filtros dentro de los grupos y examenes
  */
@@ -97,7 +165,6 @@ function aplicarFiltroActividades(filtro) {
 function aplicarFiltroExamenes(filtro) {
     console.log("Exámenes:", filtro);
 }
-
 
 /**
  * Método para mostrar una seccion dentro de un grupo

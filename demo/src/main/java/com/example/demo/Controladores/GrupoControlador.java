@@ -76,6 +76,12 @@ public class GrupoControlador {
                 .body("No se encontró el grupo con el ID especificado.");
     }
 
+    //
+    @GetMapping("/alumno/{matricula}")
+    public List<Grupo> obtenerGruposDeAlumno(@PathVariable String matricula){
+        return igrupo.findGruposByAlumno(matricula);
+    }
+
     // Actualizar datos de un grupo existente
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarGrupo(@PathVariable Integer id, @RequestBody Grupo datosActualizados) {
