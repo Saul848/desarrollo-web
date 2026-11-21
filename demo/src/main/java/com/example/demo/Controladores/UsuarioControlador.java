@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * UsuarioControlador
  */
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/usuarios")
 public class UsuarioControlador {
     /*Se agrega la propiedad que hará uso del crud repository*/
@@ -42,19 +44,34 @@ public class UsuarioControlador {
 	//POST /usuarios -> crear
 	@PostMapping
 	public ResponseEntity<?> crearUsuario(@RequestBody Usuario newUsuario){
-		if(iusuario.existsById(newUsuario.getMatricula())){
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un usuario con esta matricula");
-		}
-
 		if(iusuario.existsByCorreo(newUsuario.getCorreo())){
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un usuario asociado a este correo");
 		}
+
+		if(newUsuario.getMatricula() == null || newUsuario.getMatricula().isBlank()){
+			newUsuario.setMatricula(generarMatricula());
+		}else if(iusuario.existsById(newUsuario.getMatricula())){
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un usuario con esa matrícula");
+		}
+
+		if (newUsuario.getRol() == null){
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El rol es obligatorio");
+		}
+
 		//Creamos el nuevo usuario con su contraseña en formato hash y lo guardamos 
 		newUsuario.setPassword(encoder.encode(newUsuario.getPassword()));
 		Usuario guardado = iusuario.save(newUsuario);
 		return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
 	}
 
+	private String generarMatricula(){
+		String matricula;
+		do{
+			int numero = java.util.concurrent.ThreadLocalRandom.current().nextInt(20230000, 20240000);
+			matricula = String.valueOf(numero);
+		}while(iusuario.existsById(matricula));
+		return matricula;
+	}
 	
 	// POST /usuarios/login/usuario1  -> validar credenciales
 	@PostMapping("/login")
