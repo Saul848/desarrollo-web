@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  */
 @CrossOrigin(origins = "*")
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/usuarios")
 public class UsuarioControlador {
     /*Se agrega la propiedad que hará uso del crud repository*/
