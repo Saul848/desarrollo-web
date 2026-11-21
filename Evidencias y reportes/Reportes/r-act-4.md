@@ -25,14 +25,15 @@ Integrar frontend y backend - avance
 | Avance en las paginas de profesor y alumno         | Saúl                   |https://github.com/Saul848/desarrollo-web/commit/f3fc7e3f4791cae5b80ba764e25ece52d55c3d19|
 | Ajustes generales a los controladores              |Saúl                    |https://github.com/Saul848/desarrollo-web/commit/f2a5bb1f9f37bdc2385ca82d4f1aea8e96aa8e03 |
 | Listado de cursos y avance de creación de grupos   |Saúl                    |https://github.com/Saul848/desarrollo-web/commit/7cfc2beac9a250d4c691a8bdd71101a51777b6bf |
-| Ajustes a listado de cursos, creación de grupos y filtros|Saúl              |https://github.com/Saul848/desarrollo-web/commit/01cc8d91b25ec5404178945f39bf5b9575b41889 |
-| | | | |
-| | | | |
+| Ajustes a listado de cursos, creación de grupos y filtros |Saúl              |https://github.com/Saul848/desarrollo-web/commit/01cc8d91b25ec5404178945f39bf5b9575b41889 |
+| Login y creación de cuenta | Tania | https://github.com/Saul848/desarrollo-web/commit/b705c051ed7daf0bbfb8e4b2acad325ad038c051 |
+| | | |
 ---
 
 # 3. Problemas encontrados
 
-Errores en las rutas de algunos métodos del backend que no coincididan y resultaban en errores 404.
+Errores en las rutas de algunos métodos del backend que no coincididan y resultaban en errores 404. 
+
 Errores en los datos que se enviaban en algunas peticiones; no eran los datos correctos, y resultaban en errores 400.
 
 ---
@@ -40,8 +41,9 @@ Errores en los datos que se enviaban en algunas peticiones; no eran los datos co
 # 4. Avance funcional
 
 Métodos faltantes en las clases backend
-Interfaz gráfica para profesor y alumno con algunas de sus funciones activas
+Interfaz gráfica para profesor y alumno con algunas de sus funciones activas.
 
+Ya se puede iniciar sesión, en caso de no tener una cuenta existente, se puede crear una. Una vez iniciada la sesión, se redirige a la página correspondiete al rol.
 
 ---
 
@@ -67,7 +69,7 @@ Describir brevemente la contribución de cada integrante.
 - **Saúl Ortiz Zarate:** Se construyeron las interfaces de Profesor y Alumno y sus estilos. Se implementaron peticiones Fetch en la clase Profesor para el listado de los cursos actuales, se implementó la busqueda de grupos; busqueda de alumnos al crear un grupo y visualización del panel de tareas (aún a trabajar)
 - **Montserrat Rojas Martinez:** 
 - **Integrante 3:**
-- **Tania:** 
+- **Tania Ketzel Gómez Velásquez:** Se creó la página para iniciar sesión lo más fiel al prototipo, en caso de no tener una cuenta existente, se podrá crear una. El login redirecciona a la página de acuerdo al rol del usuario, se implementó en el método de crear usuario que se genere una matrícula aleatoria.
 
 ---
 
@@ -75,8 +77,8 @@ Describir brevemente la contribución de cada integrante.
 
 Indicar las tareas que se realizarán antes del siguiente reporte.
 
-- Actividad 1 - Saul: seguir construyendo las peticiones fetch para el llenado de las tareas en la seccion de grupos para profesor, creación de tareas y examenes
-- Actividad 2 - 
+- Actividad 1 - Saúl: seguir construyendo las peticiones fetch para el llenado de las tareas en la seccion de grupos para profesor, creación de tareas y examenes
+- Actividad 2 - Tania: implementación de métodos faltantes, además de corrección de errores en los métodos de backend.
 - Actividad 3
 - Actividad 4 - 
 - Actividad 5
