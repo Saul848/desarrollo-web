@@ -42,6 +42,7 @@
     
         </div>
     </section>
+    
     <section id="areaTrabajo">
         <!--Modal de listado de cursos-->
         <div id="areaCursos" class="modal-class">
@@ -147,6 +148,40 @@
             </div>
         </div>
     </section>
+
+
+
+    <!--Modal para crear un grupo-->
+    <div id="modal-crear-grupo" role="dialog" aria-modal="true" aria-labelledby="titulo-crear-grupo">
+        <form id="form-crear-grupo" class="panel-crear-grupo">
+            <h2 id="titulo-crear-grupo">Crear grupo</h2>
+
+            <label for="nombre-grupo">Nombre del curso:</label>
+            <input type="text" id="nombre-grupo" maxlength="50" placeholder="Matematicas I, Lengua I...">
+
+            <label for="buscar-miembros">Miembros</label>
+            <div class="campo-busqueda">
+                <input type="text" id="buscar-miembros" autocomplete="off"
+                    placeholder="Buscar miembros por nombre/matricula">
+                <span class="icono-busqueda" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                        stroke-width="2.2" stroke-linecap="round">
+                        <circle cx="10.5" cy="10.5" r="6"></circle>
+                        <path d="M15 15l5 5"></path>
+                    </svg>
+                </span>
+            </div>
+
+            <ul id="lista-miembros"></ul>
+
+            <p id="error-crear-grupo" role="alert" hidden></p>
+
+            <div class="acciones-crear-grupo">
+                <button type="button" id="btnCancelarGrupo">Cancelar</button>
+                <button type="submit" id="btnConfirmarGrupo">+ Crear nuevo grupo</button>
+            </div>
+        </form>
+    </div>
 
     <script src="../javascript/PaginaProfesor.js"></script>
 </body>
