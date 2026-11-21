@@ -1,6 +1,5 @@
 package com.example.demo.Rep_Interfaces;
 
-import com.example.demo.Clases.Grupo;
 import com.example.demo.Clases.Tarea;
 
 import java.util.List;

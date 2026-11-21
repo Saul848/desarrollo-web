@@ -23,10 +23,11 @@ Integrar frontend y backend - avance
 |----------------------------------------------------|------------------------|----------------------------------------|
 | Estructura inicial de las paginas profesor y alumno| Saúl                   |https://github.com/Saul848/desarrollo-web/commit/123cac44a2b4318178356f52043347b0989e81e4|
 | Avance en las paginas de profesor y alumno         | Saúl                   |https://github.com/Saul848/desarrollo-web/commit/f3fc7e3f4791cae5b80ba764e25ece52d55c3d19|
-| | | |
-| | | |
-| Implementación de métodos PUT Y DELETE, validación de peticiones en Tareas | Tania | https://github.com/Saul848/desarrollo-web/commit/1443bf61ff2c284caf7a38767e14e2d4cd8225f4 |
-| Implementación de métodos PUT Y DELETE, validación de peticiones en Reactivos | Tania | https://github.com/Saul848/desarrollo-web/commit/f0866d9b985c3807a34dd7a11c2def9db1fa3854 |
+| Ajustes generales a los controladores              |Saúl                    |https://github.com/Saul848/desarrollo-web/commit/f2a5bb1f9f37bdc2385ca82d4f1aea8e96aa8e03 |
+| Listado de cursos y avance de creación de grupos   |Saúl                    |https://github.com/Saul848/desarrollo-web/commit/7cfc2beac9a250d4c691a8bdd71101a51777b6bf |
+| Ajustes a listado de cursos, creación de grupos y filtros|Saúl              |https://github.com/Saul848/desarrollo-web/commit/01cc8d91b25ec5404178945f39bf5b9575b41889 |
+| | | | |
+| | | | |
 ---
 
 # 3. Problemas encontrados
@@ -63,7 +64,7 @@ Documentar el uso de herramientas de inteligencia artificial durante el desarrol
 
 Describir brevemente la contribución de cada integrante.
 
-- **Saúl Ortiz Zarate:** Se construyeron las interfaces de Profesor y Alumno y sus estilos. Se implementaron peticiones Fetch en la clase Profesor 
+- **Saúl Ortiz Zarate:** Se construyeron las interfaces de Profesor y Alumno y sus estilos. Se implementaron peticiones Fetch en la clase Profesor para el listado de los cursos actuales, se implementó la busqueda de grupos; busqueda de alumnos al crear un grupo y visualización del panel de tareas (aún a trabajar)
 - **Montserrat Rojas Martinez:** 
 - **Integrante 3:**
 - **Tania:** 
@@ -74,7 +75,7 @@ Describir brevemente la contribución de cada integrante.
 
 Indicar las tareas que se realizarán antes del siguiente reporte.
 
-- Actividad 1 - Saul: 
+- Actividad 1 - Saul: seguir construyendo las peticiones fetch para el llenado de las tareas en la seccion de grupos para profesor, creación de tareas y examenes
 - Actividad 2 - 
 - Actividad 3
 - Actividad 4 - 
@@ -85,4 +86,3 @@ Indicar las tareas que se realizarán antes del siguiente reporte.
 ## Observaciones adicionales
 
 Agregar cualquier comentario, acuerdo, decisión técnica o evidencia complementaria relevante para el proyecto.
-
