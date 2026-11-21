@@ -29,6 +29,8 @@ Integrar frontend y backend - avance
 | Login y creación de cuenta | Tania | https://github.com/Saul848/desarrollo-web/commit/b705c051ed7daf0bbfb8e4b2acad325ad038c051 |
 | Endpoint de grupos del alumno (backend) y primera versión del listado de cursos como alumno | Montse | https://github.com/Saul848/desarrollo-web/commit/77dd053abbd4ef44ac00ada2e60b530d141ae99a |
 | Ajustes al listado de cursos como alumno (HTML, CSS y JS) | Montse | https://github.com/Saul848/desarrollo-web/commit/7a694a2085dbb134619076967fafdeeccfd550b1 |
+|Estructura de la pagina correo(HTML, CSS y JS) | Gabriel | https://github.com/Saul848/desarrollo-web/commit/e2eef6a5192715c65481bf1398cc22c7adb60082 |
+
 ---
 
 # 3. Problemas encontrados
@@ -38,6 +40,8 @@ Errores en las rutas de algunos métodos del backend que no coincididan y result
 Errores en los datos que se enviaban en algunas peticiones; no eran los datos correctos, y resultaban en errores 400.
 
 Conflicto de puerto al probar el backend: otro servicio local (eXist-db) ocupaba el puerto 8080 y devolvía un 404 que no provenía de Spring Boot. Además, el método de inscripción de alumnos usaba una columna (`rol`) que no existe en la tabla `esta_en_grupo`, y hubo que ajustar los nombres de campos del JSON a los de la clase `Grupo`.
+
+Problema para comunicarse con la base de datos por el distinto manejo de nombre de atributos
 
 ---
 
@@ -49,6 +53,8 @@ Interfaz gráfica para profesor y alumno con algunas de sus funciones activas.
 Ya se puede iniciar sesión, en caso de no tener una cuenta existente, se puede crear una. Una vez iniciada la sesión, se redirige a la página correspondiete al rol.
 
 En la pantalla de alumno ya se listan los grupos a los que pertenece, obtenidos de la base de datos mediante el endpoint `GET /grupos/alumno/{matricula}` y mostrados como tarjetas con búsqueda por nombre.
+
+dentro de la ventana de correos ya se estan implementando solo falta conectarlo bien con las otras ventanas
 
 ---
 
@@ -63,6 +69,7 @@ Documentar el uso de herramientas de inteligencia artificial durante el desarrol
 - **Forma en que se verificó el resultado:** códificación en pares analizando los promts, verificación individual y en equipo durante los pull request además de votación por sugerencias que dió la herramienta sobre el proyecto.
 - **Actividad para la que se utilizó:** Dudas sobre la estructura de los métodos GET y POST de algunas clases, qué validaciones y códigos HTTP usar, cómo probarlos con CURL y cómo interpretar errores de arranque en Maven/Spring.
 - **Actividad para la que se utilizó:** Entender en qué capa (JS, controlador, interfaz o entidad) se integra cada parte de la conexión con la BD, crear la consulta y el endpoint de grupos por alumno, y depurar errores al ejecutar (conexión a la BD, puerto ocupado, nombres de tablas y campos). Ver el reporte de uso documental número 3.
+- **Actividad para la que se utilizó:** Manejo de errores entre los controladores y base de datos
 
 
 > Si no se utilizó IA, indicarlo expresamente.
@@ -77,7 +84,8 @@ Describir brevemente la contribución de cada integrante.
 - **Montserrat Rojas Martinez:** Se integró la pantalla de alumno para visualizar los grupos a los que pertenece. En el backend se agregó la consulta en la interfaz `IGrupo` (JOIN con la tabla `esta_en_grupo`) y el endpoint `GET /grupos/alumno/{matricula}` en `GrupoControlador`, y se corrigió el método de inscripción de alumnos para que coincida con la tabla. En el frontend se implementó en `PaginaAlumno.js` la petición fetch que carga los grupos, el dibujado de las tarjetas con sus estilos, la búsqueda por nombre y la apertura de un grupo. También se corrigieron detalles del HTML de alumno y se resolvieron problemas de ejecución local.
 - **Integrante 3:**
 - **Tania Ketzel Gómez Velásquez:** Se creó la página para iniciar sesión lo más fiel al prototipo, en caso de no tener una cuenta existente, se podrá crear una. El login redirecciona a la página de acuerdo al rol del usuario, se implementó en el método de crear usuario que se genere una matrícula aleatoria.
-
+- **Integrante 4:**
+- **Gabriel maldonado :** Se creó la página para mostrar los correo y enviarlos.
 ---
 
 # 7. Próximas actividades
@@ -87,7 +95,7 @@ Indicar las tareas que se realizarán antes del siguiente reporte.
 - Actividad 1 - Saúl: seguir construyendo las peticiones fetch para el llenado de las tareas en la seccion de grupos para profesor, creación de tareas y examenes
 - Actividad 2 - Tania: implementación de métodos faltantes, además de corrección de errores en los métodos de backend.
 - Actividad 3 - Montserrat: integrar la vista dentro de un grupo como alumno: listado de tareas y exámenes del grupo, y la resolución de tareas y exámenes.
-- Actividad 4 - 
+- Actividad 4 - Gabriel: Integrar bien todas las funciones del correo 
 - Actividad 5
 
 ---
