@@ -71,7 +71,7 @@
         <div id="areaActividad" class="modal-class">
             <div id="barra-opciones-profesor">
                 <span id="nombre-curso">
-                    <!--Aqui se insertará el nombre del curso dinamicamente-->nombre curso
+                    <!--Aqui se insertará el nombre del curso dinamicamente-->
                 </span>
                 <div id="barra-botones">
                     <ul>
@@ -91,23 +91,45 @@
 
             <div id="seccion-actividades" class="seccion-grupo">
                 <div id="actividades">
-                    <div id="filtros-actividades" class="filtros">
-                        <ul>
-                            <li>
-                                <button type="button" class="activo" data-filtro="actuales">Actuales</button>
-                            </li>
-                            <li>
-                                <button type="button" data-filtro="concluidas">Concluidas</button>
-                            </li>
-                            <li>
-                                <button type="button" data-filtro="prorroga">Con prorroga</button>
-                            </li>
-                        </ul>
+
+                    <!-- Fila superior: filtros a la izquierda, botón a la derecha -->
+                    <div id="barra-acciones-actividades">
+                        <div id="filtros-actividades" class="filtros">
+                            <ul>
+                                <li><button type="button" class="activo" data-filtro="actuales">Actuales</button></li>
+                                <li><button type="button" data-filtro="concluidas">Concluidas</button></li>
+                                <li><button type="button" data-filtro="prorroga">Con prórroga</button></li>
+                            </ul>
+                        </div>
+                        <button type="button" id="btnCrearActividad">+ Crear Actividad</button>
                     </div>
 
-                    <div id="contenedor-actividades">
-                        <!--Aqui se insertarán las actividades dinamicamente-->
+                    <!-- Dos columnas: actividades + panel lateral -->
+                    <div id="distribucion-actividades">
+                        <div id="contenedor-actividades">
+                            <!--Aqui se insertarán las actividades dinamicamente-->
+                        </div>
+
+                        <aside id="panel-avance" aria-labelledby="titulo-avance">
+                            <h3 id="titulo-avance">Avance general del grupo</h3>
+                            <ul id="lista-avance">
+                                <!-- Filas de ejemplo: después se llenarán dinámicamente con los alumnos -->
+                                <li class="fila-avance">
+                                    <span class="avance-matricula">Matricula</span>
+                                    <progress class="avance-barra" value="40" max="100" aria-label="Avance del alumno"></progress>
+                                </li>
+                                <li class="fila-avance">
+                                    <span class="avance-matricula">Matricula</span>
+                                    <progress class="avance-barra" value="25" max="100" aria-label="Avance del alumno"></progress>
+                                </li>
+                                <li class="fila-avance">
+                                    <span class="avance-matricula">Matricula</span>
+                                    <progress class="avance-barra" value="60" max="100" aria-label="Avance del alumno"></progress>
+                                </li>
+                            </ul>
+                        </aside>
                     </div>
+
                 </div>
             </div>
             

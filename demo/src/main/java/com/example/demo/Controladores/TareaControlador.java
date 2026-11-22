@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 /**
  * Controlador de Tarea
  */
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/tareas")
 public class TareaControlador {
@@ -47,16 +48,11 @@ public class TareaControlador {
         return ResponseEntity.ok(tareas);
     }
 
-    @GetMapping("/obtenerTareas/{idGrupo}")
-    public ResponseEntity<List<Tarea>> obtenerTareasGrupo(@PathVariable Integer idGrupo){
-        List<Tarea> tareas= itarea.findByIdGrupo(idGrupo);
-
-        if(tareas == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        return ResponseEntity.ok(tareas);
+    @GetMapping("/obtenerTareasGrupo")
+    public ResponseEntity<List<Tarea>> obtenerTareasGrupo(@RequestParam Integer idGrupo) {
+        return ResponseEntity.ok(itarea.findByIdGrupo(idGrupo));
     }
+
 
     /**
      * Método para obtener una tarea por su título

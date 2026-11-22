@@ -665,3 +665,174 @@ body {
         gap: 16px;
     }
 }
+
+#contenedor-actividades {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.mensaje-actividades {
+    margin: 0;
+    color: #555;
+}
+
+.tarea {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 16px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid var(--gris-borde);
+    border-left: 6px solid var(--turquesa-oscuro);
+    border-radius: 12px;
+}
+
+.tarea-prorroga { border-left-color: var(--morado); }
+.tarea-inactivo { border-left-color: #8a8a8a; }
+
+.tarea-titulo,
+.tarea-descripcion,
+.tarea-fechas {
+    grid-column: 1;
+    margin: 0;
+}
+
+.tarea-titulo {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.tarea-descripcion {
+    color: #444;
+}
+
+.tarea-fechas {
+    font-size: 14px;
+    color: #555;
+}
+
+.tarea-estado {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    padding: 3px 16px;
+    border-radius: 999px;
+    background: var(--turquesa-oscuro);
+    color: #fff;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.tarea-prorroga .tarea-estado { background: var(--morado); }
+.tarea-inactivo .tarea-estado { background: #5c5c5c; }
+
+/*Estilos para el panel de avance de los alumnos-----------------------------*/
+/* Fila superior */
+#barra-acciones-actividades {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin-bottom: 20px;
+}
+
+#btnCrearActividad {
+    padding: 12px 40px;
+    border: none;
+    border-radius: 8px;
+    background: #14c9b5;
+    color: #000;
+    font-family: inherit;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#btnCrearActividad:hover {
+    filter: brightness(0.92);
+}
+
+#btnCrearActividad:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+}
+
+/* Dos columnas */
+#distribucion-actividades {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 282px;
+    gap: 24px;
+    align-items: start;
+}
+
+/* El margen de arriba ya lo da la fila superior; ponlo DESPUÉS de la regla
+   que tenías para #contenedor-actividades y #contenedor-examenes */
+#contenedor-actividades {
+    margin-top: 0;
+}
+
+/* Panel lateral */
+#panel-avance {
+    padding: 16px 20px 24px;
+    background: #fff;
+    border-radius: 12px;
+}
+
+#panel-avance h3 {
+    margin: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gris-borde);
+    font-size: 20px;
+    font-weight: 400;
+}
+
+#lista-avance {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fila-avance {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0 0;
+}
+
+.avance-matricula {
+    font-size: 17px;
+}
+
+.avance-barra {
+    width: 100%;
+    height: 4px;
+    border: none;
+    border-radius: 2px;
+    background: var(--gris-boton);
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.avance-barra::-webkit-progress-bar {
+    background: var(--gris-boton);
+    border-radius: 2px;
+}
+
+.avance-barra::-webkit-progress-value {
+    background: #14c9b5;
+    border-radius: 2px;
+}
+
+.avance-barra::-moz-progress-bar {
+    background: #14c9b5;
+    border-radius: 2px;
+}
+
+/* En pantallas angostas el panel pasa debajo de la lista */
+@media (max-width: 900px) {
+    #distribucion-actividades {
+        grid-template-columns: 1fr;
+    }
+}
