@@ -1,5 +1,6 @@
 package com.example.demo.Clases;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,12 +11,16 @@ import jakarta.persistence.Table;
  * Clase Equipo que representa un equipo dentro de un grupo
  */
 @Entity
-@Table(name = "grupo", schema = "desweb")
+@Table(name = "equipo", schema = "desweb")
 public class Equipo {
     @Id 
-    @GeneratedValue(strategy = GenerationType.AUTO) 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
+
+    @Column(name = "id_tarea")
     private Integer idTarea;
+
     private String nombreEquipo;
     private Integer integrantes;
 
