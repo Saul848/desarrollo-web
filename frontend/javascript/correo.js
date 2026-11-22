@@ -1,8 +1,14 @@
 const API_URL = "http://localhost:8080/mensajes";
 
-// Aca se define el usuario para mostrar los correo falta conectarlo use uno de prueba
-const usuarioActual = sessionStorage.getItem("usuario") || "20230001";
+// Aca se define el usuario para mostrar los correo 
+const usuarioActual = JSON.parse(sessionStorage.getItem("usuario"));
 
+if (!usuarioActual) {
+    window.location.href = "login.html";
+}
+
+// Identificador del usuario que inició sesión
+const matriculaUsuario = usuarioActual.matricula;
 let correoSeleccionado = null;
 
 function obtenerIdMensaje(msg) {
@@ -12,8 +18,9 @@ function obtenerIdMensaje(msg) {
 async function cargarBandejaEntrada() {
     try {
         console.log("Usuario actual:", usuarioActual);
+        const matriculaUsuario = usuarioActual.matricula;
 
-        const url = `${API_URL}/destinatario?idDestinatario=${encodeURIComponent(usuarioActual)}`;
+        const url = `${API_URL}/destinatario?idDestinatario=${encodeURIComponent(matriculaUsuario)}`;
 
         console.log("URL consultada:", url);
 
@@ -21,7 +28,19 @@ async function cargarBandejaEntrada() {
 
         console.log("Estado HTTP:", res.status);
 
+        if (!res.ok) {
+            throw new Error("Error HTTP: " + res.status);
+        }
+
         const mensajes = await res.json();
+
+        // prueba en consola del navegador
+        console.log("Mensajes recibidos:", mensajes);
+
+        mensajes.forEach(msg => {
+            console.log("Remitente recibido:", msg.remitente);
+        });
+        // aca termina la prueba
 
         console.log("Mensajes recibidos:", mensajes);
 
@@ -31,6 +50,58 @@ async function cargarBandejaEntrada() {
         console.error("Error al cargar bandeja:", error);
     }
 }
+
+// Buscar correos del usuario logueado por palabra del asunto
+async function buscarCorreos() {
+
+    const asunto = document.getElementById("inputBuscar").value.trim();
+
+    if (!asunto) {
+        alert("Escribe una palabra para buscar.");
+        return;
+    }
+
+    try {
+
+        const url = `${API_URL}/buscar?asunto=${encodeURIComponent(asunto)}&idDestinatario=${encodeURIComponent(matriculaUsuario)}`;
+
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error("Error HTTP: " + res.status);
+        }
+
+        const mensajes = await res.json();
+
+        renderizarTabla(mensajes);
+
+    } catch (error) {
+        console.error("Error al buscar correos:", error);
+        alert("No se pudieron buscar los correos.");
+    }
+}
+
+// Metodo para darle formato a la tabla
+
+function formatearFecha(fecha) {
+    if (!fecha) return "";
+
+    const fechaObjeto = new Date(fecha);
+
+    if (isNaN(fechaObjeto.getTime())) {
+        return fecha;
+    }
+
+    return fechaObjeto.toLocaleString("es-MX", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+}
+
 
 function renderizarTabla(mensajes) {
     const tbody = document.getElementById("tablaCorreos");
@@ -48,7 +119,7 @@ function renderizarTabla(mensajes) {
 
         tr.innerHTML = `
             <td><input type="checkbox" data-id="${idMsg}"></td>
-            <td>${msg.fecha || ""}</td>
+            <td>${formatearFecha(msg.fecha)}</td>
             <td>${msg.remitente || ""}</td>
             <td>${asuntoHtml}</td>
         `;
@@ -68,7 +139,7 @@ async function abrirCorreo(msg) {
 
     document.getElementById("detalleAsunto").textContent = msg.asunto || "(Sin asunto)";
     document.getElementById("detalleRemitente").textContent = msg.remitente || "";
-    document.getElementById("detalleFecha").textContent = msg.fecha || "";
+    document.getElementById("detalleFecha").textContent = formatearFecha(msg.fecha);
     document.getElementById("detalleCuerpo").textContent = msg.cuerpo || "";
     document.getElementById("panelDetalleCorreo").style.display = "block";
 
@@ -123,7 +194,7 @@ async function enviarNuevoCorreo(e) {
 
     // Construir el objeto que se manda a sprint creo aca para optener el id del destinatario despues de pedir nombre
     const nuevoMensaje = {
-        remitente: usuarioActual,
+        remitente: usuarioActual.matricula,
         idDestinatario: destinatario,
         asunto: asunto,
         cuerpo: cuerpo,
@@ -142,11 +213,11 @@ async function enviarNuevoCorreo(e) {
 
         if (!res.ok) {
             const error = await res.text();
-            alert("No se pudo enviar el correo: " + error);
+            alert(error);
             return;
         }
 
-        // Envío exitoso
+        // Envio exitoso
         alert("¡Correo enviado correctamente!");
 
         // Limpiar formulario
@@ -202,6 +273,8 @@ async function eliminarCorreo() {
     }
 }
 
+
+
 // listener de los botones
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -227,5 +300,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Cerrar el correo 
     document.getElementById("btnCerrarDetalle")
         .addEventListener("click", cerrarDetalleCorreo);
+
+    // Buscar correos
+    document.getElementById("btnBuscar")
+        .addEventListener("click", buscarCorreos);
+
+    // Regresar a la bandeja de entrada
+    document.getElementById("btnBandeja")
+        .addEventListener("click", () => {
+            document.getElementById("inputBuscar").value = "";
+            cargarBandejaEntrada();
+        });
 });
 

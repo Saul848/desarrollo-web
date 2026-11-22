@@ -18,4 +18,6 @@ public interface IMensaje extends JpaRepository<Mensaje, Integer> {
     // Búsqueda de mensajes que contengan una palabra clave en el asunto
     List<Mensaje> findByAsuntoContainingIgnoreCase(String asunto);
 
+    // busqueda de mesnaje por usuario logueado
+    List<Mensaje> findByIdDestinatarioAndAsuntoContainingIgnoreCase(String idDestinatario, String asunto);
 }

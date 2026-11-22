@@ -4,7 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import com.example.demo.Clases.Usuario;
+import com.example.demo.Rep_Interfaces.IUsuario;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,31 +38,65 @@ import com.example.demo.Rep_Interfaces.IMensaje;
 public class MensajeControlador {
 
     @Autowired
+    private IUsuario iusuario;
+
+    @Autowired
     private IMensaje imensaje;
 
     // Enviar/Crear un nuevo mensaje
     @PostMapping("/enviarMensaje")
     public ResponseEntity<?> enviarMensaje(@RequestBody Mensaje nuevoMensaje) {
-        if (nuevoMensaje.getIdDestinatario() == null || nuevoMensaje.getIdDestinatario().trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("El destinatario no puede estar vacío.");
+
+        // Validar que se haya proporcionado un correo
+        if (nuevoMensaje.getIdDestinatario() == null ||
+                nuevoMensaje.getIdDestinatario().trim().isEmpty()) {
+
+            return ResponseEntity.badRequest()
+                    .body("Debes ingresar el correo institucional del destinatario.");
         }
-        if (nuevoMensaje.getCuerpo() == null || nuevoMensaje.getCuerpo().trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+
+        // Buscar al usuario mediante su correo institucional
+        String correoDestinatario = nuevoMensaje.getIdDestinatario()
+                .trim();
+
+        Optional<Usuario> usuarioDestinatario =
+                iusuario.findByCorreo(correoDestinatario);
+
+        // Si no existe, no se guarda el mensaje
+        if (usuarioDestinatario.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("El correo institucional no está registrado. Ingresa un correo que exista.");
+        }
+
+        // Obtener la matrícula del usuario encontrado
+        String matriculaDestinatario =
+                usuarioDestinatario.get().getMatricula();
+
+        // Validar el cuerpo del mensaje
+        if (nuevoMensaje.getCuerpo() == null ||
+                nuevoMensaje.getCuerpo().trim().isEmpty()) {
+
+            return ResponseEntity.badRequest()
                     .body("El cuerpo del mensaje no puede estar vacío.");
         }
 
+        // Mantener la matrícula del remitente
         if (nuevoMensaje.getRemitente() != null) {
             nuevoMensaje.setRemitente(nuevoMensaje.getRemitente().trim());
         }
-        nuevoMensaje.setIdDestinatario(nuevoMensaje.getIdDestinatario().trim());
-        nuevoMensaje.setFecha(LocalDateTime.now());
-        if (nuevoMensaje.getLeido() == null) {
-            nuevoMensaje.setLeido(false);
-        }
 
+        // Guardar la matrícula, NO el correo
+        nuevoMensaje.setIdDestinatario(matriculaDestinatario);
+
+        nuevoMensaje.setFecha(LocalDateTime.now());
+
+        nuevoMensaje.setLeido(false);
+
+        // Guardar mensaje
         Mensaje mensajeGuardado = imensaje.save(nuevoMensaje);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mensajeGuardado);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mensajeGuardado);
     }
 
     // Lista de todos los mensajes
@@ -86,9 +124,33 @@ public class MensajeControlador {
 
     // Buscar mensajes recibidos por un destinatario
     @GetMapping("/destinatario")
-    public List<Mensaje>obtenerMensajePorDestinatario(@RequestParam String idDestinatario) {
-        return imensaje.findByIdDestinatario(idDestinatario);
+    public List<Map<String, Object>> obtenerMensajePorDestinatario(
+            @RequestParam String idDestinatario) {
+
+        List<Mensaje> mensajes =
+                imensaje.findByIdDestinatario(idDestinatario);
+
+        return mensajes.stream().map(msg -> {
+
+            Map<String, Object> mensaje = new HashMap<>();
+
+            String nombreRemitente = iusuario
+                    .findById(msg.getRemitente())
+                    .map(Usuario::getNombre)
+                    .orElse("Usuario desconocido");
+
+            mensaje.put("id", msg.getId());
+            mensaje.put("fecha", msg.getFecha());
+            mensaje.put("remitente", nombreRemitente);
+            mensaje.put("asunto", msg.getAsunto());
+            mensaje.put("cuerpo", msg.getCuerpo());
+            mensaje.put("leido", msg.getLeido());
+
+            return mensaje;
+
+        }).collect(Collectors.toList());
     }
+
 
     // Marcar un mensaje como leído
     @PutMapping("/{id}/leido")
@@ -115,15 +177,42 @@ public class MensajeControlador {
                 .body("No se encontró el mensaje que deseas eliminar.");
     }
 
-    // Buscar mensajes por palabra clave en el asunto
+    // Buscar mensajes por asunto, únicamente del usuario logueado
     @GetMapping("/buscar")
-    public ResponseEntity<?> buscarMensajes(@RequestParam(required = false) String asunto) {
+    public ResponseEntity<?> buscarMensajes(
+            @RequestParam String asunto,
+            @RequestParam String idDestinatario) {
+
         if (asunto == null || asunto.trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.badRequest()
                     .body("Debes ingresar una palabra clave para buscar.");
         }
-        List<Mensaje> resultados = imensaje.findByAsuntoContainingIgnoreCase(asunto.trim());
-        return ResponseEntity.ok(resultados);
+
+        List<Mensaje> resultados =
+                imensaje.findByIdDestinatarioAndAsuntoContainingIgnoreCase(
+                        idDestinatario, asunto.trim());
+
+        return ResponseEntity.ok(
+            resultados.stream().map(msg -> {
+
+                Map<String, Object> mensaje = new HashMap<>();
+
+                String nombreRemitente = iusuario
+                        .findById(msg.getRemitente())
+                        .map(Usuario::getNombre)
+                        .orElse("Usuario desconocido");
+
+                mensaje.put("id", msg.getId());
+                mensaje.put("fecha", msg.getFecha());
+                mensaje.put("remitente", nombreRemitente);
+                mensaje.put("asunto", msg.getAsunto());
+                mensaje.put("cuerpo", msg.getCuerpo());
+                mensaje.put("leido", msg.getLeido());
+
+                return mensaje;
+
+            }).collect(Collectors.toList())
+        );
     }
 
 

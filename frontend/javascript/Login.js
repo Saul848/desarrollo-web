@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAcceder = document.getElementById('btnAcceder');
 
     // Definidas arriba para que estén disponibles en todo el archivo
-    const BASE_URL = 'http://localhost:9999'; // Cambia el puerto si tu Spring Boot usa otro
+    const BASE_URL = 'http://localhost:8080'; // Cambia el puerto si tu Spring Boot usa otro
     const API_LOGIN_URL = `${BASE_URL}/usuarios/login`;
 
     loginForm.addEventListener('submit', async (event) => {

@@ -1,3 +1,10 @@
+//Agregar el usuario que esta logeado en este momento 
+const usuarioActual = JSON.parse(sessionStorage.getItem("usuario"));
+
+if (!usuarioActual || usuarioActual.rol !== "profesor") {
+    window.location.href = "login.html";
+}
+
 //Cuando se carga la página se muestra el listado de los cursos
 document.addEventListener('DOMContentLoaded', ()=>{
     mostrarModal('areaCursos')
@@ -56,6 +63,16 @@ document.addEventListener("click", (e) => {
     }
 });
 
+
+/* Boton para el correo  */
+
+const btnCorreo = document.getElementById("btnCorreo");
+
+btnCorreo.addEventListener("click", () => {
+    window.location.href = "correo.html";
+});
+
+
 const botonesCurso = document.querySelectorAll("#barra-botones button");
 
 /**
@@ -97,8 +114,7 @@ document.querySelectorAll(".filtros").forEach((grupo) => {
 });
 
 function aplicarFiltroActividades(filtro) {
-    filtroActividades = filtro;
-    mostrarActividades();
+    console.log("Actividades:", filtro);
 }
 
 function aplicarFiltroExamenes(filtro) {
@@ -120,7 +136,7 @@ function mostrarSeccion(nombre) {
     }
 }
 
-const API = "http://localhost:9999";
+const API = "http://localhost:8080";
 const MATRICULA_PROFESOR = sessionStorage.getItem("matricula") || "20230001";
 const contenedorCursos = document.getElementById("contenedorCursos");
 
@@ -189,13 +205,11 @@ let grupoSeleccionado = null;
 
 function abrirCurso(id, nombre) {
     grupoSeleccionado = { id, nombre };
+
     document.getElementById("nombre-curso").textContent = nombre;
-
-    // Cada curso abre en Actividades y con el filtro "Actuales"
+    // Siempre se abre en la pestaña Actividades: reutiliza el clic de esa opción,
+    // que ya marca el botón activo y muestra su sección.
     document.querySelector('#barra-botones button[data-seccion="actividades"]').click();
-    document.querySelector('#filtros-actividades button[data-filtro="actuales"]').click();
-
-    cargarActividades(id);
     mostrarModal("areaActividad");
 }
 
@@ -433,78 +447,79 @@ formCrearGrupo.addEventListener("submit", async (e) => {
     }
 });
 
+/**
+ * Checar para cargar las tareas ------------------------------------------------------------
+ */
 
-//Actividades (tareas) del grupo abierto --------------------------------------------
-const contenedorActividades = document.getElementById("contenedor-actividades");
+let tareasCargadas = [];  
 
-const urlTareasDeGrupo = (idGrupo) => `${API}/tareas/obtenerTareasGrupo?idGrupo=${encodeURIComponent(idGrupo)}`;
+async function listarTareasGrupo(idGrupo) {
+    try {
+        const r = await fetch(`${API}/tareas/obtenerTareas/${idGrupo}`, {method: "GET"});
+        if (!r.ok) throw new Error("HTTP " + res.status);
 
-// Botón de filtro -> valor de la columna `estado`
-const ESTADO_POR_FILTRO = { actuales: "activo", concluidas: "inactivo", prorroga: "prorroga" };
-const TEXTO_FILTRO = { actuales: "actuales", concluidas: "concluidas", prorroga: "con prórroga" };
-const ETIQUETA_ESTADO = { activo: "Actual", inactivo: "Concluida", prorroga: "Con prórroga" };
-
-let tareasCargadas = [];
-let filtroActividades = "actuales";
-
-// ünico método para ajustar los nombres de campo que devuelve API
-function normalizarTarea(t) {
-    return {
-        id: t.id,
-        titulo: t.titulo ?? "",
-        descripcion: t.descripcion ?? "",
-        fechaInicio: t.fechaInicio ?? t.fecha_inicio,
-        fechaTermino: t.fechaTermino ?? t.fecha_termino,
-        estado: String(t.estado ?? "").trim().toLowerCase()
-    };
+        const tareas = await res.json();
+        tareasCargadas = tareas.map((grupo) => ({ grupo, texto: textoBusqueda(grupo) }));
+    } catch (error) {
+        console.error(error);
+    }
 }
-
-function mostrarMensajeActividades(texto) {
-    contenedorActividades.replaceChildren(crearElemento("p", "mensaje-actividades", texto));
-}
-
 
 
 function crearTarjetaTarea(tarea) {
-    const item = crearElemento("article", `tarea tarea-${tarea.estado}`);
+    const id = tarea.id ?? tarea.id;
+    const nombre = tarea.titulo ?? "Sin nombre";
 
-    item.append(crearElemento("h3", "tarea-titulo", tarea.titulo));
-    if (tarea.descripcion) {
-        item.append(crearElemento("p", "tarea-descripcion", tarea.descripcion));
-    }
-    item.append(
-        crearElemento("p", "tarea-fechas",
-            `${formatearFecha(tarea.fechaInicio)} – ${formatearFecha(tarea.fechaTermino)}`),
-        crearElemento("span", "tarea-estado", ETIQUETA_ESTADO[tarea.estado] ?? tarea.estado)
+    const tarjeta = crearElemento("button", `tarjeta-tarea`);
+    tarjeta.type = "button";
+    tarjeta.dataset.idTarea = id;
+
+    // Cuerpo
+    const titulo = crearElemento("span", "tarea-nombre");
+    titulo.append(crearElemento("span", "tarea-numero", `Grupo: `), nombre);
+
+    const fechas = crearElemento("span", "curso-fechas",
+        `${formatearFecha(tarea.fecha_inicio)} – ${formatearFecha(tarea.fecha_termino)}`);
+
+    const datos = crearElemento("span", "curso-datos");
+    datos.append(titulo, fechas);
+
+    const estado = crearElemento("span",
+        "estado-curso" + (tarea.estado ? "" : " inactivo"),
+        (tarea.estado ? "Prorroga" : "prorroga"),
+        tarea.activo ? "Activo" : "Inactivo" , "Prorroga"
     );
-    return item;
+
+    const cuerpo = crearElemento("span", "tarjeta-cuerpo");
+    cuerpo.append(datos, estado);
+
+    tarjeta.append(cuerpo);
+    tarjeta.addEventListener("click", () => abrirActividad(id, nombre));
+    return tarjeta;
 }
 
-function mostrarActividades() {
-    const estado = ESTADO_POR_FILTRO[filtroActividades];
-    const lista = tareasCargadas.filter((t) => t.estado === estado);
-
-    if (lista.length === 0) {
-        mostrarMensajeActividades(`No hay actividades ${TEXTO_FILTRO[filtroActividades]}.`);
-        return;
-    }
-    contenedorActividades.replaceChildren(...lista.map(crearTarjetaTarea));
+function abrirActividad(idTarea) {
+    console.log("Tarea seleccionada")
 }
 
-async function cargarActividades(idGrupo) {
-    tareasCargadas = [];
-    mostrarMensajeActividades("Cargando actividades...");
+async function cargarTareas(idGrupo) {
     try {
-        const res = await fetch(urlTareasDeGrupo(idGrupo));
+        const res = listarTareasGrupo(idGrupo);
         if (!res.ok) throw new Error("HTTP " + res.status);
 
-        const datos = await res.json();
-        if (grupoSeleccionado?.id !== idGrupo) return;   // el usuario ya abrió otro curso
+        const grupos = await res.json();
+        gruposCargados = grupos.map((grupo) => ({ grupo, texto: textoBusqueda(grupo) }));
 
-        tareasCargadas = datos.map(normalizarTarea);
-        mostrarActividades();
+        if (gruposCargados.length === 0) {
+            mostrarMensaje("Aún no tienes grupos. Crea el primero con «+ Crear nuevo grupo».");
+            return;
+        }
+        aplicarBusqueda();   // respeta lo que ya esté escrito en la barra
     } catch (error) {
         console.error(error);
-        mostrarMensajeActividades("No se pudieron cargar las actividades.");
+        gruposCargados = [];
+        mostrarMensaje("No se pudieron cargar los grupos. Verifica que el servidor esté en ejecución.");
     }
 }
+
+cargarGrupos(MATRICULA_PROFESOR);

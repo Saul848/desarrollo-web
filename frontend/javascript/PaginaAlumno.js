@@ -1,5 +1,13 @@
 const API_URL = "http://localhost:8080";
-const matriculaAlumno = sessionStorage.getItem("matricula") || "20230002";
+
+const usuarioActual = JSON.parse(sessionStorage.getItem("usuario"));
+
+if (!usuarioActual || usuarioActual.rol !== "alumno") {
+    window.location.href = "login.html";
+}
+
+const matriculaAlumno = usuarioActual.matricula;
+
 
 const contenedorCursos = document.getElementById("contenedorCursos");
 const barraBusqueda = document.getElementById("barra-busqueda");
@@ -100,6 +108,16 @@ function cerrarPerfil() {
     modalPerfil.hidden = true;
     btnPerfil.setAttribute("aria-expanded", "false");
 }
+
+
+/* Boton para el correo  */
+
+const btnCorreo = document.getElementById("btnCorreo");
+
+btnCorreo.addEventListener("click", () => {
+    window.location.href = "correo.html";
+});
+
 
 // Clic en el botón: abre o cierra
 btnPerfil.addEventListener("click", () => {
