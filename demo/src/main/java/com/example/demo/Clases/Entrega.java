@@ -9,13 +9,19 @@ import jakarta.persistence.*;
  * Clase Entrega que representa la entrega de una tarea.
  */
 @Entity
-@Table(name = "grupo", schema = "desweb")
+@Table(name = "entrega", schema = "desweb")
 public class Entrega {
     @Id 
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_entrega")
     private Integer id;
+
+    @Column(name = "id_actividad")
     private Integer idActividad;
+
+    @Column(name = "id_alumno")
     private String idAlumno;
+
     private String contenido;
     private String archivos;
     private BigDecimal calificacionObtenida;

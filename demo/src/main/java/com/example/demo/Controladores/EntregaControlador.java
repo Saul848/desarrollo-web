@@ -112,6 +112,35 @@ public class EntregaControlador {
         return ResponseEntity.ok(entregaActualizada);
     }
 
+    //PUT /entregas/{id} -> el alumno actualiza contenido y/o archivos antes de ser calificada
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarEntrega(@PathVariable Integer id, @RequestBody Entrega datos) {
+        Optional<Entrega> entregaOpt = ientrega.findById(id);
+        if (entregaOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró la entrega con id " + id);
+        }
+
+        Entrega entrega = entregaOpt.get();
+
+        // Si ya fue calificada, no se permite modificarla desde este endpoint
+        if (entrega.getCalificacionObtenida() != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("No se puede modificar una entrega que ya fue calificada");
+        }
+
+        if (datos.getContenido() != null) {
+            entrega.setContenido(datos.getContenido());
+        }
+        if (datos.getArchivos() != null) {
+            entrega.setArchivos(datos.getArchivos());
+        }
+
+        entrega.setFechaEntrega(LocalDateTime.now());
+        Entrega actualizada = ientrega.save(entrega);
+        return ResponseEntity.ok(actualizada);
+    }
+
     //métodos delete
     
     //DELETE /entregas/{id} -> eliminar una entrega
