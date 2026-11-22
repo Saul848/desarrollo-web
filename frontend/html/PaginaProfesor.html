@@ -216,6 +216,36 @@
         </form>
     </div>
 
+    <!--Modal con el contenido de una actividad-->
+    <div id="modal-tarea" role="dialog" aria-modal="true" aria-label="Detalle de la actividad">
+        <div class="tarjeta-tarea">
+
+            <div id="barra-tarea">
+                <ul>
+                    <li><button type="button" class="activo" data-panel="contenido-tarea">Actividad</button></li>
+                    <li><button type="button" data-panel="entregas-tarea">Entregas</button></li>
+                </ul>
+                <button type="button" id="btnCerrarTarea" aria-label="Cerrar">×</button>
+            </div>
+
+            <div id="contenido-tarea">
+                <div class="campo-detalle">
+                    <span class="etiqueta-detalle">Título de actividad:</span>
+                    <p id="detalle-titulo"></p>
+                </div>
+                <div class="campo-detalle">
+                    <span class="etiqueta-detalle">Descripción:</span>
+                    <p id="detalle-descripcion"></p>
+                </div>
+            </div>
+
+            <div class="pie-tarea">
+                <button type="button" id="btnEliminarTarea">Eliminar actividad</button>
+            </div>
+
+        </div>
+    </div>
+
     <script src="../javascript/PaginaProfesor.js"></script>
 </body>
 </html>
