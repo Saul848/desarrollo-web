@@ -48,8 +48,8 @@ public class TareaControlador {
         return ResponseEntity.ok(tareas);
     }
 
-    @GetMapping("/obtenerTareasGrupo")
-    public ResponseEntity<List<Tarea>> obtenerTareasGrupo(@RequestParam Integer idGrupo) {
+    @GetMapping("/obtenerTareasGrupo/{idGrupo}")
+    public ResponseEntity<List<Tarea>> obtenerTareasGrupo(@PathVariable Integer idGrupo) {
         return ResponseEntity.ok(itarea.findByIdGrupo(idGrupo));
     }
 
