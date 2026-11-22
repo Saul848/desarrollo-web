@@ -492,6 +492,16 @@ function crearTarjetaTarea(tarea) {
             `${formatearFecha(tarea.fechaInicio)} – ${formatearFecha(tarea.fechaTermino)}`),
         crearElemento("span", "tarea-estado", ETIQUETA_ESTADO[tarea.estado] ?? tarea.estado)
     );
+
+    item.tabIndex = 0;
+    item.setAttribute("role", "button");
+    item.addEventListener("click", () => abrirTarea(tarea));
+    item.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            abrirTarea(tarea);
+        }
+    });
     return item;
 }
 
@@ -523,3 +533,26 @@ async function cargarActividades(idGrupo) {
         mostrarMensajeActividades("No se pudieron cargar las actividades.");
     }
 }
+
+// Modal con el contenido de una actividad ----------------------------
+const modalTarea = document.getElementById("modal-tarea");
+let tareaSeleccionada = null;   // la usaremos después para eliminar y para ver las entregas
+
+function abrirTarea(tarea) {
+    tareaSeleccionada = tarea;
+    document.getElementById("detalle-titulo").textContent = tarea.titulo;
+    document.getElementById("detalle-descripcion").textContent =
+        tarea.descripcion || "Esta actividad no tiene descripción.";
+    modalTarea.style.display = "flex";
+}
+
+function cerrarTarea() {
+    modalTarea.style.display = "none";
+}
+
+document.getElementById("btnCerrarTarea").addEventListener("click", cerrarTarea);
+
+// Clic en el fondo oscuro, fuera de la tarjeta: cierra
+modalTarea.addEventListener("click", (e) => {
+    if (e.target === modalTarea) cerrarTarea();
+});
