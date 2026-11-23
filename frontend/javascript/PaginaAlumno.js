@@ -452,6 +452,7 @@ async function cargarExamenesGrupo(idGrupo) {
     }
 }
 
+
 function cerrarDetalleExamen() {
     const detalle = document.getElementById("detalle-examen");
     if (detalle) {
@@ -499,11 +500,40 @@ function renderizarExamenes() {
 
     const ahora = new Date();
 
-    examenesGrupo.forEach((ex) => {
+    const filtrados = examenesGrupo.filter((ex) => {
+        const estadoRaw = String(ex.estado ?? "").trim().toLowerCase();
+        const esProrroga = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga");
         const fechaLim = ex.fecha_limite ?? ex.fechaLimite;
         const vencido = fechaLim ? ahora > new Date(fechaLim) : false;
-        const estadoTexto = vencido ? "Concluido" : "Disponible";
-        const claseEstado = vencido ? "examen-concluido" : "";
+        const vigente = !vencido;
+
+        if (filtroExamenActual === "prorroga") {
+            return esProrroga && vigente;
+        }
+        if (filtroExamenActual === "concluidas") {
+            return vencido;
+        }
+        return vigente && !esProrroga;
+    });
+
+    if (filtrados.length === 0) {
+        contenedor.innerHTML = "<p>No hay exámenes en este filtro.</p>";
+        return;
+    }
+
+    filtrados.forEach((ex) => {
+        const estadoRaw = String(ex.estado ?? "").trim().toLowerCase();
+        const esProrroga = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga");
+        const fechaLim = ex.fecha_limite ?? ex.fechaLimite;
+        const vencido = fechaLim ? ahora > new Date(fechaLim) : false;
+        const vigente = !vencido;
+
+        const estadoTexto = esProrroga
+            ? (vigente ? "Con prórroga" : "Prórroga vencida")
+            : (vencido ? "Concluido" : "Disponible");
+        const claseEstado = vencido && !esProrroga
+            ? "examen-concluido"
+            : (esProrroga ? "examen-prorroga" : "");
 
         const tarjeta = document.createElement("article");
         tarjeta.className = `tarjeta-examen ${claseEstado}`;
@@ -720,7 +750,12 @@ function aplicarFiltroActividades(filtro) {
     renderizarTareas();
 }
 
+let filtroExamenActual = "actuales";
+
 function aplicarFiltroExamenes(filtro) {
+    filtroExamenActual = filtro;
+    cerrarDetalleExamen();
+    renderizarExamenes();
     console.log("Exámenes:", filtro);
 }
 
