@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Variables globales
     const loginForm = document.getElementById('loginForm');
     const correoInput = document.getElementById('correo');
     const passwordInput = document.getElementById('password');
     const errorMessage = document.getElementById('errorMessage');
     const btnAcceder = document.getElementById('btnAcceder');
 
-    // Definidas arriba para que estén disponibles en todo el archivo
-    const BASE_URL = 'http://localhost:8080'; // Cambia el puerto si tu Spring Boot usa otro
+    const BASE_URL = 'http://localhost:9999'; // Puerto usado en el desarrollo del proyecto
     const API_LOGIN_URL = `${BASE_URL}/usuarios/login`;
 
     loginForm.addEventListener('submit', async (event) => {
