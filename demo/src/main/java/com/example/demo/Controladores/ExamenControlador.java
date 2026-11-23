@@ -17,7 +17,6 @@ import com.example.demo.Rep_Interfaces.IExamen;
  */
 @CrossOrigin(origins = "*")
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/examenes")
 public class ExamenControlador {
     
