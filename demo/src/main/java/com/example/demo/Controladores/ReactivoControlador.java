@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Reactivos
  * ReactivoControlador
  */
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/reactivos")
 public class ReactivoControlador {

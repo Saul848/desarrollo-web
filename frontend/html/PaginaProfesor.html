@@ -59,7 +59,7 @@
             </div>
             <div id="areaPrincipal">
                 <div id="areaBotones">
-                <button id="btnCrearCurso" type="button">+ Crear nuevo grupo</button>
+                    <button id="btnCrearCurso" type="button">+ Crear nuevo grupo</button>
                 </div>
                 <div id="contenedorCursos">
                     <!--Aqui se insertarán los cursos dinamicamente-->
@@ -70,15 +70,18 @@
         <!--Modal dentro de un curso-->
         <div id="areaActividad" class="modal-class">
             <div id="barra-opciones-profesor">
-                <span id="nombre-curso">
-                    <!--Aqui se insertará el nombre del curso dinamicamente-->
-                </span>
+                <div id="areaBotones" style="align-items: center; justify-content: space-between; padding: 18px 36px 12px;">
+                    <span id="nombre-curso" style="padding: 0;">
+                        <!--Aqui se insertará el nombre del curso dinamicamente-->
+                    </span>
+                    <button type="button" id="btnCerrarGrupo" class="btn-expulsar-alumno">Cerrar grupo</button>
+                </div>
+
                 <div id="barra-botones">
                     <ul>
                         <li>
                             <button type="button" class="activo" data-seccion="actividades">Actividades</button>
                         </li>
-
                         <li>
                             <button type="button" data-seccion="examenes">Exámenes</button>
                         </li>

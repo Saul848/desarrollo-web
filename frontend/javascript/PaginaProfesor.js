@@ -209,15 +209,16 @@ function crearTarjeta(grupo) {
     cuerpo.append(iniciales, datos, estado);
 
     tarjeta.append(cabecera, cuerpo);
-    tarjeta.addEventListener("click", () => abrirCurso(id, nombre));
+    tarjeta.addEventListener("click", () => abrirCurso(id, nombre, Boolean(grupo.activo)));
     return tarjeta;
 }
 
 let grupoSeleccionado = null; 
 
-function abrirCurso(id, nombre) {
-    grupoSeleccionado = { id, nombre };
+function abrirCurso(id, nombre, activo = true) {
+    grupoSeleccionado = { id, nombre, activo: Boolean(activo)};
     document.getElementById("nombre-curso").textContent = nombre;
+    actualizarBotonEstadoGrupo(grupoSeleccionado.activo);
 
     // Cada curso abre en Actividades y con el filtro "Actuales"
     document.querySelector('#barra-botones button[data-seccion="actividades"]').click();
@@ -226,6 +227,51 @@ function abrirCurso(id, nombre) {
     cargarActividades(id);
     mostrarModal("areaActividad");
 }
+
+const btnCerrarGrupo = document.getElementById("btnCerrarGrupo");
+
+function actualizarBotonEstadoGrupo(activo) {
+    if (!btnCerrarGrupo) return;
+    if (activo) {
+        btnCerrarGrupo.textContent = "Cerrar grupo";
+        btnCerrarGrupo.className = "btn-expulsar-alumno";
+    } else {
+        btnCerrarGrupo.textContent = "Activar grupo";
+        btnCerrarGrupo.className = "btn-confirmar-turquesa";
+    }
+}
+
+btnCerrarGrupo?.addEventListener("click", async () => {
+    if (!grupoSeleccionado?.id) return;
+
+    const vaACerrar = Boolean(grupoSeleccionado.activo);
+    const accion = vaACerrar ? "cerrar" : "activar";
+    const confirmar = confirm(`¿Seguro que deseas ${accion} el grupo "${grupoSeleccionado.nombre}"?`);
+    if (!confirmar) return;
+
+    try {
+        const res = await fetch(`${API}/grupos/${grupoSeleccionado.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ activo: !vaACerrar })
+        });
+
+        if (!res.ok) {
+            throw new Error(await res.text() || `HTTP ${res.status}`);
+        }
+
+        const actualizado = await res.json();
+        const nuevoEstado = Boolean(actualizado.activo ?? !vaACerrar);
+        grupoSeleccionado.activo = nuevoEstado;
+        actualizarBotonEstadoGrupo(nuevoEstado);
+
+        await cargarGrupos(MATRICULA_PROFESOR);
+        mostrarModal("areaCursos");
+    } catch (error) {
+        console.error(error);
+        alert(`No se pudo ${accion} el grupo: ` + error.message);
+    }
+});
 
 const barraBusqueda = document.getElementById("barra-busqueda");
 let gruposCargados = [];  
