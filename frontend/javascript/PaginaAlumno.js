@@ -53,6 +53,8 @@ function mostrarModal(idModal) {
 }
 
 document.getElementById("tituloPagina").addEventListener("click", () => {
+    if (typeof cerrarDetalleTarea === "function") cerrarDetalleTarea();
+    if (typeof cerrarDetalleExamen === "function") cerrarDetalleExamen();
     mostrarModal("areaCursos");
 });
 
@@ -159,6 +161,9 @@ async function abrirGrupo(grupo) {
     document.getElementById("nombre-curso").textContent = nombre;
     sessionStorage.setItem("idGrupoActual", idGrupo);
 
+    if (typeof cerrarDetalleTarea === "function") cerrarDetalleTarea();
+    if (typeof cerrarDetalleExamen === "function") cerrarDetalleExamen();
+
     const detalleTarea = document.getElementById("detalle-tarea");
     const detalleExamen = document.getElementById("detalle-examen");
     if (detalleTarea) detalleTarea.style.display = "none";
@@ -202,10 +207,22 @@ async function cargarTareasYEntregas(idGrupo) {
     }
 }
 
+function formatearFechaCorta(iso) {
+    if (!iso) return "Sin fecha";
+    const fecha = new Date(iso);
+    if (Number.isNaN(fecha.getTime())) return iso;
+    return fecha.toLocaleDateString("es-MX", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+    });
+}
+
 function renderizarTareas() {
     const contenedor = document.getElementById("contenedor-actividades");
     if (!contenedor) return;
 
+    //si la tarea seleccionado ya no esta, se oculta el modal
     const ahora = new Date();
     const filtradas = tareasGrupo.filter((t) => {
         const estado = (t.estado ?? "").toLowerCase();
@@ -221,6 +238,12 @@ function renderizarTareas() {
         return !vencida;
     });
 
+    if (tareaSeleccionada) {
+        const idSel = tareaSeleccionada.id ?? tareaSeleccionada.idTarea;
+        const sigueVisible = filtradas.some((t) => (t.id ?? t.idTarea) === idSel);
+        if (!sigueVisible) cerrarDetalleTarea();
+    }
+
     contenedor.innerHTML = "";
     if (filtradas.length === 0) {
         contenedor.innerHTML = "<p>No hay tareas en este filtro.</p>";
@@ -230,10 +253,15 @@ function renderizarTareas() {
     filtradas.forEach((t) => {
         const idTarea = t.id ?? t.idTarea;
         const entregaExistente = entregasAlumno.find((e) => e.idActividad === idTarea);
+        const estadoRaw = (t.estado ?? "activo").toLowerCase();
 
-        const tarjeta = document.createElement("div");
-        tarjeta.className = "tarjeta-tarea";
-        tarjeta.style.cssText = "background:#fff;padding:14px;margin-bottom:12px;border-radius:8px;cursor:pointer;";
+        const claseEstado = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga")
+            ? "tarea-prorroga"
+            : (estadoRaw === "inactivo" ? "tarea-inactivo" : "tarea-activo");
+
+        const etiquetaEstado = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga")
+            ? "Con prórroga"
+            : (estadoRaw === "inactivo" ? "Concluida" : "Actual");
 
         const estadoEntrega = entregaExistente
             ? (entregaExistente.calificacionObtenida != null
@@ -241,10 +269,13 @@ function renderizarTareas() {
                 : "Entregada")
             : "Pendiente";
 
+        const tarjeta = document.createElement("article");
+        tarjeta.className = `tarjeta-tarea-alumno ${claseEstado}`;
         tarjeta.innerHTML = `
-            <strong>${t.titulo ?? "Sin título"}</strong>
-            <div>Estado de entrega: ${estadoEntrega}</div>
-            <div>Fecha límite: ${t.fechaTermino ?? "Sin fecha"}</div>
+            <h4 class="tarea-alumno-titulo">${t.titulo ?? "Sin título"}</h4>
+            <p class="tarea-alumno-meta">Estado de entrega: <strong>${estadoEntrega}</strong></p>
+            <p class="tarea-alumno-fecha">Fecha límite: ${formatearFechaCorta(t.fechaTermino)}</p>
+            <span class="tarea-alumno-estado">${etiquetaEstado}</span>
         `;
         tarjeta.addEventListener("click", () => seleccionarTarea(t, entregaExistente));
         contenedor.appendChild(tarjeta);
@@ -256,11 +287,11 @@ function seleccionarTarea(tarea, entregaExistente) {
     const detalle = document.getElementById("detalle-tarea");
     if (!detalle) return;
 
-    detalle.style.display = "block";
+    detalle.style.display = "flex";
     document.getElementById("tarea-titulo").textContent = tarea.titulo ?? "Tarea";
-    document.getElementById("tarea-descripcion").textContent = tarea.descripcion ?? "";
+    document.getElementById("tarea-descripcion").textContent = tarea.descripcion || "Sin descripción.";
     document.getElementById("tarea-info").textContent =
-        `Puntos: ${tarea.calificacion ?? "-"} | Estado actividad: ${tarea.estado ?? "-"}`;
+        `Fecha límite: ${formatearFechaCorta(tarea.fechaTermino)} | Estado actividad: ${tarea.estado ?? "-"}`;
 
     const inputContenido = document.getElementById("input-contenido");
     const inputArchivos = document.getElementById("input-archivos");
@@ -286,6 +317,29 @@ function seleccionarTarea(tarea, entregaExistente) {
     }
 }
 
+function cerrarDetalleTarea() {
+    tareaSeleccionada = null;
+    const detalle = document.getElementById("detalle-tarea");
+    if (detalle) {
+        detalle.style.display = "none";
+    }
+}
+
+document.getElementById("btnCerrarDetalleTarea")?.addEventListener("click", cerrarDetalleTarea);
+
+document.getElementById("detalle-tarea")?.addEventListener("click", (e) => {
+    if (e.target.id === "detalle-tarea") {
+        cerrarDetalleTarea();
+    }
+});
+
+document.addEventListener("keydown", (e) => {
+    const detalle = document.getElementById("detalle-tarea");
+    if (e.key === "Escape" && detalle && detalle.style.display === "flex") {
+        cerrarDetalleTarea();
+    }
+});
+
 const formEntrega = document.getElementById("form-entrega");
 if (formEntrega) {
     formEntrega.addEventListener("submit", async (e) => {
@@ -296,8 +350,10 @@ if (formEntrega) {
         const contenido = document.getElementById("input-contenido").value.trim();
         const archivos = document.getElementById("input-archivos").value.trim();
         const mensaje = document.getElementById("mensaje-entrega");
+        const btnEnviar = document.getElementById("btn-enviar-entrega");
 
         const entregaExistente = entregasAlumno.find((en) => en.idActividad === idTarea);
+        if (btnEnviar) btnEnviar.disabled = true;
 
         try {
             let resp;
@@ -323,15 +379,17 @@ if (formEntrega) {
             const textoResp = await resp.text();
             if (!resp.ok) {
                 if (mensaje) mensaje.textContent = "No se pudo guardar: " + textoResp;
+                if (btnEnviar) btnEnviar.disabled = false;
                 return;
             }
 
-            if (mensaje) mensaje.textContent = "Entrega guardada correctamente.";
             const idGrupo = sessionStorage.getItem("idGrupoActual");
             await cargarTareasYEntregas(idGrupo);
+            cerrarDetalleTarea();
         } catch (err) {
             console.error(err);
             if (mensaje) mensaje.textContent = "Error de conexión al enviar la entrega.";
+            if (btnEnviar) btnEnviar.disabled = false;
         }
     });
 }
@@ -352,6 +410,41 @@ async function cargarExamenesGrupo(idGrupo) {
     }
 }
 
+function cerrarDetalleExamen() {
+    const detalle = document.getElementById("detalle-examen");
+    if (detalle) {
+        detalle.style.display = "none";
+    }
+}
+
+document.getElementById("btnCerrarDetalleExamen")?.addEventListener("click", cerrarDetalleExamen);
+
+document.getElementById("detalle-examen")?.addEventListener("click", (e) => {
+    if (e.target.id === "detalle-examen") {
+        cerrarDetalleExamen();
+    }
+});
+
+document.addEventListener("keydown", (e) => {
+    const detalle = document.getElementById("detalle-examen");
+    if (e.key === "Escape" && detalle && detalle.style.display === "flex") {
+        cerrarDetalleExamen();
+    }
+});
+
+function formatearFechaExamen(iso) {
+    if (!iso) return "Sin fecha límite";
+    const fecha = new Date(iso);
+    if (Number.isNaN(fecha.getTime())) return iso;
+    return fecha.toLocaleString("es-MX", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
 function renderizarExamenes() {
     const contenedor = document.getElementById("contenedor-examenes");
     if (!contenedor) return;
@@ -362,25 +455,144 @@ function renderizarExamenes() {
         return;
     }
 
+    const ahora = new Date();
+
     examenesGrupo.forEach((ex) => {
-        const tarjeta = document.createElement("div");
-        tarjeta.style.cssText = "background:#fff;padding:14px;margin-bottom:12px;border-radius:8px;cursor:pointer;";
+        const fechaLim = ex.fecha_limite ?? ex.fechaLimite;
+        const vencido = fechaLim ? ahora > new Date(fechaLim) : false;
+        const estadoTexto = vencido ? "Concluido" : "Disponible";
+        const claseEstado = vencido ? "examen-concluido" : "";
+
+        const tarjeta = document.createElement("article");
+        tarjeta.className = `tarjeta-examen ${claseEstado}`;
         tarjeta.innerHTML = `
-            <strong>${ex.titulo ?? "Examen"}</strong>
-            <div>Puntos: ${ex.calificacion ?? "-"} | Fecha límite: ${ex.fecha_limite ?? "-"}</div>
+            <h4 class="examen-titulo-card">${ex.titulo ?? "Examen"}</h4>
+            <p class="examen-meta-card">Puntos: <strong>${ex.calificacion ?? "-"}</strong> · Intentos: <strong>${ex.intentos ?? "-"}</strong></p>
+            <p class="examen-fecha-card">Fecha límite: ${formatearFechaExamen(fechaLim)}</p>
+            <span class="examen-estado-badge">${estadoTexto}</span>
         `;
+
         tarjeta.addEventListener("click", () => {
             const detalle = document.getElementById("detalle-examen");
             if (!detalle) return;
-            detalle.style.display = "block";
+            detalle.style.display = "flex";
             document.getElementById("examen-titulo").textContent = ex.titulo ?? "Examen";
             document.getElementById("examen-info").textContent =
-                `Intentos permitidos: ${ex.intentos ?? "-"} | Tiempo límite: ${ex.tiempo_limite ?? "-"}`;
+                `Intentos permitidos: ${ex.intentos ?? "-"} | Tiempo límite: ${ex.tiempo_limite ?? ex.tiempoLimite ?? "-"} | Puntos: ${ex.calificacion ?? "-"}`;
             document.getElementById("mensaje-examen").textContent =
-                "Examen seleccionado.";
+                `Fecha límite: ${formatearFechaExamen(fechaLim)}`;
         });
+
         contenedor.appendChild(tarjeta);
     });
+}
+
+/* ---------- Usuarios del grupo ---------- */
+async function obtenerDatosProfesorGrupo(grupoActual) {
+    const matriculaProfe =
+        grupoActual?.matriculaProfesor ??
+        grupoActual?.matricula_profesor ??
+        grupoActual?.profesor?.matricula ??
+        null;
+
+    // Si el objeto ya trae nombre y matrícula del profesor
+    if (grupoActual?.profesor?.nombre) {
+        return {
+            nombre: grupoActual.profesor.nombre,
+            matricula: grupoActual.profesor.matricula ?? matriculaProfe ?? ""
+        };
+    }
+
+    if (!matriculaProfe) return null;
+
+    try {
+        const resp = await fetch(`${API_URL}/usuarios`);
+        if (!resp.ok) {
+            return { nombre: "Profesor del grupo", matricula: matriculaProfe };
+        }
+        const usuarios = await resp.json();
+        const encontrado = usuarios.find(
+            (u) => String(u.matricula) === String(matriculaProfe)
+        );
+        return {
+            nombre: encontrado?.nombre ?? "Profesor del grupo",
+            matricula: matriculaProfe
+        };
+    } catch {
+        return { nombre: "Profesor del grupo", matricula: matriculaProfe };
+    }
+}
+
+function crearTarjetaIntegrante(persona, esProfesor) {
+    const tarjeta = document.createElement("article");
+    tarjeta.className = `tarjeta-integrante${esProfesor ? " es-profesor" : ""}`;
+
+    const encabezado = document.createElement("div");
+    encabezado.className = "integrante-encabezado";
+
+    const badge = document.createElement("span");
+    badge.className = `badge-rol${esProfesor ? " profesor" : ""}`;
+    badge.textContent = esProfesor ? "Maestro" : "Alumno";
+
+    const nombre = document.createElement("span");
+    nombre.className = "integrante-nombre";
+    nombre.textContent = persona.nombre ?? "Sin nombre";
+
+    encabezado.append(badge, nombre);
+
+    const matricula = document.createElement("p");
+    matricula.className = "integrante-matricula";
+    matricula.textContent = persona.matricula ? `Matrícula: ${persona.matricula}` : "Docente titular";
+
+    tarjeta.append(encabezado, matricula);
+    return tarjeta;
+}
+
+async function cargarIntegrantesGrupo(idGrupo) {
+    const contenedor = document.getElementById("contenedor-integrantes-grupo");
+    if (!contenedor) return;
+
+    contenedor.innerHTML = `<p class="mensaje-integrantes">Cargando integrantes del grupo...</p>`;
+
+    try {
+        const grupoActual = grupos.find(
+            (g) => String(obtenerIdGrupo(g)) === String(idGrupo)
+        );
+
+        const [respAlumnos, datosProfesor] = await Promise.all([
+            fetch(`${API_URL}/usuarios/grupo/${idGrupo}/alumnos`),
+            obtenerDatosProfesorGrupo(grupoActual)
+        ]);
+
+        if (!respAlumnos.ok) {
+            throw new Error("Error al cargar alumnos: " + respAlumnos.status);
+        }
+
+        const alumnos = await respAlumnos.json();
+        const elementos = [];
+
+        if (datosProfesor) {
+            elementos.push(crearTarjetaIntegrante(datosProfesor, true));
+        }
+
+        const alumnosOrdenados = [...alumnos].sort((a, b) =>
+            String(a.nombre ?? "").localeCompare(String(b.nombre ?? ""), "es")
+        );
+
+        alumnosOrdenados.forEach((al) => {
+            elementos.push(crearTarjetaIntegrante(al, false));
+        });
+
+        if (elementos.length === 0) {
+            contenedor.innerHTML = `<p class="mensaje-integrantes">No hay integrantes registrados en este grupo.</p>`;
+            return;
+        }
+
+        contenedor.replaceChildren(...elementos);
+    } catch (err) {
+        console.error(err);
+        contenedor.innerHTML = `<p class="mensaje-integrantes">No se pudieron cargar los integrantes del grupo.</p>`;
+    }
 }
 
 /* ---------- Perfil ---------- */
@@ -418,6 +630,9 @@ document.addEventListener("click", (e) => {
 /* ---------- Botones dentro de un curso ---------- */
 botonesCurso.forEach((btn) => {
     btn.addEventListener("click", () => {
+        if (typeof cerrarDetalleTarea === "function") cerrarDetalleTarea();
+        if (typeof cerrarDetalleExamen === "function") cerrarDetalleExamen();
+        
         botonesCurso.forEach((b) => {
             b.classList.remove("activo");
             b.removeAttribute("aria-current");
@@ -426,6 +641,11 @@ botonesCurso.forEach((btn) => {
         btn.setAttribute("aria-current", "page");
 
         mostrarSeccion(btn.dataset.seccion);
+
+        if (btn.dataset.seccion === "alumnos") {
+            const idGrupo = sessionStorage.getItem("idGrupoActual");
+            if (idGrupo) cargarIntegrantesGrupo(idGrupo);
+        }
     });
 });
 
@@ -454,6 +674,7 @@ document.querySelectorAll(".filtros").forEach((grupo) => {
 
 function aplicarFiltroActividades(filtro) {
     filtroActividadActual = filtro;
+    cerrarDetalleTarea();
     renderizarTareas();
 }
 
