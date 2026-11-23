@@ -668,15 +668,11 @@ function crearDetalleEntrega(entrega) {
     const detalle = crearElemento("div", "detalle-entrega");
     detalle.hidden = true;
 
-    const campos = [
+    const camposLectura = [
         ["Contenido:", entrega.contenido || "Sin contenido."],
-        ["Archivos:", entrega.archivos || "Sin archivos."],
-        ["Calificación:", entrega.calificacion == null
-            ? "Sin calificar" : Number(entrega.calificacion).toFixed(2)],
-        ["Retroalimentación:", entrega.retroalimentacion || "Sin retroalimentación."]
+        ["Archivos:", entrega.archivos || "Sin archivos."]
     ];
-
-    for (const [etiqueta, valor] of campos) {
+    for (const [etiqueta, valor] of camposLectura) {
         const campo = crearElemento("div", "campo-detalle");
         campo.append(
             crearElemento("span", "etiqueta-detalle", etiqueta),
@@ -684,5 +680,93 @@ function crearDetalleEntrega(entrega) {
         );
         detalle.append(campo);
     }
+
+    detalle.append(crearFormularioCalificacion(entrega));
     return detalle;
 }
+
+function crearFormularioCalificacion(entrega) {
+    const MAX_RETRO = 255;
+
+    const form = crearElemento("form", "form-calificar");
+    form.noValidate = true;   // validamos nosotros para mostrar mensajes propios
+
+    // Calificación
+    const inputNota = document.createElement("input");
+    inputNota.type = "number";
+    inputNota.min = "0";
+    inputNota.max = "10";
+    inputNota.step = "0.01";
+    inputNota.className = "input-calificacion";
+    inputNota.value = entrega.calificacion == null ? "" : Number(entrega.calificacion).toFixed(2);
+
+    const campoNota = crearElemento("label", "campo-form");
+    campoNota.append(crearElemento("span", "etiqueta-detalle", "Calificación (0 a 10):"), inputNota);
+
+    // Retroalimentación
+    const inputRetro = document.createElement("textarea");
+    inputRetro.className = "input-retro";
+    inputRetro.rows = 3;
+    inputRetro.maxLength = MAX_RETRO;
+    inputRetro.placeholder = "Escribe la retroalimentación para el alumno...";
+    inputRetro.value = entrega.retroalimentacion || "";
+
+    const contador = crearElemento("small", "contador-retro", `${inputRetro.value.length}/${MAX_RETRO}`);
+    inputRetro.addEventListener("input", () => {
+        contador.textContent = `${inputRetro.value.length}/${MAX_RETRO}`;
+    });
+
+    const campoRetro = crearElemento("label", "campo-form");
+    campoRetro.append(crearElemento("span", "etiqueta-detalle", "Retroalimentación:"), inputRetro);
+
+    // Estado y botón
+    const estado = crearElemento("p", "estado-guardado");
+    estado.setAttribute("role", "status");
+
+    const boton = crearElemento("button", "btn-guardar-calificacion", "Guardar calificación");
+    boton.type = "submit";
+
+    function mostrarEstado(texto, esError) {
+        estado.textContent = texto;
+        estado.classList.toggle("error", esError);
+    }
+
+    form.append(campoNota, campoRetro, contador, estado, boton);
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const texto = inputNota.value.trim();
+        const nota = Number(texto);
+        if (texto === "" || Number.isNaN(nota) || nota < 0 || nota > 10) {
+            mostrarEstado("La calificación debe ser un número entre 0 y 10.", true);
+            return;
+        }
+
+        const retro = inputRetro.value.trim();
+        boton.disabled = true;
+        mostrarEstado("Guardando...", false);
+
+        try {
+            const res = await fetch(`${API}/entregas/${entrega.id}/calificacion`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ calificacion: nota, retroalimentacion: retro })
+            });
+            if (!res.ok) throw new Error(await res.text());
+
+            entrega.calificacion = nota;
+            entrega.retroalimentacion = retro;
+            mostrarEstado("Calificación guardada.", false);
+        } catch (error) {
+            console.error(error);
+            mostrarEstado("No se pudo guardar. " + error.message, true);
+        } finally {
+            boton.disabled = false;
+        }
+    });
+
+
+    return form;
+}
+
