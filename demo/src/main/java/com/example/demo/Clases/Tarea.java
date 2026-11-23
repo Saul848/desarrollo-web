@@ -1,19 +1,14 @@
 package com.example.demo.Clases;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.ColumnTransformer;
 
 /**
  * Clase Tarea que representa una tarea asignada
@@ -38,12 +33,6 @@ public class Tarea {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @DecimalMin(value = "0.00", message = "La calificación no puede ser negativa")
-    @DecimalMax(value = "99.99", message = "La calificación no puede exceder 99.99")
-    @Digits(integer = 2, fraction = 2, message = "La calificación debe tener máximo 2 enteros y 2 decimales")
-    @Column(precision = 4, scale = 2)
-    private BigDecimal calificacion;
-
     @NotNull(message = "La fecha de inicio es obligatoria")
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDateTime fechaInicio;
@@ -57,8 +46,12 @@ public class Tarea {
         regexp = "^(activo|inactivo|prorroga)$",
         message = "El estado debe ser: activo, inactivo o prorroga"
     )
-    @Column(nullable = false, columnDefinition = "estado_tarea")
-    @ColumnTransformer(write = "?::estado_tarea")
+    @NotBlank(message = "El estado de la tarea es obligatorio")
+    @Pattern(
+        regexp = "^(activo|inactivo|prorroga)$",
+        message = "El estado debe ser: activo, inactivo o prorroga"
+    )
+    @Column(nullable = false, length = 255)
     private String estado;
 
     /**
@@ -100,14 +93,6 @@ public class Tarea {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public BigDecimal getCalificacion() {
-        return calificacion;
-    }
-
-    public void setCalificacion(BigDecimal calificacion) {
-        this.calificacion = calificacion;
     }
 
     public LocalDateTime getFechaInicio() {

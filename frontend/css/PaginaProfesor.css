@@ -738,7 +738,7 @@ body {
     margin-bottom: 20px;
 }
 
-#btnCrearActividad {
+#btnCrearActividad #btnAgregarAlumnos{
     padding: 12px 40px;
     border: none;
     border-radius: 8px;
@@ -1135,3 +1135,302 @@ body {
     opacity: 0.6;
     cursor: wait;
 }
+/* estilos del modal para crear tareas*/
+
+#modal-crear-tarea {
+    --tarea-teal: #21a3a5;
+    --tarea-verde: #0f5a55;
+    --tarea-turquesa: #19c9b4;
+    --tarea-rojo: #d91c1c;
+    --tarea-borde: #222;
+
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.45);
+    font-family: "Montserrat", system-ui, sans-serif;
+}
+
+#form-crear-tarea {
+    width: min(620px, 100%);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    background: #fff;
+    color: #1d1d1d;
+}
+
+/* Cabecera ----------------- */
+#form-crear-tarea .cabecera-crear-tarea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.5rem;
+    background: var(--tarea-teal);
+    color: #fff;
+}
+#form-crear-tarea h2 { margin: 0; font-size: 1.7rem; font-weight: 400; }
+#btnCerrarCrearTarea {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* Cuerpo -------------------------------- */
+#form-crear-tarea .cuerpo-crear-tarea {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+}
+
+#form-crear-tarea fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+#form-crear-tarea legend,
+#form-crear-tarea label { font-size: 1rem; }
+#form-crear-tarea legend { padding: 0; margin-bottom: 0.35rem; }
+
+.campo-tarea { display: flex; flex-direction: column; gap: 0.35rem; }
+
+#form-crear-tarea input[type="text"],
+#form-crear-tarea input[type="date"],
+#form-crear-tarea input[type="number"],
+#form-crear-tarea textarea,
+#form-crear-tarea select {
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--tarea-borde);
+    border-radius: 6px;
+    background: #fff;
+    color: inherit;
+    box-sizing: border-box;
+}
+#form-crear-tarea input[type="text"],
+#form-crear-tarea textarea { width: 100%; }
+#form-crear-tarea textarea { resize: vertical; }
+
+#form-crear-tarea :is(input, select, textarea, button):focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--tarea-teal) 55%, transparent);
+    outline-offset: 1px;
+}
+
+/*Fechas -------------------- */
+.fila-tarea { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+.grupo-fechas { flex: 1 1 18rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.par-fecha { display: flex; align-items: center; gap: 0.6rem; }
+.par-fecha label { width: 3.6rem; }
+
+/* Error y botones ----------------------- */
+#error-crear-tarea { margin: 0; color: #b3261e; font-weight: 600; }
+#error-crear-tarea[hidden] { display: none; }
+
+.acciones-crear-tarea { display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 0.4rem; }
+.acciones-crear-tarea button {
+    font: inherit;
+    padding: 0.5rem 1.6rem;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+#btnCancelarTarea { background: var(--tarea-rojo); color: #fff; }
+#btnConfirmarTarea { background: var(--tarea-turquesa); color: #06332f; }
+.acciones-crear-tarea button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/*Seccion de alumnos---------------------------------*/
+#alumnos { padding: 1rem 0; }
+
+#barra-acciones-alumnos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+#titulo-alumnos { margin: 0; font-size: 1.6rem; font-weight: 400; }
+
+/* Dos columnas como en la maqueta; una sola en pantallas angostas */
+#contenedor-alumnos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 520px));
+    gap: 1rem 1.5rem;
+}
+
+/* Tarjeta: datos a la izquierda, botón a la derecha */
+.tarjeta-alumno {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.tarjeta-alumno-info { min-width: 0; }
+
+.tarjeta-alumno-encabezado {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tarjeta-alumno-etiqueta {
+    padding: 0.1rem 0.5rem;
+    background: #77709f;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.tarjeta-alumno-nombre { font-size: 1.05rem; overflow-wrap: anywhere; }
+.tarjeta-alumno-matricula { margin: 0.6rem 0 0; font-size: 0.9rem; }
+
+.btn-expulsar-alumno {
+    flex-shrink: 0;
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.4rem 1.3rem;
+    border: 0;
+    border-radius: 8px;
+    background: #d91c1c;
+    color: #fff;
+    cursor: pointer;
+}
+.btn-expulsar-alumno:hover { background: #b81616; }
+.btn-expulsar-alumno:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-expulsar-alumno:focus-visible {
+    outline: 3px solid rgba(217, 28, 28, 0.35);
+    outline-offset: 2px;
+}
+
+.mensaje-alumnos { grid-column: 1 / -1; margin: 0; color: #5b5b5b; }
+
+@media (max-width: 860px) {
+    #contenedor-alumnos { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Botón de la sección Alumnos. Si #btnCrearActividad ya tiene estilos,
+   agrega #btnAgregarAlumnos a ese mismo selector y borra esta regla. */
+#btnAgregarAlumnos {
+    font: inherit;
+    padding: 0.6rem 1.6rem;
+    border: 0;
+    border-radius: 8px;
+    background: #19c9b4;
+    color: #06332f;
+    cursor: pointer;
+}
+#btnAgregarAlumnos:hover { filter: brightness(0.95); }
+
+#modal-agregar-alumnos {
+    --aa-teal: #21a3a5;
+    --aa-turquesa: #19c9b4;
+    --aa-rojo: #d91c1c;
+    --aa-borde: #222;
+
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.45);
+    font-family: "Montserrat", system-ui, sans-serif;
+}
+
+#form-agregar-alumnos {
+    width: min(520px, 100%);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    background: #fff;
+    color: #1d1d1d;
+}
+
+#form-agregar-alumnos .cabecera-agregar-alumnos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.5rem;
+    background: var(--aa-teal);
+    color: #fff;
+}
+#form-agregar-alumnos h2 { margin: 0; font-size: 1.7rem; font-weight: 400; }
+#btnCerrarAgregarAlumnos {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+#form-agregar-alumnos .cuerpo-agregar-alumnos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+}
+
+#buscar-alumnos-disponibles {
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--aa-borde);
+    border-radius: 6px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#form-agregar-alumnos :is(input, button):focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--aa-teal) 55%, transparent);
+    outline-offset: 1px;
+}
+
+#lista-alumnos-disponibles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 18rem;
+    overflow-y: auto;
+    border: 1px solid var(--aa-borde);
+    border-radius: 6px;
+}
+#lista-alumnos-disponibles li[hidden] { display: none; }
+#lista-alumnos-disponibles li + li { border-top: 1px solid #e3e3e3; }
+
+.fila-disponible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0.8rem;
+    cursor: pointer;
+}
+.fila-disponible:hover { background: #f3f8f8; }
+.fila-disponible small { display: block; color: #666; }
+.fila-disponible input { width: 1.1rem; height: 1.1rem; accent-color: var(--aa-teal); }
+
+.mensaje-disponibles { padding: 0.9rem; color: #5b5b5b; }
+
+#error-agregar-alumnos { margin: 0; color: #b3261e; font-weight: 600; }
+#error-agregar-alumnos[hidden] { display: none; }
+
+.acciones-agregar-alumnos { display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 0.4rem; }
+.acciones-agregar-alumnos button {
+    font: inherit;
+    padding: 0.5rem 1.6rem;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+#btnCancelarAgregarAlumnos { background: var(--aa-rojo); color: #fff; }
+#btnConfirmarAgregarAlumnos { background: var(--aa-turquesa); color: #06332f; }
+.acciones-agregar-alumnos button:disabled { opacity: 0.6; cursor: not-allowed; }
+

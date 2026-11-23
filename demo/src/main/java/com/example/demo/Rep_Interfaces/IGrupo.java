@@ -31,4 +31,12 @@ public interface IGrupo extends JpaRepository<Grupo, Integer> {
                     "WHERE e.matricula_alumno = :matricula",
             nativeQuery = true)
     List<Grupo> findGruposByAlumno(@Param("matricula") String matricula);
+
+    // Método para expulsar a un alumno de la tabla intermedia esta_en_grupo
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM desweb.esta_en_grupo " +
+                "WHERE id_grupo = :idGrupo AND matricula_alumno = :matriculaAlumno",
+        nativeQuery = true)
+    void expulsarAlumnoDeGrupo(@Param("idGrupo") Integer idGrupo, @Param("matriculaAlumno") String matriculaAlumno);
 }
