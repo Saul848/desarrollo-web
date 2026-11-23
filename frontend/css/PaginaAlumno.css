@@ -147,21 +147,74 @@ body {
 }
 
 #contenedorCursos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
     padding: 20px 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px 60px;
 }
 
 .tarjeta-curso {
-    width: 180px;
-    padding: 14px 10px;
-    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+    border-radius: 20px;
+    color: #000;
+    font-family: inherit;
+    text-align: left;
     cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .tarjeta-curso:hover {
-    filter: brightness(0.95);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+.tarjeta-curso:focus-visible {
+    outline: 3px solid #000;
+    outline-offset: 3px;
+}
+
+.tarjeta-curso.color-0 { background: #d3d3d3; }
+.tarjeta-curso.color-1 { background: #14c9b5; }
+.tarjeta-curso.color-2 { background: var(--morado); }
+
+.tarjeta-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 31px;
+    padding: 0 26px;
+    border-bottom: 1px solid #000;
+}
+
+.tarjeta-cabecera::before,
+.tarjeta-cabecera::after {
+    content: "";
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.ranura {
+    width: 74px;
+    height: 19px;
+    border-radius: 999px;
+    background: #fff;
+}
+
+.tarjeta-cuerpo {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    grid-template-areas:
+        "icono datos"
+        ".     estado";
+    gap: 6px 10px;
+    padding: 16px 10px 8px;
 }
 
 .tarjeta-info {
@@ -183,6 +236,56 @@ body {
 
 .modal-class{
     display: none;
+}
+
+.curso-iniciales {
+    grid-area: icono;
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: #ff5a5a;
+    font-family: "Archivo Black", "Arial Black", sans-serif;
+    font-size: 28px;
+}
+
+.curso-datos {
+    grid-area: datos;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.curso-nombre {
+    font-size: 22px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.curso-numero {
+    display: block;
+}
+
+.curso-fechas {
+    font-size: 15px;
+}
+
+.estado-curso {
+    grid-area: estado;
+    justify-self: end;
+    min-width: 128px;
+    padding: 3px 18px;
+    border-radius: 999px;
+    background: var(--turquesa-oscuro);
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+}
+
+.estado-curso.inactivo {
+    background: #5c5c5c;
 }
 
 /*Estilos del modal de perfil*/
@@ -370,9 +473,5 @@ body {
 
     .seccion-grupo {
         padding: 14px 16px;
-    }
-
-    .tarjeta-curso {
-        width: 100%;
     }
 }
