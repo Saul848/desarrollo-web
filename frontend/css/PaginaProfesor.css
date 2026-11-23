@@ -965,6 +965,158 @@ body {
     outline-offset: 2px;
 }
 
+.barra-acciones-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+#btnCrearExamen,
+.btn-confirmar-turquesa,
+.btn-secundario-turquesa {
+    background-color: #13CBB5;
+    color: #0b2526;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.1rem;
+    cursor: pointer;
+}
+
+.btn-secundario-turquesa {
+    background-color: #e0f7f4;
+    color: #0E5A5E;
+    border: 1px solid #13CBB5;
+}
+
+.btn-cancelar-rojo {
+    background-color: #d32f2f;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.1rem;
+    cursor: pointer;
+}
+
+.modal-overlay-examen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    z-index: 200;
+}
+
+.panel-crear-examen {
+    background: #ffffff;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.cabecera-modal-examen,
+.encabezado-reactivos,
+.acciones-modal-examen {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.cabecera-modal-examen {
+    background-color: #159a90;
+    color: #ffffff;
+    margin: -1.5rem -1.5rem 1.25rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px 12px 0 0;
+}
+
+.btn-cerrar-modal {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.campo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.9rem;
+    flex: 1;
+}
+
+.campo-form input,
+.campo-form select,
+.campo-form textarea {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #bdbdbd;
+    border-radius: 8px;
+    font-family: inherit;
+}
+
+.fila-campos-examen {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.separador-examen {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 1.2rem 0;
+}
+
+.tarjeta-reactivo {
+    border: 1px solid #cfd8dc;
+    border-left: 4px solid #159a90;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.85rem;
+    background-color: #fafafa;
+}
+
+.cabecera-reactivo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.btn-quitar-reactivo {
+    background: none;
+    border: 1px solid #d32f2f;
+    color: #d32f2f;
+    border-radius: 6px;
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.grid-opciones-multiple {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.error-form {
+    color: #c62828;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
 /* #contenido-tarea tiene display:flex, que anularía el atributo hidden */
 .tarjeta-tarea [hidden] {
     display: none !important;
