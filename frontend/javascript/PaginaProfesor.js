@@ -543,6 +543,7 @@ function abrirTarea(tarea) {
     document.getElementById("detalle-titulo").textContent = tarea.titulo;
     document.getElementById("detalle-descripcion").textContent =
         tarea.descripcion || "Esta actividad no tiene descripción.";
+    mostrarPanelTarea("contenido-tarea");   // cada tarea se abre en la pestaña Actividad
     modalTarea.style.display = "flex";
 }
 
@@ -556,3 +557,132 @@ document.getElementById("btnCerrarTarea").addEventListener("click", cerrarTarea)
 modalTarea.addEventListener("click", (e) => {
     if (e.target === modalTarea) cerrarTarea();
 });
+
+const tarjetaTarea = document.querySelector(".tarjeta-tarea");
+const botonesPestanaTarea = document.querySelectorAll("#barra-tarea ul button");
+const listaEntregas = document.getElementById("lista-entregas");
+
+// Cambia entre "Actividad" y "Entregas"
+function mostrarPanelTarea(idPanel) {
+    document.querySelectorAll(".panel-tarea").forEach((panel) => {
+        panel.hidden = panel.id !== idPanel;
+    });
+    botonesPestanaTarea.forEach((boton) => {
+        boton.classList.toggle("activo", boton.dataset.panel === idPanel);
+    });
+    tarjetaTarea.dataset.panel = idPanel;
+
+    if (idPanel === "entregas-tarea" && grupoSeleccionado) {
+        cargarEntregasPanel(grupoSeleccionado.id);
+    }
+}
+
+botonesPestanaTarea.forEach((boton) => {
+    boton.addEventListener("click", () => mostrarPanelTarea(boton.dataset.panel));
+});
+
+function mensajeEntregas(texto) {
+    listaEntregas.replaceChildren(crearElemento("li", "mensaje-entregas", texto));
+}
+
+function crearFilaAlumno(alumno, entrega) {
+    const fila = crearElemento("li", "fila-alumno");
+
+    const boton = crearElemento("button", "btn-ver-entrega");
+    boton.type = "button";
+
+    fila.append(
+        crearElemento("span", "etiqueta-alumno", "Alumno"),
+        crearElemento("span", "alumno-nombre", alumno.nombre),
+        crearElemento("span", "alumno-matricula", `Matricula: ${alumno.matricula}`),
+        boton
+    );
+
+    if (!entrega) {
+        boton.textContent = "Sin entrega";
+        boton.disabled = true;
+        return fila;
+    }
+
+    const detalle = crearDetalleEntrega(entrega);
+    boton.textContent = "Ver entrega";
+    boton.setAttribute("aria-expanded", "false");
+    boton.addEventListener("click", () => {
+        detalle.hidden = !detalle.hidden;
+        boton.textContent = detalle.hidden ? "Ver entrega" : "Ocultar entrega";
+        boton.setAttribute("aria-expanded", String(!detalle.hidden));
+    });
+
+    fila.append(detalle);
+    return fila;
+}
+
+async function cargarEntregasPanel() {
+    mensajeEntregas("Cargando alumnos...");
+    const idGrupo = grupoSeleccionado.id;
+    const idTarea = tareaSeleccionada.id;
+
+    try {
+        const [resAlumnos, resEntregas] = await Promise.all([
+            fetch(`${API}/usuarios/grupo/${idGrupo}/alumnos`),
+            fetch(`${API}/entregas/actividad/${idTarea}`)
+        ]);
+        if (!resAlumnos.ok || !resEntregas.ok) {
+            throw new Error(`HTTP ${resAlumnos.status} / ${resEntregas.status}`);
+        }
+
+        const alumnos = await resAlumnos.json();
+        const entregas = (await resEntregas.json()).map(normalizarEntrega);
+
+        if (tareaSeleccionada?.id !== idTarea) return;   // se abrió otra tarea mientras cargaba
+
+        if (alumnos.length === 0) {
+            mensajeEntregas("Aún no hay alumnos inscritos en este grupo.");
+            return;
+        }
+
+        const entregaPorAlumno = new Map(entregas.map((e) => [e.idAlumno, e]));
+        listaEntregas.replaceChildren(
+            ...alumnos.map((a) => crearFilaAlumno(a, entregaPorAlumno.get(String(a.matricula))))
+        );
+    } catch (error) {
+        console.error(error);
+        mensajeEntregas("No se pudo cargar la lista de alumnos.");
+    }
+}
+
+// Método para ajustar los nombres de campo que devuelve la API
+function normalizarEntrega(e) {
+    return {
+        id: e.idEntrega ?? e.id_entrega ?? e.id,
+        idActividad: e.idActividad ?? e.id_actividad,
+        idAlumno: String(e.idAlumno ?? e.id_alumno ?? ""),
+        contenido: e.contenido ?? "",
+        archivos: e.archivos ?? "",
+        calificacion: e.calificacionObtenida ?? e.calificacion_obtenida ?? null,
+        retroalimentacion: e.retroalimentacion ?? ""
+    };
+}
+
+function crearDetalleEntrega(entrega) {
+    const detalle = crearElemento("div", "detalle-entrega");
+    detalle.hidden = true;
+
+    const campos = [
+        ["Contenido:", entrega.contenido || "Sin contenido."],
+        ["Archivos:", entrega.archivos || "Sin archivos."],
+        ["Calificación:", entrega.calificacion == null
+            ? "Sin calificar" : Number(entrega.calificacion).toFixed(2)],
+        ["Retroalimentación:", entrega.retroalimentacion || "Sin retroalimentación."]
+    ];
+
+    for (const [etiqueta, valor] of campos) {
+        const campo = crearElemento("div", "campo-detalle");
+        campo.append(
+            crearElemento("span", "etiqueta-detalle", etiqueta),
+            crearElemento("p", "", String(valor))
+        );
+        detalle.append(campo);
+    }
+    return detalle;
+}
