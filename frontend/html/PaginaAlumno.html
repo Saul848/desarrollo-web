@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -99,6 +99,24 @@
                         <!--Aqui se insertarán las actividades dinamicamente-->
                     </div>
 
+                    <!-- Dentro de #seccion-actividades -> #actividades, después de #contenedor-actividades: -->
+                    <div id="detalle-tarea" style="display: none; margin-top: 20px; padding: 16px; background: #fff; border-radius: 8px;">
+                        <h3 id="tarea-titulo">Selecciona una tarea</h3>
+                        <p id="tarea-descripcion"></p>
+                        <p id="tarea-info"></p>
+                        <p id="tarea-estado-entrega"></p>
+
+                        <form id="form-entrega">
+                            <label for="input-contenido">Contenido / respuesta:</label><br>
+                            <textarea id="input-contenido" rows="3" style="width: 100%; margin: 8px 0;"></textarea><br>
+
+                            <label for="input-archivos">Archivo o nombre de archivo:</label><br>
+                            <input type="text" id="input-archivos" placeholder="ej. tarea1.pdf" style="width: 100%; margin: 8px 0;"><br>
+
+                            <button type="submit" id="btn-enviar-entrega">Enviar entrega</button>
+                        </form>
+                        <p id="mensaje-entrega"></p>
+                    </div>
                     
                     <div id="avance-alumno">
 
@@ -124,6 +142,12 @@
 
                     <div id="contenedor-examenes">
                         <!--aqui se insertarán los examenes dinamicamente-->
+                    </div>
+
+                    <div id="detalle-examen" style="display: none; margin-top: 20px; padding: 16px; background: #fff; border-radius: 8px;">
+                        <h3 id="examen-titulo"></h3>
+                        <p id="examen-info"></p>
+                        <p id="mensaje-examen"></p>
                     </div>
                 </div>
             </div>

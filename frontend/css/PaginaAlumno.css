@@ -340,3 +340,39 @@ body {
 #contenedor-examenes {
     margin-top: 20px;
 }
+
+@media (max-width: 768px) {
+    #contenedor-botones {
+        gap: 16px;
+        padding: 0 16px;
+    }
+
+    #tituloPagina span {
+        font-size: 26px;
+    }
+
+    #areaTrabajo {
+        padding: 14px 12px;
+    }
+
+    #nombre-curso {
+        padding: 14px 16px 8px;
+        font-size: 24px;
+    }
+
+    #barra-botones {
+        padding: 0 16px;
+    }
+
+    #barra-botones ul {
+        gap: 16px;
+    }
+
+    .seccion-grupo {
+        padding: 14px 16px;
+    }
+
+    .tarjeta-curso {
+        width: 100%;
+    }
+}
