@@ -79,7 +79,7 @@ Describir brevemente la contribución de cada integrante.
 - **Integrante 3:**
 - **Tania Ketzel Gómez Velásquez:**
 - **Integrante 4:**
-- **Gabriel maldonado :** 
+- **Gabriel maldonado :**  Se mejoro las funciones del correo como el enviar el mensaje se solicitara el correo y no la matricula del destinatario y validacion de que el correo existe dentro de la base de datos, tambien cargar de buena manera los correos.
 ---
 
 # 7. Próximas actividades
@@ -89,7 +89,7 @@ Indicar las tareas que se realizarán antes del siguiente reporte.
 - Actividad 1 - Saúl: correciones minimas de estilos y funcionamiento de algunas peticiones y sus errores
 - Actividad 2 - Tania:
 - Actividad 3 - Montserrat:
-- Actividad 4 - Gabriel: 
+- Actividad 4 - Gabriel:  Correcciones del css de la pagina correo, asegurar todo el funcionamiento completo de correo 
 - Actividad 5
 
 ---
