@@ -964,3 +964,97 @@ body {
     outline: 2px solid var(--turquesa);
     outline-offset: 2px;
 }
+
+/* #contenido-tarea tiene display:flex, que anularía el atributo hidden */
+.tarjeta-tarea [hidden] {
+    display: none !important;
+}
+
+/*En Entregas no se muestra el botón de eliminar, pero se conserva la línea */
+.tarjeta-tarea[data-panel="entregas-tarea"] #btnEliminarTarea {
+    display: none;
+}
+
+#entregas-tarea {
+    flex: 1;
+    padding: 20px 24px;
+}
+
+#lista-entregas {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mensaje-entregas {
+    color: #555;
+}
+
+.fila-alumno {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+        "etiqueta  nombre    boton"
+        "matricula matricula boton";
+    align-items: center;
+    gap: 6px 18px;
+    padding: 14px 20px;
+    background: #dcdcdc;
+    border-radius: 6px;
+}
+
+.etiqueta-alumno {
+    grid-area: etiqueta;
+    padding: 1px 8px;
+    border-radius: 4px;
+    background: var(--morado);
+    color: #fff;
+    font-size: 16px;
+}
+
+.alumno-nombre {
+    grid-area: nombre;
+    font-size: 20px;
+}
+
+.alumno-matricula {
+    grid-area: matricula;
+    font-size: 16px;
+}
+
+.btn-ver-entrega {
+    grid-area: boton;
+    min-width: 200px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #14c9b5;
+    color: #000;
+    font-family: inherit;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.btn-ver-entrega:not(:disabled):hover {
+    filter: brightness(0.92);
+}
+
+.btn-ver-entrega:disabled {
+    background: #bdbdbd;
+    color: #555;
+    cursor: not-allowed;
+}
+
+.detalle-entrega {
+    grid-column: 1 / -1;           /* ocupa todo el ancho de la fila */
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+    padding: 16px 20px;
+    background: #fff;
+    border-radius: 6px;
+}

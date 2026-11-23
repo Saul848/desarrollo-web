@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import com.example.demo.Rep_Interfaces.IEntrega;
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Entregas
  * EntregaControlador 
  */
+@CrossOrigin(origins = "*")
 @RestController 
 @RequestMapping("/entregas")
 public class EntregaControlador {
@@ -73,11 +75,12 @@ public class EntregaControlador {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la entrega con id " + id);
     }
 
-    //GET /entregas/actividad?idActividad=1 -> entregas de una actividad
-    @GetMapping("/actividad")
-    public List<Entrega> obtenerPorActividad(@RequestParam Integer idActividad) {
+    //GET /entregas/actividad/1 -> entregas de una actividad
+    @GetMapping("/actividad/{idActividad}")
+    public List<Entrega> obtenerPorActividad(@PathVariable Integer idActividad) {
         return ientrega.findByIdActividad(idActividad);
     }
+
 
     //GET /entregas/alumno?idAlumno=abc -> entregas de un alumno
     @GetMapping("/alumno")
