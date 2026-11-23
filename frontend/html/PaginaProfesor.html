@@ -147,6 +147,7 @@
                                 <button type="button" data-filtro="prorroga">Con prorroga</button>
                             </li>
                         </ul>
+                        <button type="button" id="btnCrearExamen">+ Crear Examen</button>
                     </div>
 
                     <div id="contenedor-examenes">
@@ -246,6 +247,60 @@
         </div>
     </div>
 
+        <!-- Modal para crear examen y reactivos -->
+    <div id="modal-crear-examen" class="modal-overlay-examen" role="dialog" aria-modal="true" aria-labelledby="titulo-crear-examen">
+        <form id="form-crear-examen" class="panel-crear-examen">
+            <div class="cabecera-modal-examen">
+                <h2 id="titulo-crear-examen">Crear examen</h2>
+                <button type="button" id="btnCerrarModalExamen" class="btn-cerrar-modal" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <div class="campo-form">
+                <label for="titulo-examen">Título del examen:</label>
+                <input type="text" id="titulo-examen" placeholder="Ej. Primer parcial de Álgebra" required>
+            </div>
+
+            <div class="fila-campos-examen">
+                <div class="campo-form">
+                    <label for="fecha-limite-examen">Fecha y hora límite:</label>
+                    <input type="datetime-local" id="fecha-limite-examen" required>
+                </div>
+                <div class="campo-form">
+                    <label for="puntos-examen">Puntos totales:</label>
+                    <input type="number" id="puntos-examen" min="1" step="0.5" placeholder="100" required>
+                </div>
+            </div>
+
+            <div class="fila-campos-examen">
+                <div class="campo-form">
+                    <label for="intentos-examen">Intentos permitidos:</label>
+                    <input type="number" id="intentos-examen" min="1" value="1" required>
+                </div>
+                <div class="campo-form">
+                    <label for="tiempo-limite-examen">Tiempo límite (min):</label>
+                    <input type="number" id="tiempo-limite-examen" min="1" placeholder="60">
+                </div>
+            </div>
+
+            <hr class="separador-examen">
+
+            <div class="encabezado-reactivos">
+                <h3>Reactivos del examen</h3>
+                <button type="button" id="btnAgregarReactivo" class="btn-secundario-turquesa">+ Añadir reactivo</button>
+            </div>
+
+            <div id="lista-reactivos">
+                <!-- Aquí se agregan dinámicamente las tarjetas de reactivos -->
+            </div>
+
+            <p id="error-crear-examen" class="error-form" role="alert" hidden></p>
+
+            <div class="acciones-modal-examen">
+                <button type="button" id="btnCancelarExamen" class="btn-cancelar-rojo">Cancelar</button>
+                <button type="submit" id="btnConfirmarExamen" class="btn-confirmar-turquesa">+ Crear Examen</button>
+            </div>
+        </form>
+    </div>
     <script src="../javascript/PaginaProfesor.js"></script>
 </body>
 </html>

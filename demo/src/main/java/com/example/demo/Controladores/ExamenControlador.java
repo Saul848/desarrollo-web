@@ -12,10 +12,11 @@ import com.example.demo.Clases.Examen;
 import com.example.demo.Rep_Interfaces.IExamen;
 
 /**
- * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Profesores
- * ProfesorControlador
+ * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Examenes
+ * ExamenControlador
  */
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/examenes")
 public class ExamenControlador {
     
@@ -62,9 +63,9 @@ public class ExamenControlador {
                 .map(existente -> {
                     existente.setId_grupo(datos.getId_grupo());
                     existente.setTitulo(datos.getTitulo());
-                    existente.setCalificacion(datos.getCalificacion());
+                    existente.setCalificacion_asignada(datos.getCalificacion_asignada());
                     existente.setFecha_limite(datos.getFecha_limite());
-                    existente.setIntentos(datos.getIntentos());
+                    existente.setIntentos_permitidos(datos.getIntentos_permitidos());
                     existente.setTiempo_limite(datos.getTiempo_limite());
                     return ResponseEntity.ok(iexamen.save(existente));
                 })

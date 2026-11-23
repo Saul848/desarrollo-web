@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
  * ReactivoControlador
  */
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/reactivos")
 public class ReactivoControlador {
     
@@ -64,8 +65,14 @@ public class ReactivoControlador {
 		return ireactivo.findById(id)
 			.map(reactivoExistente -> {
 				reactivoExistente.setId_examen(reactivoActualizado.getId_examen());
+				reactivoExistente.setTipo(reactivoActualizado.getTipo());
+				reactivoExistente.setEnunciado(reactivoActualizado.getEnunciado());
+				reactivoExistente.setOpcion_1(reactivoActualizado.getOpcion_1());
+				reactivoExistente.setOpcion_2(reactivoActualizado.getOpcion_2());
+				reactivoExistente.setOpcion_3(reactivoActualizado.getOpcion_3());
+				reactivoExistente.setOpcion_4(reactivoActualizado.getOpcion_4());
+				reactivoExistente.setRespuesta_correcta(reactivoActualizado.getRespuesta_correcta());
 				reactivoExistente.setValor(reactivoActualizado.getValor());
-				reactivoExistente.setRespuesta(reactivoActualizado.getRespuesta());
 
 				Reactivo guardado = ireactivo.save(reactivoExistente);
 				return ResponseEntity.ok(guardado);

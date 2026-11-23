@@ -118,7 +118,14 @@ function aplicarFiltroActividades(filtro) {
     mostrarActividades();
 }
 
+let filtroExamenes = "actuales";
+
 function aplicarFiltroExamenes(filtro) {
+    filtroExamenes = filtro;
+    if (grupoSeleccionado?.id) {
+        cargarExamenes(grupoSeleccionado.id);
+    }
+
     console.log("Exámenes:", filtro);
 }
 
@@ -135,6 +142,10 @@ function mostrarSeccion(nombre) {
     if (seccion) {
         seccion.style.display = "block";
     }
+
+    if (nombre === "examenes" && grupoSeleccionado?.id) {
+    cargarExamenes(grupoSeleccionado.id);
+}
 }
 
 const API = "http://localhost:9999";
@@ -556,3 +567,339 @@ document.getElementById("btnCerrarTarea").addEventListener("click", cerrarTarea)
 modalTarea.addEventListener("click", (e) => {
     if (e.target === modalTarea) cerrarTarea();
 });
+
+// ===== Exámenes y Reactivos del grupo abierto =====
+const contenedorExamenes = document.getElementById("contenedor-examenes");
+const modalCrearExamen = document.getElementById("modal-crear-examen");
+const formCrearExamen = document.getElementById("form-crear-examen");
+const listaReactivos = document.getElementById("lista-reactivos");
+const errorCrearExamen = document.getElementById("error-crear-examen");
+const btnConfirmarExamen = document.getElementById("btnConfirmarExamen");
+
+let examenesCargados = [];
+let contadorReactivos = 0;
+
+document.getElementById("btnCrearExamen").addEventListener("click", abrirModalCrearExamen);
+document.getElementById("btnCancelarExamen").addEventListener("click", cerrarModalCrearExamen);
+document.getElementById("btnCerrarModalExamen").addEventListener("click", cerrarModalCrearExamen);
+document.getElementById("btnAgregarReactivo").addEventListener("click", () => agregarTarjetaReactivo());
+
+modalCrearExamen.addEventListener("click", (e) => {
+    if (e.target === modalCrearExamen) cerrarModalCrearExamen();
+});
+
+function abrirModalCrearExamen() {
+    if (!grupoSeleccionado?.id) {
+        alert("Primero selecciona un grupo.");
+        return;
+    }
+    formCrearExamen.reset();
+    errorCrearExamen.hidden = true;
+    errorCrearExamen.textContent = "";
+    listaReactivos.replaceChildren();
+    contadorReactivos = 0;
+
+    // Agrega un primer reactivo por defecto para facilitar el llenado
+    agregarTarjetaReactivo();
+    modalCrearExamen.style.display = "flex";
+}
+
+function cerrarModalCrearExamen() {
+    modalCrearExamen.style.display = "none";
+}
+
+function agregarTarjetaReactivo() {
+    contadorReactivos += 1;
+    const num = contadorReactivos;
+
+    const tarjeta = crearElemento("div", "tarjeta-reactivo");
+    tarjeta.dataset.indice = num;
+
+    const cabecera = crearElemento("div", "cabecera-reactivo");
+    cabecera.append(crearElemento("strong", "", `Reactivo #${num}`));
+
+    const btnQuitar = crearElemento("button", "btn-quitar-reactivo", "Eliminar");
+    btnQuitar.type = "button";
+    btnQuitar.addEventListener("click", () => {
+        tarjeta.remove();
+        renumerarReactivos();
+    });
+    cabecera.append(btnQuitar);
+
+    const filaSuperior = crearElemento("div", "fila-campos-examen");
+
+    const grupoTipo = crearElemento("div", "campo-form");
+    const labelTipo = crearElemento("label", "", "Tipo de pregunta:");
+    const selectTipo = document.createElement("select");
+    selectTipo.className = "tipo-reactivo";
+    selectTipo.innerHTML = `
+        <option value="abierta">Pregunta abierta</option>
+        <option value="verdadero_falso">Verdadero / Falso</option>
+        <option value="opcion_multiple">Opción múltiple</option>
+    `;
+    grupoTipo.append(labelTipo, selectTipo);
+
+    const grupoValor = crearElemento("div", "campo-form");
+    const labelValor = crearElemento("label", "", "Valor (puntos):");
+    const inputValor = document.createElement("input");
+    inputValor.type = "number";
+    inputValor.className = "valor-reactivo";
+    inputValor.min = "0.5";
+    inputValor.step = "0.5";
+    inputValor.value = "10";
+    inputValor.required = true;
+    grupoValor.append(labelValor, inputValor);
+
+    filaSuperior.append(grupoTipo, grupoValor);
+
+    const grupoEnunciado = crearElemento("div", "campo-form");
+    const labelEnunciado = crearElemento("label", "", "Pregunta / Redacción:");
+    const inputEnunciado = document.createElement("textarea");
+    inputEnunciado.className = "enunciado-reactivo";
+    inputEnunciado.rows = 2;
+    inputEnunciado.placeholder = "Escribe la pregunta o instrucción del reactivo...";
+    inputEnunciado.required = true;
+    grupoEnunciado.append(labelEnunciado, inputEnunciado);
+
+    const contenedorDinamico = crearElemento("div", "detalle-tipo-reactivo");
+
+    const renderizarCamposTipo = () => {
+        contenedorDinamico.replaceChildren();
+        const tipo = selectTipo.value;
+
+        if (tipo === "abierta") {
+            const wrap = crearElemento("div", "campo-form");
+            wrap.append(crearElemento("label", "", "Respuesta esperada / guía de calificación:"));
+            const inputResp = document.createElement("input");
+            inputResp.type = "text";
+            inputResp.className = "respuesta-reactivo";
+            inputResp.placeholder = "Respuesta modelo o criterio clave";
+            wrap.append(inputResp);
+            contenedorDinamico.append(wrap);
+        } else if (tipo === "verdadero_falso") {
+            const wrap = crearElemento("div", "campo-form");
+            wrap.append(crearElemento("label", "", "Respuesta correcta:"));
+            const selectFV = document.createElement("select");
+            selectFV.className = "respuesta-reactivo";
+            selectFV.innerHTML = `
+                <option value="Verdadero">Verdadero</option>
+                <option value="Falso">Falso</option>
+            `;
+            wrap.append(selectFV);
+            contenedorDinamico.append(wrap);
+        } else if (tipo === "opcion_multiple") {
+            const wrap = crearElemento("div", "campo-form");
+            wrap.append(crearElemento("label", "", "Opciones (A, B, C, D):"));
+
+            const grid = crearElemento("div", "grid-opciones-multiple");
+            ["A", "B", "C", "D"].forEach((letra) => {
+                const inp = document.createElement("input");
+                inp.type = "text";
+                inp.className = "opcion-multiple";
+                inp.dataset.opcion = letra;
+                inp.placeholder = `Opción ${letra}`;
+                grid.append(inp);
+            });
+
+            const wrapCorrecta = crearElemento("div", "campo-form");
+            wrapCorrecta.style.marginTop = "0.6rem";
+            wrapCorrecta.append(crearElemento("label", "", "Inciso correcto:"));
+            const selectCorrecta = document.createElement("select");
+            selectCorrecta.className = "respuesta-reactivo";
+            selectCorrecta.innerHTML = `
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            `;
+            wrapCorrecta.append(selectCorrecta);
+
+            wrap.append(grid, wrapCorrecta);
+            contenedorDinamico.append(wrap);
+        }
+    };
+
+    selectTipo.addEventListener("change", renderizarCamposTipo);
+    renderizarCamposTipo();
+
+    tarjeta.append(cabecera, filaSuperior, grupoEnunciado, contenedorDinamico);
+    listaReactivos.append(tarjeta);
+}
+
+function renumerarReactivos() {
+    listaReactivos.querySelectorAll(".tarjeta-reactivo").forEach((tarjeta, idx) => {
+        const strong = tarjeta.querySelector(".cabecera-reactivo strong");
+        if (strong) strong.textContent = `Reactivo #${idx + 1}`;
+    });
+}
+
+function recolectarReactivos(idExamen) {
+    const tarjetas = [...listaReactivos.querySelectorAll(".tarjeta-reactivo")];
+
+    return tarjetas.map((tarjeta) => {
+        const tipo = tarjeta.querySelector(".tipo-reactivo").value;
+        const valor = Number(tarjeta.querySelector(".valor-reactivo").value);
+        const enunciado = tarjeta.querySelector(".enunciado-reactivo").value.trim();
+
+        let opcion_1 = null;
+        let opcion_2 = null;
+        let opcion_3 = null;
+        let opcion_4 = null;
+        let respuesta_correcta = null;
+
+        if (tipo === "opcion_multiple") {
+            const opciones = [...tarjeta.querySelectorAll(".opcion-multiple")];
+            opcion_1 = opciones[0]?.value.trim() || null;
+            opcion_2 = opciones[1]?.value.trim() || null;
+            opcion_3 = opciones[2]?.value.trim() || null;
+            opcion_4 = opciones[3]?.value.trim() || null;
+
+            const letra = tarjeta.querySelector(".respuesta-reactivo")?.value;
+            const mapaIndice = { A: 1, B: 2, C: 3, D: 4 };
+            respuesta_correcta = mapaIndice[letra] ?? null;
+        } else if (tipo === "verdadero_falso") {
+            opcion_1 = "Verdadero";
+            opcion_2 = "Falso";
+            const elegida = tarjeta.querySelector(".respuesta-reactivo")?.value;
+            respuesta_correcta = elegida === "Verdadero" ? 1 : 2;
+        }
+        // Si es "abierta", opcion_1..4 y respuesta_correcta quedan en null
+
+        return {
+            id_examen: idExamen,
+            tipo,
+            enunciado,
+            opcion_1,
+            opcion_2,
+            opcion_3,
+            opcion_4,
+            respuesta_correcta,
+            valor
+        };
+    });
+}
+
+formCrearExamen.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorCrearExamen.hidden = true;
+
+    const titulo = document.getElementById("titulo-examen").value.trim();
+    const fechaLimiteRaw = document.getElementById("fecha-limite-examen").value;
+    const calificacion = Number(document.getElementById("puntos-examen").value);
+    const intentos = Number(document.getElementById("intentos-examen").value);
+    const tiempoLimiteRaw = document.getElementById("tiempo-limite-examen").value;
+
+    if (!titulo || !fechaLimiteRaw || !calificacion) {
+        errorCrearExamen.textContent = "Completa el título, la fecha límite y los puntos del examen.";
+        errorCrearExamen.hidden = false;
+        return;
+    }
+
+    const reactivos = recolectarReactivos(null);
+    if (reactivos.length === 0) {
+        errorCrearExamen.textContent = "Añade al menos un reactivo al examen.";
+        errorCrearExamen.hidden = false;
+        return;
+    }
+
+    btnConfirmarExamen.disabled = true;
+    try {
+        // 1. Crear el examen
+        const fechaLimiteISO = fechaLimiteRaw.length === 16 ? `${fechaLimiteRaw}:00` : fechaLimiteRaw;
+        const resExamen = await fetch(`${API}/examenes`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                id_grupo: grupoSeleccionado.id,
+                titulo,
+                calificacion_asignada: calificacion,
+                fecha_limite: fechaLimiteISO,
+                intentos_permitidos: intentos,
+                tiempo_limite: tiempoLimiteRaw ? Number(tiempoLimiteRaw) : null
+            })
+        });
+
+        if (!resExamen.ok) {
+            throw new Error(await resExamen.text() || `HTTP ${resExamen.status}`);
+        }
+
+        const examenCreado = await resExamen.json();
+        const idExamen = examenCreado.id_examen ?? examenCreado.idExamen ?? examenCreado.id;
+
+        // 2. Guardar cada reactivo asociado al examen creado
+        for (const r of reactivos) {
+            const resReactivo = await fetch(`${API}/reactivos`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...r, id_examen: idExamen })
+            });
+            if (!resReactivo.ok) {
+                throw new Error(`Error al guardar reactivo: ${await resReactivo.text()}`);
+            }
+        }
+
+        cerrarModalCrearExamen();
+        await cargarExamenes(grupoSeleccionado.id);
+    } catch (error) {
+        console.error(error);
+        errorCrearExamen.textContent = "No se pudo guardar el examen: " + error.message;
+        errorCrearExamen.hidden = false;
+    } finally {
+        btnConfirmarExamen.disabled = false;
+    }
+});
+
+async function cargarExamenes(idGrupo) {
+    if (!contenedorExamenes) return;
+    contenedorExamenes.replaceChildren(crearElemento("p", "", "Cargando exámenes..."));
+    try {
+        const res = await fetch(`${API}/examenes/grupo/${idGrupo}`);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        examenesCargados = await res.json();
+        renderizarExamenes();
+    } catch (error) {
+        console.error(error);
+        contenedorExamenes.replaceChildren(crearElemento("p", "", "No se pudieron cargar los exámenes."));
+    }
+}
+
+function renderizarExamenes() {
+    if (!contenedorExamenes) return;
+    if (!examenesCargados || examenesCargados.length === 0) {
+        contenedorExamenes.replaceChildren(crearElemento("p", "", "No hay exámenes registrados en este grupo."));
+        return;
+    }
+
+    const ahora = new Date();
+    const listaFiltrada = examenesCargados.filter((ex) => {
+        const fecha = ex.fecha_limite ? new Date(ex.fecha_limite) : null;
+        if (!fecha || Number.isNaN(fecha.getTime())) return true;
+        if (filtroExamenes === "actuales") return fecha >= ahora;
+        if (filtroExamenes === "concluidas") return fecha < ahora;
+        return true; // "prorroga" o cualquier otro muestra todos por ahora
+    });
+
+    if (listaFiltrada.length === 0) {
+        contenedorExamenes.replaceChildren(crearElemento("p", "", `No hay exámenes en «${filtroExamenes}».`));
+        return;
+    }
+
+    const tarjetas = listaFiltrada.map((ex) => {
+        const puntos = ex.calificacion_asignada ?? ex.calificacionAsignada ?? ex.calificacion ?? 0;
+        const intentos = ex.intentos_permitidos ?? ex.intentosPermitidos ?? ex.intentos ?? 1;
+        const tiempoTexto = ex.tiempo_limite ? ` · Duración: ${ex.tiempo_limite}` : "";
+        const fechaTexto = ex.fecha_limite
+            ? `Límite: ${typeof formatearFecha === "function" ? formatearFecha(ex.fecha_limite) : ex.fecha_limite}`
+            : "";
+
+        const card = crearElemento("article", "tarea");
+        card.append(
+            crearElemento("h3", "tarea-titulo", ex.titulo ?? "Examen sin título"),
+            crearElemento("p", "tarea-descripcion", `Puntos: ${puntos} · Intentos: ${intentos}${tiempoTexto}`),
+            crearElemento("p", "tarea-fechas", fechaTexto)
+        );
+        return card;
+    });
+
+    contenedorExamenes.replaceChildren(...tarjetas);
+}
