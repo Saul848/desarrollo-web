@@ -77,6 +77,15 @@ async function cargarGrupos() {
     }
 }
 
+function formatearFechaGrupo(iso) {
+    if (!iso) return "";
+    const fecha = new Date(iso);
+    if (Number.isNaN(fecha.getTime())) return "";
+    return fecha.toLocaleDateString("es-MX", {
+        day: "numeric", month: "short", year: "numeric"
+    });
+}
+
 function mostrarGrupos(lista) {
     contenedorCursos.innerHTML = "";
 
@@ -85,20 +94,59 @@ function mostrarGrupos(lista) {
         return;
     }
 
-    lista.forEach((g, i) => {
+    const clasesColor = ["color-0", "color-1", "color-2"];
+
+    lista.forEach((g) => {
+        const id = obtenerIdGrupo(g);
         const nombre = obtenerNombreGrupo(g);
-        const iniciales = nombre.substring(0, 2).toUpperCase();
+        const iniciales = nombre.trim().slice(0, 2).toUpperCase();
+        const claseColor = clasesColor[(Number(id) || 0) % clasesColor.length];
 
-        const tarjeta = document.createElement("div");
-        tarjeta.className = "tarjeta-curso";
-        tarjeta.style.backgroundColor = COLORES[i % COLORES.length];
-        tarjeta.innerHTML = `
-            <div class="tarjeta-info">
-                <span class="tarjeta-iniciales">${iniciales}</span>
-                <span class="tarjeta-nombre"></span>
-            </div>`;
-        tarjeta.querySelector(".tarjeta-nombre").textContent = nombre;
+        const tarjeta = document.createElement("button");
+        tarjeta.type = "button";
+        tarjeta.className = `tarjeta-curso ${claseColor}`;
 
+        const cabecera = document.createElement("span");
+        cabecera.className = "tarjeta-cabecera";
+        cabecera.setAttribute("aria-hidden", "true");
+        const ranura = document.createElement("span");
+        ranura.className = "ranura";
+        cabecera.append(ranura);
+
+        const spanIniciales = document.createElement("span");
+        spanIniciales.className = "curso-iniciales";
+        spanIniciales.textContent = iniciales;
+
+        const datos = document.createElement("span");
+        datos.className = "curso-datos";
+
+        const titulo = document.createElement("span");
+        titulo.className = "curso-nombre";
+        const prefijo = document.createElement("span");
+        prefijo.className = "curso-numero";
+        prefijo.textContent = "Grupo: ";
+        titulo.append(prefijo, nombre);
+        datos.append(titulo);
+
+        const inicio = formatearFechaGrupo(g.fechaInicio ?? g.fecha_inicio);
+        const fin = formatearFechaGrupo(g.fechaFin ?? g.fecha_fin);
+        if (inicio && fin) {
+            const fechas = document.createElement("span");
+            fechas.className = "curso-fechas";
+            fechas.textContent = `${inicio} – ${fin}`;
+            datos.append(fechas);
+        }
+
+        const estaActivo = g.activo !== undefined ? Boolean(g.activo) : true;
+        const estado = document.createElement("span");
+        estado.className = "estado-curso" + (estaActivo ? "" : " inactivo");
+        estado.textContent = estaActivo ? "Activo" : "Inactivo";
+
+        const cuerpo = document.createElement("span");
+        cuerpo.className = "tarjeta-cuerpo";
+        cuerpo.append(spanIniciales, datos, estado);
+
+        tarjeta.append(cabecera, cuerpo);
         tarjeta.addEventListener("click", () => abrirGrupo(g));
         contenedorCursos.appendChild(tarjeta);
     });
@@ -137,7 +185,7 @@ async function cargarTareasYEntregas(idGrupo) {
     const contenedor = document.getElementById("contenedor-actividades");
     try {
         const [respTareas, respEntregas] = await Promise.all([
-            fetch(`${API_URL}/tareas/obtenerTareasGrupo?idGrupo=${idGrupo}`),
+            fetch(`${API_URL}/tareas/obtenerTareasGrupo/${idGrupo}`),
             fetch(`${API_URL}/entregas/alumno?idAlumno=${encodeURIComponent(matriculaAlumno)}`)
         ]);
 
