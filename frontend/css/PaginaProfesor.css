@@ -1586,3 +1586,31 @@ body {
 #btnConfirmarAgregarAlumnos { background: var(--aa-turquesa); color: #06332f; }
 .acciones-agregar-alumnos button:disabled { opacity: 0.6; cursor: not-allowed; }
 
+.encabezado-curso {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+#btnCerrarGrupo.btn-cerrar-grupo {
+    background-color: #c91818;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.25rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#btnCerrarGrupo.btn-cerrar-grupo:hover {
+    background-color: #a81212;
+}
+
+#btnCerrarGrupo.btn-cerrar-grupo:active {
+    transform: scale(0.98);
+}

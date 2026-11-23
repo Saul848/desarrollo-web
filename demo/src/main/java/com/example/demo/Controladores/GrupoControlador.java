@@ -89,12 +89,21 @@ public class GrupoControlador {
         
         if (grupoExistente.isPresent()) {
             Grupo grupo = grupoExistente.get();
-            grupo.setNombre_grupo(datosActualizados.getNombre_grupo());
-            grupo.setMatriculaProfesor(datosActualizados.getMatriculaProfesor());
-            grupo.setMatriculaProfesor(datosActualizados.getMatriculaProfesor());
-            grupo.setFechaInicio(datosActualizados.getFechaInicio());
-            grupo.setFechaFin(datosActualizados.getFechaFin());
-            grupo.setActivo(datosActualizados.getActivo());
+            if (datosActualizados.getNombre_grupo() != null) {
+                grupo.setNombre_grupo(datosActualizados.getNombre_grupo());
+            }
+            if (datosActualizados.getMatriculaProfesor() != null) {
+                grupo.setMatriculaProfesor(datosActualizados.getMatriculaProfesor());
+            }
+            if (datosActualizados.getFechaInicio() != null) {
+                grupo.setFechaInicio(datosActualizados.getFechaInicio());
+            }
+            if (datosActualizados.getFechaFin() != null) {
+                grupo.setFechaFin(datosActualizados.getFechaFin());
+            }
+            if (datosActualizados.getActivo() != null) {
+                grupo.setActivo(datosActualizados.getActivo());
+            }
             
             Grupo grupoActualizado = igrupo.save(grupo);
             return ResponseEntity.ok(grupoActualizado);

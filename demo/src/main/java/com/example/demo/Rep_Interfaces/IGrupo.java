@@ -28,7 +28,7 @@ public interface IGrupo extends JpaRepository<Grupo, Integer> {
     // Grupos a los que pertenece un alumno
     @Query(value = "SELECT g.* FROM desweb.grupo g " +
                     "JOIN desweb.esta_en_grupo e ON g.id_grupo = e.id_grupo " +
-                    "WHERE e.matricula_alumno = :matricula",
+                    "WHERE e.matricula_alumno = :matricula AND g.activo = true",
             nativeQuery = true)
     List<Grupo> findGruposByAlumno(@Param("matricula") String matricula);
 
