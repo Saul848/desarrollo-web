@@ -222,20 +222,22 @@ function renderizarTareas() {
     const contenedor = document.getElementById("contenedor-actividades");
     if (!contenedor) return;
 
-    //si la tarea seleccionado ya no esta, se oculta el modal
     const ahora = new Date();
     const filtradas = tareasGrupo.filter((t) => {
-        const estado = (t.estado ?? "").toLowerCase();
+        const estado = (t.estado ?? "").trim().toLowerCase();
+        const esProrroga = estado.includes("prorroga") || estado.includes("prórroga");
         const fechaTermino = t.fechaTermino ? new Date(t.fechaTermino) : null;
-        const vencida = fechaTermino ? ahora > fechaTermino : false;
+        const fechaValida = fechaTermino && !Number.isNaN(fechaTermino.getTime());
+        const vencida = fechaValida ? ahora > fechaTermino : false;
+        const vigente = !vencida;
 
         if (filtroActividadActual === "prorroga") {
-            return estado.includes("prorroga") || estado.includes("prórroga");
+            return esProrroga && vigente;
         }
         if (filtroActividadActual === "concluidas") {
-            return vencida && !estado.includes("prorroga") && !estado.includes("prórroga");
+            return vencida;
         }
-        return !vencida;
+        return vigente && !esProrroga;
     });
 
     if (tareaSeleccionada) {
@@ -253,13 +255,19 @@ function renderizarTareas() {
     filtradas.forEach((t) => {
         const idTarea = t.id ?? t.idTarea;
         const entregaExistente = entregasAlumno.find((e) => e.idActividad === idTarea);
-        const estadoRaw = (t.estado ?? "activo").toLowerCase();
+        const estadoRaw = (t.estado ?? "activo").trim().toLowerCase();
 
-        const claseEstado = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga")
+        const esProrroga = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga");
+        const fechaTermino = t.fechaTermino ? new Date(t.fechaTermino) : null;
+        const fechaValida = fechaTermino && !Number.isNaN(fechaTermino.getTime());
+        const vencida = fechaValida ? ahora > fechaTermino : false;
+        const vigente = !vencida;
+
+        const claseEstado = esProrroga
             ? "tarea-prorroga"
             : (estadoRaw === "inactivo" ? "tarea-inactivo" : "tarea-activo");
 
-        const etiquetaEstado = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga")
+        const etiquetaEstado = esProrroga
             ? "Con prórroga"
             : (estadoRaw === "inactivo" ? "Concluida" : "Actual");
 
@@ -269,12 +277,18 @@ function renderizarTareas() {
                 : "Entregada")
             : "Pendiente";
 
+        const textoFecha = esProrroga
+            ? (vigente
+                ? `Prórroga vigente hasta: ${formatearFechaCorta(t.fechaTermino)}`
+                : `Prórroga vencida: ${formatearFechaCorta(t.fechaTermino)}`)
+            : `Fecha límite: ${formatearFechaCorta(t.fechaTermino)}`;
+
         const tarjeta = document.createElement("article");
         tarjeta.className = `tarjeta-tarea-alumno ${claseEstado}`;
         tarjeta.innerHTML = `
             <h4 class="tarea-alumno-titulo">${t.titulo ?? "Sin título"}</h4>
             <p class="tarea-alumno-meta">Estado de entrega: <strong>${estadoEntrega}</strong></p>
-            <p class="tarea-alumno-fecha">Fecha límite: ${formatearFechaCorta(t.fechaTermino)}</p>
+            <p class="tarea-alumno-fecha">${textoFecha}</p>
             <span class="tarea-alumno-estado">${etiquetaEstado}</span>
         `;
         tarjeta.addEventListener("click", () => seleccionarTarea(t, entregaExistente));
@@ -290,8 +304,22 @@ function seleccionarTarea(tarea, entregaExistente) {
     detalle.style.display = "flex";
     document.getElementById("tarea-titulo").textContent = tarea.titulo ?? "Tarea";
     document.getElementById("tarea-descripcion").textContent = tarea.descripcion || "Sin descripción.";
+
+    const estadoRaw = (tarea.estado ?? "").trim().toLowerCase();
+    const esProrroga = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga");
+    const fechaTermino = tarea.fechaTermino ? new Date(tarea.fechaTermino) : null;
+    const fechaValida = fechaTermino && !Number.isNaN(fechaTermino.getTime());
+    const ahora = new Date();
+    const vigente = !fechaValida || ahora <= fechaTermino;
+
+    const etiquetaVigencia = esProrroga
+        ? (vigente
+            ? `Prórroga vigente hasta: ${formatearFechaCorta(tarea.fechaTermino)}`
+            : `Prórroga vencida (${formatearFechaCorta(tarea.fechaTermino)})`)
+        : `Fecha límite: ${formatearFechaCorta(tarea.fechaTermino)}`;
+
     document.getElementById("tarea-info").textContent =
-        `Fecha límite: ${formatearFechaCorta(tarea.fechaTermino)} | Estado actividad: ${tarea.estado ?? "-"}`;
+        `${etiquetaVigencia} | Estado actividad: ${tarea.estado ?? "-"}`;
 
     const inputContenido = document.getElementById("input-contenido");
     const inputArchivos = document.getElementById("input-archivos");
@@ -300,21 +328,35 @@ function seleccionarTarea(tarea, entregaExistente) {
     const mensaje = document.getElementById("mensaje-entrega");
     if (mensaje) mensaje.textContent = "";
 
+    const yaCalificada = entregaExistente?.calificacionObtenida != null;
+    const puedeEntregar = vigente && !yaCalificada;
+
     if (entregaExistente) {
-        estadoTexto.textContent = entregaExistente.calificacionObtenida != null
+        estadoTexto.textContent = yaCalificada
             ? `Calificada: ${entregaExistente.calificacionObtenida} | Retroalimentación: ${entregaExistente.retroalimentacion ?? "Sin retroalimentación"}`
-            : "Ya enviaste una entrega (puedes actualizarla antes de que sea calificada).";
+            : (vigente
+                ? "Ya enviaste una entrega (puedes actualizarla mientras el periodo esté vigente)."
+                : "Entrega registrada. El periodo habilitado ya finalizó.");
         inputContenido.value = entregaExistente.contenido ?? "";
         inputArchivos.value = entregaExistente.archivos ?? "";
-        btnEnviar.disabled = entregaExistente.calificacionObtenida != null;
-        btnEnviar.textContent = entregaExistente.calificacionObtenida != null ? "Ya calificada" : "Actualizar entrega";
+        btnEnviar.disabled = !puedeEntregar;
+        btnEnviar.textContent = yaCalificada
+            ? "Ya calificada"
+            : (vigente ? "Actualizar entrega" : "Periodo cerrado");
     } else {
-        estadoTexto.textContent = "Aún no has realizado esta entrega.";
+        estadoTexto.textContent = vigente
+            ? (esProrroga
+                ? "Prórroga activa: puedes enviar tu entrega dentro del periodo habilitado."
+                : "Aún no has realizado esta entrega.")
+            : "El periodo de entrega ha finalizado.";
         inputContenido.value = "";
         inputArchivos.value = "";
-        btnEnviar.disabled = false;
-        btnEnviar.textContent = "Enviar entrega";
+        btnEnviar.disabled = !puedeEntregar;
+        btnEnviar.textContent = vigente ? "Enviar entrega" : "Periodo cerrado";
     }
+
+    inputContenido.disabled = !puedeEntregar;
+    inputArchivos.disabled = !puedeEntregar;
 }
 
 function cerrarDetalleTarea() {
@@ -410,6 +452,7 @@ async function cargarExamenesGrupo(idGrupo) {
     }
 }
 
+
 function cerrarDetalleExamen() {
     const detalle = document.getElementById("detalle-examen");
     if (detalle) {
@@ -457,11 +500,40 @@ function renderizarExamenes() {
 
     const ahora = new Date();
 
-    examenesGrupo.forEach((ex) => {
+    const filtrados = examenesGrupo.filter((ex) => {
+        const estadoRaw = String(ex.estado ?? "").trim().toLowerCase();
+        const esProrroga = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga");
         const fechaLim = ex.fecha_limite ?? ex.fechaLimite;
         const vencido = fechaLim ? ahora > new Date(fechaLim) : false;
-        const estadoTexto = vencido ? "Concluido" : "Disponible";
-        const claseEstado = vencido ? "examen-concluido" : "";
+        const vigente = !vencido;
+
+        if (filtroExamenActual === "prorroga") {
+            return esProrroga && vigente;
+        }
+        if (filtroExamenActual === "concluidas") {
+            return vencido;
+        }
+        return vigente && !esProrroga;
+    });
+
+    if (filtrados.length === 0) {
+        contenedor.innerHTML = "<p>No hay exámenes en este filtro.</p>";
+        return;
+    }
+
+    filtrados.forEach((ex) => {
+        const estadoRaw = String(ex.estado ?? "").trim().toLowerCase();
+        const esProrroga = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga");
+        const fechaLim = ex.fecha_limite ?? ex.fechaLimite;
+        const vencido = fechaLim ? ahora > new Date(fechaLim) : false;
+        const vigente = !vencido;
+
+        const estadoTexto = esProrroga
+            ? (vigente ? "Con prórroga" : "Prórroga vencida")
+            : (vencido ? "Concluido" : "Disponible");
+        const claseEstado = vencido && !esProrroga
+            ? "examen-concluido"
+            : (esProrroga ? "examen-prorroga" : "");
 
         const tarjeta = document.createElement("article");
         tarjeta.className = `tarjeta-examen ${claseEstado}`;
@@ -678,7 +750,12 @@ function aplicarFiltroActividades(filtro) {
     renderizarTareas();
 }
 
+let filtroExamenActual = "actuales";
+
 function aplicarFiltroExamenes(filtro) {
+    filtroExamenActual = filtro;
+    cerrarDetalleExamen();
+    renderizarExamenes();
     console.log("Exámenes:", filtro);
 }
 
