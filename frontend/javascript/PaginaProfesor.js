@@ -450,10 +450,9 @@ formCrearGrupo.addEventListener("submit", async (e) => {
     }
 });
 
-// ===== Actividades (tareas) del grupo abierto =====
+// Actividades (tareas) del grupo abierto ----------------
 const contenedorActividades = document.getElementById("contenedor-actividades");
 
-// Si tu ruta es otra, cámbiala solo aquí
 const urlTareasDeGrupo = (idGrupo) => `${API}/tareas/obtenerTareasGrupo/${idGrupo}`;
 
 // Botón de filtro -> valor de la columna `estado`
