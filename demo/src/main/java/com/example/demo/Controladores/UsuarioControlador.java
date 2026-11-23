@@ -24,7 +24,6 @@ import com.example.demo.Rep_Interfaces.IUsuario;
 import jakarta.validation.Valid;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Usuarios
@@ -123,6 +122,12 @@ public class UsuarioControlador {
 	@GetMapping("/alumnos")
 	public List<Usuario> listarAlumnos(){
 		return iusuario.findByRol(Rol.alumno);
+	}
+
+	// GET /usuarios/grupo/5/alumnos
+	@GetMapping("/grupo/{idGrupo}/alumnos")
+	public List<Usuario> listarAlumnosDeGrupo(@PathVariable Integer idGrupo) {
+		return iusuario.findAlumnosByGrupo(idGrupo);
 	}
 
 	//Métodos PUT-----------------------------------------------------------

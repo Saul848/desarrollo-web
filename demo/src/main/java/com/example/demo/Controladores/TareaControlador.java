@@ -103,7 +103,6 @@ public class TareaControlador {
                     tareaExistente.setIdGrupo(tareaActualizada.getIdGrupo());
                     tareaExistente.setTitulo(tareaActualizada.getTitulo());
                     tareaExistente.setDescripcion(tareaActualizada.getDescripcion());
-                    tareaExistente.setCalificacion(tareaActualizada.getCalificacion());
                     tareaExistente.setFechaInicio(tareaActualizada.getFechaInicio());
                     tareaExistente.setFechaTermino(tareaActualizada.getFechaTermino());
                     tareaExistente.setEstado(tareaActualizada.getEstado());

@@ -1,6 +1,7 @@
 package com.example.demo.Controladores;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,7 @@ import com.example.demo.Rep_Interfaces.IEntrega;
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Entregas
  * EntregaControlador 
  */
+@CrossOrigin(origins = "*")
 @RestController 
 @RequestMapping("/entregas")
 public class EntregaControlador {
@@ -73,11 +76,12 @@ public class EntregaControlador {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la entrega con id " + id);
     }
 
-    //GET /entregas/actividad?idActividad=1 -> entregas de una actividad
-    @GetMapping("/actividad")
-    public List<Entrega> obtenerPorActividad(@RequestParam Integer idActividad) {
+    //GET /entregas/actividad/1 -> entregas de una actividad
+    @GetMapping("/actividad/{idActividad}")
+    public List<Entrega> obtenerPorActividad(@PathVariable Integer idActividad) {
         return ientrega.findByIdActividad(idActividad);
     }
+
 
     //GET /entregas/alumno?idAlumno=abc -> entregas de un alumno
     @GetMapping("/alumno")
@@ -87,30 +91,35 @@ public class EntregaControlador {
 
     //métodos put
 
-    //PUT /entregas/{id}/calificar -> el profesor asigna calificación y retroalimentación
-    @PutMapping("/{id}/calificar")
-    public ResponseEntity<?> calificarEntrega(@PathVariable Integer id, @RequestBody Entrega datos) {
-        Optional<Entrega> entregaExistente = ientrega.findById(id);
-        if (entregaExistente.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No se encontró la entrega con id " + id);
+    // PUT /entregas/2/calificacion
+    @PutMapping("/{idEntrega}/calificacion")
+    public ResponseEntity<?> calificarEntrega(@PathVariable Integer idEntrega, @RequestBody CalificacionRequest datos) {
+        BigDecimal nota = datos.calificacion();
+        if (nota == null
+                || nota.compareTo(BigDecimal.ZERO) < 0
+                || nota.compareTo(BigDecimal.TEN) > 0) {
+            return ResponseEntity.badRequest().body("La calificación debe estar entre 0 y 10.");
         }
 
-        //la calificación es obligatoria y no puede ser negativa
-        if (datos.getCalificacionObtenida() == null
-                || datos.getCalificacionObtenida().compareTo(BigDecimal.ZERO) < 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Se requiere una calificación válida (mayor o igual a 0)");
+        String retro = datos.retroalimentacion() == null ? "" : datos.retroalimentacion().trim();
+        if (retro.length() > 255) {
+            return ResponseEntity.badRequest()
+                    .body("La retroalimentación no puede pasar de 255 caracteres.");
         }
 
-        //solo se actualizan estos dos campos, el resto de la entrega no se modifica
-        Entrega entrega = entregaExistente.get();
-        entrega.setCalificacionObtenida(datos.getCalificacionObtenida());
-        entrega.setRetroalimentacion(datos.getRetroalimentacion());
+        Optional<Entrega> buscada = ientrega.findById(idEntrega);
+        if (buscada.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la entrega.");
+        }
 
-        Entrega entregaActualizada = ientrega.save(entrega);
-        return ResponseEntity.ok(entregaActualizada);
+        Entrega entrega = buscada.get();
+        entrega.setCalificacionObtenida(nota.setScale(2, RoundingMode.HALF_UP));
+        entrega.setRetroalimentacion(retro.isEmpty() ? null : retro);
+        return ResponseEntity.ok(ientrega.save(entrega));
     }
+
+    // Datos que llegan en el cuerpo del PUT
+    public record CalificacionRequest(BigDecimal calificacion, String retroalimentacion) {}
 
     //PUT /entregas/{id} -> el alumno actualiza contenido y/o archivos antes de ser calificada
     @PutMapping("/{id}")

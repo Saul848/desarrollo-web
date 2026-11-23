@@ -24,8 +24,13 @@ public class Entrega {
 
     private String contenido;
     private String archivos;
+
+    @Column(name = "calificacion_obtenida")
     private BigDecimal calificacionObtenida;
+
     private String retroalimentacion;
+
+    @Column(name = "fecha_entrega")
     private LocalDateTime fechaEntrega;
     
     /**

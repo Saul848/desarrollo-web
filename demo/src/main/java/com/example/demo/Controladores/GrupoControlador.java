@@ -76,7 +76,7 @@ public class GrupoControlador {
                 .body("No se encontró el grupo con el ID especificado.");
     }
 
-    //
+    //obtener los grupos en los que está un alumno
     @GetMapping("/alumno/{matricula}")
     public List<Grupo> obtenerGruposDeAlumno(@PathVariable String matricula){
         return igrupo.findGruposByAlumno(matricula);
@@ -134,6 +134,26 @@ public class GrupoControlador {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Error al inscribir al alumno: " + e.getMessage());
+        }
+    }
+
+    // Expulsa a un alumno del grupo
+    @DeleteMapping("/{idGrupo}/alumnos/{matriculaAlumno}")
+    public ResponseEntity<?> expulsarAlumno(
+            @PathVariable Integer idGrupo,
+            @PathVariable String matriculaAlumno) {
+
+        try {
+            if (!igrupo.existsById(idGrupo)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No se encontró el grupo especificado.");
+            }
+            igrupo.expulsarAlumnoDeGrupo(idGrupo, matriculaAlumno);
+
+            return ResponseEntity.noContent().build();   // 204
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al expulsar al alumno: " + e.getMessage());
         }
     }
 

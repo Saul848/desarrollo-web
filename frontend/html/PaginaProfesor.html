@@ -156,9 +156,17 @@
                 </div>
             </div>
 
-            <div id="seccion-alumnos">
-                <div id="contenedor-alumnos">
-                    <!--Aquí se insertará dinamicamente a los alumnos-->
+            <!-- seccion de alumnos-->
+            <div id="seccion-alumnos" class="seccion-grupo">
+                <div id="alumnos">
+                    <div id="barra-acciones-alumnos">
+                        <h3 id="titulo-alumnos">Alumnos:</h3>
+                        <button type="button" id="btnAgregarAlumnos">Agregar alumnos</button>
+                    </div>
+
+                    <div id="contenedor-alumnos">
+                        <!--Aquí se insertarán dinámicamente las tarjetas de los alumnos-->
+                    </div>
                 </div>
             </div>
             
@@ -217,6 +225,81 @@
         </form>
     </div>
 
+    <!--Modal para crear una actividad (pegar justo después del modal #modal-crear-grupo)-->
+    <div id="modal-crear-tarea" role="dialog" aria-modal="true" aria-labelledby="titulo-crear-tarea">
+        <form id="form-crear-tarea" novalidate>
+
+            <header class="cabecera-crear-tarea">
+                <h2 id="titulo-crear-tarea">Crear actividad</h2>
+                <button type="button" id="btnCerrarCrearTarea" aria-label="Cerrar">×</button>
+            </header>
+
+            <div class="cuerpo-crear-tarea">
+
+                <div class="campo-tarea">
+                    <label for="titulo-tarea">Título de la actividad:</label>
+                    <input type="text" id="titulo-tarea" maxlength="150">
+                </div>
+
+                <div class="campo-tarea">
+                    <label for="descripcion-tarea">Descripción:</label>
+                    <textarea id="descripcion-tarea" rows="2" maxlength="255"></textarea>
+                </div>
+
+                <!-- Fechas -->
+                <div class="fila-tarea">
+                    <fieldset class="grupo-fechas">
+                        <legend>Fecha y hora de inicio/cierre:</legend>
+                        <div class="par-fecha">
+                            <label for="inicio-tarea">Inicio</label>
+                            <input type="date" id="inicio-tarea">
+                            <select id="hora-inicio-tarea" aria-label="Hora de inicio"></select>
+                        </div>
+                        <div class="par-fecha">
+                            <label for="fin-tarea">Cierre</label>
+                            <input type="date" id="fin-tarea">
+                            <select id="hora-fin-tarea" aria-label="Hora de cierre"></select>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <p id="error-crear-tarea" role="alert" hidden></p>
+
+                <div class="acciones-crear-tarea">
+                    <button type="button" id="btnCancelarTarea">Cancelar</button>
+                    <button type="submit" id="btnConfirmarTarea">+ Crear Actividad</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!--Modal para agregar alumnos a un grupo------->
+    <div id="modal-agregar-alumnos" role="dialog" aria-modal="true" aria-labelledby="titulo-agregar-alumnos">
+        <form id="form-agregar-alumnos" novalidate>
+
+            <header class="cabecera-agregar-alumnos">
+                <h2 id="titulo-agregar-alumnos">Agregar alumnos</h2>
+                <button type="button" id="btnCerrarAgregarAlumnos" aria-label="Cerrar">×</button>
+            </header>
+
+            <div class="cuerpo-agregar-alumnos">
+                <label for="buscar-alumnos-disponibles">Alumnos disponibles</label>
+                <input type="text" id="buscar-alumnos-disponibles" autocomplete="off"
+                    placeholder="Buscar alumnos por nombre/matrícula">
+
+                <ul id="lista-alumnos-disponibles"></ul>
+
+                <p id="error-agregar-alumnos" role="alert" hidden></p>
+
+                <div class="acciones-agregar-alumnos">
+                    <button type="button" id="btnCancelarAgregarAlumnos">Cancelar</button>
+                    <button type="submit" id="btnConfirmarAgregarAlumnos">+ Agregar alumnos</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <!--Modal con el contenido de una actividad-->
     <div id="modal-tarea" role="dialog" aria-modal="true" aria-label="Detalle de la actividad">
         <div class="tarjeta-tarea">
@@ -229,7 +312,7 @@
                 <button type="button" id="btnCerrarTarea" aria-label="Cerrar">×</button>
             </div>
 
-            <div id="contenido-tarea">
+            <div id="contenido-tarea" class="panel-tarea">
                 <div class="campo-detalle">
                     <span class="etiqueta-detalle">Título de actividad:</span>
                     <p id="detalle-titulo"></p>
@@ -238,6 +321,12 @@
                     <span class="etiqueta-detalle">Descripción:</span>
                     <p id="detalle-descripcion"></p>
                 </div>
+            </div>
+
+            <div id="entregas-tarea" class="panel-tarea" hidden>
+                <ul id="lista-entregas">
+                    <!--Aqui se insertarán los alumnos del grupo dinamicamente-->
+                </ul>
             </div>
 
             <div class="pie-tarea">
