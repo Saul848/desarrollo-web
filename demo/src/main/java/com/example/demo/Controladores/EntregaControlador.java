@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import com.example.demo.Rep_Interfaces.IEntrega;
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Entregas
  * EntregaControlador 
  */
+@CrossOrigin(origins = "*")
 @RestController 
 @RequestMapping("/entregas")
 public class EntregaControlador {

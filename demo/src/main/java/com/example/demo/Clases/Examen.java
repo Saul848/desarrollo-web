@@ -2,6 +2,7 @@ package com.example.demo.Clases;
 
 import java.util.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,8 +20,11 @@ public class Examen {
     private String titulo;
     private Integer calificacion;
     private Date fecha_limite;
-    private int intentos;
-    private int tiempo_limite;
+
+    @Column(name = "intentos_permitidos")
+    private Integer intentos;
+    
+    private Integer tiempo_limite;
     
     //Getters y setters------------------
     public Integer getId_examen() {
@@ -58,17 +62,17 @@ public class Examen {
         this.fecha_limite = fecha_limite;
     }
     
-    public int getIntentos() {
+    public Integer getIntentos() {
         return intentos;
     }
-    public void setIntentos(int intentos) {
+    public void setIntentos(Integer intentos) {
         this.intentos = intentos;
     }
     
-    public int getTiempo_limite() {
+    public Integer getTiempo_limite() {
         return tiempo_limite;
     }
-    public void setTiempo_limite(int tiempo_limite) {
+    public void setTiempo_limite(Integer tiempo_limite) {
         this.tiempo_limite = tiempo_limite;
     }
 }

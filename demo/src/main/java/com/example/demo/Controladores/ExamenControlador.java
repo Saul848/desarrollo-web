@@ -15,6 +15,7 @@ import com.example.demo.Rep_Interfaces.IExamen;
  * Clase que se encarga de recibir las peticiones y realizar las acciones sobre Profesores
  * ProfesorControlador
  */
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/examenes")
 public class ExamenControlador {
