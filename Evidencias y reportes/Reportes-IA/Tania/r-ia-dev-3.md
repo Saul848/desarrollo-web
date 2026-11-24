@@ -21,8 +21,8 @@ Prompt original | Solicitud de apoyo para construir la página de inicio de sesi
 Respuesta de IA | Propuestas de estructura HTML, estilos CSS (incluyendo recortes geométricos y paleta cromática), lógica de peticiones HTTP con `fetch` en JavaScript, adecuaciones en `UsuarioControlador` para generar matrículas únicas y diagnósticos de errores en navegador. |
 Código anterior | Commit https://github.com/Saul848/desarrollo-web/commit/c3968e5ea76b37038de223f64bc898f08df8d68a |
 Código posterior | Commit https://github.com/Saul848/desarrollo-web/commit/b705c051ed7daf0bbfb8e4b2acad325ad038c051 |
-Diferencias entre versiones | ![alt text](image.png) |
-Prueba de funcionamiento | ![alt text](image-1.png)![alt text](image-2.png) |
+Diferencias entre versiones | ![alt text](../Tania/imagenes/image.png) |
+Prueba de funcionamiento | ![alt text](../Tania/imagenes/image-1.png)![alt text](../Tania/imagenes/image-2.png) |
 Código de uso | Generación / Modificación / Depuración / Explicación / Diseño |
 Reflexión del estudiante | Se logró crear la página de inicio de sesión y de registro exitosamente, se corrigieron algunos métodos del controlador de usuario para lograr crear una matrícula aleatoriamente y evitar que el usuario la ingrese manualmente cuando haga su registro, conservando así la consistencia en las matrículas. |
 
