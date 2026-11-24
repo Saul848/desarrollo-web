@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
  * ReactivoControlador
  */
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/reactivos")
 public class ReactivoControlador {
     
