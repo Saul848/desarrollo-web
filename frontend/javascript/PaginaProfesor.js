@@ -2,11 +2,12 @@
 const usuarioActual = JSON.parse(sessionStorage.getItem("usuario"));
 
 if (!usuarioActual || usuarioActual.rol !== "profesor") {
-    window.location.href = "login.html";
+    window.location.href = "Login.html";
 }
 
 //Cuando se carga la página se muestra el listado de los cursos
 document.addEventListener('DOMContentLoaded', ()=>{
+    console.log("pagina abierta 1 esegundoooooooooooooooooooooo")
     mostrarModal('areaCursos')
     // Sección con la que arranca la página
     mostrarSeccion("actividades");
@@ -37,7 +38,7 @@ const btnLogout = document.getElementById('logout')
 
 function cerrarSesion (){
     sessionStorage.clear();                       // borra "usuario", "matricula" y cualquier otro dato de la sesión
-    window.location.replace("login.html");
+    window.location.replace("Login.html");
 }
 
 btnLogout.addEventListener('click', cerrarSesion)

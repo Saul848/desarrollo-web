@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const correo = correoInput.value.trim();
         const password = passwordInput.value;
 
+        console.log(correo)
+        console.log(password)
+        
         if (!correo || !password) {
             errorMessage.textContent = 'Por favor, completa todos los campos.';
             return;
