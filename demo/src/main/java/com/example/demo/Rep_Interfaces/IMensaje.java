@@ -6,7 +6,7 @@ import com.example.demo.Clases.Mensaje;
 
 public interface IMensaje extends JpaRepository<Mensaje, Integer> {
 
-    // Devuelve los mensajes enviados por un remitente específico (correo o identificador)
+    // Devuelve los mensajes enviados por un remitente específico 
     List<Mensaje> findByRemitente(String remitente);
 
     // Mensajes recibidos por un destinatario (bandeja de entrada)
@@ -20,4 +20,7 @@ public interface IMensaje extends JpaRepository<Mensaje, Integer> {
 
     // busqueda de mesnaje por usuario logueado
     List<Mensaje> findByIdDestinatarioAndAsuntoContainingIgnoreCase(String idDestinatario, String asunto);
+
+    // Mensajes no leidoss
+    List<Mensaje> findByIdDestinatarioAndLeido(String idDestinatario, Boolean leido);
 }
