@@ -16,6 +16,19 @@
         <div id="contenedor-botones">
             <button id="tituloPagina"><span>Lakoa I</span></button>
 
+            <button id="btnNotificaciones" type="button"
+                aria-label="Notificaciones" title="Notificaciones">
+
+                <svg viewBox="0 0 24 24" width="28" height="28"
+                    fill="none" stroke="currentColor"
+                    stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
+                </svg>
+            </button>
+
             <button id="btnCorreo" type="button" aria-label="Correo" title="Correo">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
                     stroke-width="1.6" stroke-linejoin="round" aria-hidden="true">
@@ -100,22 +113,40 @@
                     </div>
 
                     <!-- Dentro de #seccion-actividades -> #actividades, después de #contenedor-actividades: -->
-                    <div id="detalle-tarea" style="display: none; margin-top: 20px; padding: 16px; background: #fff; border-radius: 8px;">
-                        <h3 id="tarea-titulo">Selecciona una tarea</h3>
-                        <p id="tarea-descripcion"></p>
-                        <p id="tarea-info"></p>
-                        <p id="tarea-estado-entrega"></p>
+                    <!-- Ventana emergente para ver la actividad y enviar/actualizar entrega -->
+                    <div id="detalle-tarea" class="modal-entrega-overlay" role="dialog" aria-modal="true" aria-labelledby="tarea-titulo" style="display: none;">
+                        <div class="tarjeta-entrega-modal">
+                            <div class="cabecera-entrega-modal">
+                                <h3 id="tarea-titulo">Selecciona una tarea</h3>
+                                <button type="button" id="btnCerrarDetalleTarea" class="btn-cerrar-entrega" aria-label="Cerrar">×</button>
+                            </div>
 
-                        <form id="form-entrega">
-                            <label for="input-contenido">Contenido / respuesta:</label><br>
-                            <textarea id="input-contenido" rows="3" style="width: 100%; margin: 8px 0;"></textarea><br>
+                            <div class="cuerpo-entrega-modal">
+                                <p id="tarea-descripcion" class="texto-detalle-tarea"></p>
+                                <div class="meta-entrega">
+                                    <span id="tarea-info"></span>
+                                    <span id="tarea-estado-entrega" class="estado-entrega-badge"></span>
+                                </div>
 
-                            <label for="input-archivos">Archivo o nombre de archivo:</label><br>
-                            <input type="text" id="input-archivos" placeholder="ej. tarea1.pdf" style="width: 100%; margin: 8px 0;"><br>
+                                <form id="form-entrega" class="form-entrega-alumno">
+                                    <div class="campo-entrega">
+                                        <label for="input-contenido">Contenido / respuesta:</label>
+                                        <textarea id="input-contenido" rows="4" placeholder="Escribe aquí tu respuesta o comentario..."></textarea>
+                                    </div>
 
-                            <button type="submit" id="btn-enviar-entrega">Enviar entrega</button>
-                        </form>
-                        <p id="mensaje-entrega"></p>
+                                    <div class="campo-entrega">
+                                        <label for="input-archivos">Archivo o nombre de archivo:</label>
+                                        <input type="text" id="input-archivos" placeholder="ej. tarea1.pdf">
+                                    </div>
+
+                                    <div class="acciones-entrega">
+                                        <button type="submit" id="btn-enviar-entrega" class="btn-primario-entrega">Enviar entrega</button>
+                                    </div>
+                                </form>
+
+                                <p id="mensaje-entrega" class="mensaje-entrega-estado" role="status"></p>
+                            </div>
+                        </div>
                     </div>
                     
                     <div id="avance-alumno">
@@ -144,10 +175,32 @@
                         <!--aqui se insertarán los examenes dinamicamente-->
                     </div>
 
-                    <div id="detalle-examen" style="display: none; margin-top: 20px; padding: 16px; background: #fff; border-radius: 8px;">
-                        <h3 id="examen-titulo"></h3>
-                        <p id="examen-info"></p>
-                        <p id="mensaje-examen"></p>
+                    <div id="detalle-examen" class="modal-entrega-overlay" role="dialog" aria-modal="true" aria-labelledby="examen-titulo" style="display: none;">
+                        <div class="tarjeta-entrega-modal">
+                            <div class="cabecera-entrega-modal">
+                                <h3 id="examen-titulo">Detalle del examen</h3>
+                                <button type="button" id="btnCerrarDetalleExamen" class="btn-cerrar-entrega" aria-label="Cerrar">×</button>
+                            </div>
+
+                            <div class="cuerpo-entrega-modal">
+                                <div class="meta-entrega">
+                                    <span id="examen-info"></span>
+                                </div>
+                                <p id="mensaje-examen" class="mensaje-entrega-estado" role="status"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="seccion-alumnos" class="seccion-grupo">
+                <div id="alumnos-vista">
+                    <div id="barra-acciones-alumnos-vista">
+                        <h3 id="titulo-alumnos-vista">Integrantes del grupo</h3>
+                    </div>
+
+                    <div id="contenedor-integrantes-grupo">
+                        <!-- se insertarán dinámicamente el profesor y los alumnos -->
                     </div>
                 </div>
             </div>
@@ -156,5 +209,6 @@
     </section>
 
     <script src="../javascript/PaginaAlumno.js"></script>
+    <script src="../javascript/notificaciones.js"></script>
 </body>
 </html>

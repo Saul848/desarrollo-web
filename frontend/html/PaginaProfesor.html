@@ -16,6 +16,19 @@
         <div id="contenedor-botones">
             <button id="tituloPagina"><span>Lakoa I</span></button>
 
+            <button id="btnNotificaciones" type="button"
+                aria-label="Notificaciones" title="Notificaciones">
+
+                <svg viewBox="0 0 24 24" width="28" height="28"
+                    fill="none" stroke="currentColor"
+                    stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
+                </svg>
+            </button>
+
             <button id="btnCorreo" type="button" aria-label="Correo" title="Correo">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
                     stroke-width="1.6" stroke-linejoin="round" aria-hidden="true">
@@ -34,8 +47,8 @@
 
                 <!--Modal flotante para el botón de perfil-->
                 <div id="modal-perfil" hidden>
-                    <span id="perfil-nombre">Nombre de usuario</span>
-                    <span id="perfil-matricula">Matricula</span>
+                    <span id="perfil-nombre">Nombre de usuario: </span>
+                    <span id="perfil-matricula">Matricula: </span>
                     <button id="logout" type="button">Cerrar sesión</button>
                 </div>
             </div>
@@ -59,7 +72,7 @@
             </div>
             <div id="areaPrincipal">
                 <div id="areaBotones">
-                <button id="btnCrearCurso" type="button">+ Crear nuevo grupo</button>
+                    <button id="btnCrearCurso" type="button">+ Crear nuevo grupo</button>
                 </div>
                 <div id="contenedorCursos">
                     <!--Aqui se insertarán los cursos dinamicamente-->
@@ -70,15 +83,18 @@
         <!--Modal dentro de un curso-->
         <div id="areaActividad" class="modal-class">
             <div id="barra-opciones-profesor">
-                <span id="nombre-curso">
-                    <!--Aqui se insertará el nombre del curso dinamicamente-->
-                </span>
+                <div id="areaBotones" style="align-items: center; justify-content: space-between; padding: 18px 36px 12px;">
+                    <span id="nombre-curso" style="padding: 0;">
+                        <!--Aqui se insertará el nombre del curso dinamicamente-->
+                    </span>
+                    <button type="button" id="btnCerrarGrupo" class="btn-expulsar-alumno">Cerrar grupo</button>
+                </div>
+
                 <div id="barra-botones">
                     <ul>
                         <li>
                             <button type="button" class="activo" data-seccion="actividades">Actividades</button>
                         </li>
-
                         <li>
                             <button type="button" data-seccion="examenes">Exámenes</button>
                         </li>
@@ -110,24 +126,6 @@
                             <!--Aqui se insertarán las actividades dinamicamente-->
                         </div>
 
-                        <aside id="panel-avance" aria-labelledby="titulo-avance">
-                            <h3 id="titulo-avance">Avance general del grupo</h3>
-                            <ul id="lista-avance">
-                                <!-- Filas de ejemplo: después se llenarán dinámicamente con los alumnos -->
-                                <li class="fila-avance">
-                                    <span class="avance-matricula">Matricula</span>
-                                    <progress class="avance-barra" value="40" max="100" aria-label="Avance del alumno"></progress>
-                                </li>
-                                <li class="fila-avance">
-                                    <span class="avance-matricula">Matricula</span>
-                                    <progress class="avance-barra" value="25" max="100" aria-label="Avance del alumno"></progress>
-                                </li>
-                                <li class="fila-avance">
-                                    <span class="avance-matricula">Matricula</span>
-                                    <progress class="avance-barra" value="60" max="100" aria-label="Avance del alumno"></progress>
-                                </li>
-                            </ul>
-                        </aside>
                     </div>
 
                 </div>
@@ -147,6 +145,7 @@
                                 <button type="button" data-filtro="prorroga">Con prorroga</button>
                             </li>
                         </ul>
+                        <button type="button" id="btnCrearExamen">+ Crear Examen</button>
                     </div>
 
                     <div id="contenedor-examenes">
@@ -335,6 +334,61 @@
         </div>
     </div>
 
-    <script src="../javascript/PaginaProfesor.js"></script>
+        <!-- Modal para crear examen y reactivos -->
+    <div id="modal-crear-examen" class="modal-overlay-examen" role="dialog" aria-modal="true" aria-labelledby="titulo-crear-examen">
+        <form id="form-crear-examen" class="panel-crear-examen">
+            <div class="cabecera-modal-examen">
+                <h2 id="titulo-crear-examen">Crear examen</h2>
+                <button type="button" id="btnCerrarModalExamen" class="btn-cerrar-modal" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <div class="campo-form">
+                <label for="titulo-examen">Título del examen:</label>
+                <input type="text" id="titulo-examen" placeholder="Ej. Primer parcial de Álgebra" required>
+            </div>
+
+            <div class="fila-campos-examen">
+                <div class="campo-form">
+                    <label for="fecha-limite-examen">Fecha y hora límite:</label>
+                    <input type="datetime-local" id="fecha-limite-examen" required>
+                </div>
+                <div class="campo-form">
+                    <label for="puntos-examen">Puntos totales:</label>
+                    <input type="number" id="puntos-examen" min="1" step="0.5" placeholder="100" required>
+                </div>
+            </div>
+
+            <div class="fila-campos-examen">
+                <div class="campo-form">
+                    <label for="intentos-examen">Intentos permitidos:</label>
+                    <input type="number" id="intentos-examen" min="1" value="1" required>
+                </div>
+                <div class="campo-form">
+                    <label for="tiempo-limite-examen">Tiempo límite (min):</label>
+                    <input type="number" id="tiempo-limite-examen" min="1" placeholder="60">
+                </div>
+            </div>
+
+            <hr class="separador-examen">
+
+            <div class="encabezado-reactivos">
+                <h3>Reactivos del examen</h3>
+                <button type="button" id="btnAgregarReactivo" class="btn-secundario-turquesa">+ Añadir reactivo</button>
+            </div>
+
+            <div id="lista-reactivos">
+                <!-- Aquí se agregan dinámicamente las tarjetas de reactivos -->
+            </div>
+
+            <p id="error-crear-examen" class="error-form" role="alert" hidden></p>
+
+            <div class="acciones-modal-examen">
+                <button type="button" id="btnCancelarExamen" class="btn-cancelar-rojo">Cancelar</button>
+                <button type="submit" id="btnConfirmarExamen" class="btn-confirmar-turquesa">+ Crear Examen</button>
+            </div>
+        </form>
+    </div>
+    <script src="../javascript/PaginaAlumno.js"></script>
+    <script src="../javascript/notificaciones.js"></script>
 </body>
 </html>

@@ -64,6 +64,7 @@ body {
 }
 
 #btnCorreo,
+#btnNotificaciones,
 #btnPerfil {
     width: 48px;
     height: 48px;
@@ -74,7 +75,8 @@ body {
     cursor: pointer;
 }
 
-#btnCorreo {
+#btnCorreo,
+#btnNotificaciones{
     background: var(--gris-boton);
     border: 3px solid var(--gris-borde);
     color: #f0f0f0;              /* color del sobre */
@@ -442,6 +444,405 @@ body {
 #contenedor-actividades,
 #contenedor-examenes {
     margin-top: 20px;
+}
+
+/* ===== Tarjetas de actividad en Alumno ===== */
+#contenedor-actividades {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.tarjeta-tarea-alumno {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 16px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid var(--gris-borde);
+    border-left: 6px solid var(--turquesa-oscuro);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.tarjeta-tarea-alumno:hover {
+    transform: translateY(-2px);
+    border-color: var(--turquesa);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.tarjeta-tarea-alumno.tarea-prorroga {
+    border-left-color: var(--morado);
+}
+
+.tarjeta-tarea-alumno.tarea-inactivo {
+    border-left-color: #8a8a8a;
+}
+
+.tarea-alumno-titulo {
+    grid-column: 1;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #111;
+}
+
+.tarea-alumno-meta {
+    grid-column: 1;
+    margin: 0;
+    font-size: 14px;
+    color: #444;
+}
+
+.tarea-alumno-fecha {
+    grid-column: 1;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.tarea-alumno-estado {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    padding: 4px 16px;
+    border-radius: 999px;
+    background: var(--turquesa-oscuro);
+    color: #fff;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.tarjeta-tarea-alumno.tarea-prorroga .tarea-alumno-estado {
+    background: var(--morado);
+}
+
+.tarjeta-tarea-alumno.tarea-inactivo .tarea-alumno-estado {
+    background: #5c5c5c;
+}
+
+/* ===== Modal emergente de entrega ===== */
+.modal-entrega-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.tarjeta-entrega-modal {
+    width: min(640px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.cabecera-entrega-modal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px;
+    background: var(--turquesa);
+    color: #fff;
+}
+
+.cabecera-entrega-modal h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.btn-cerrar-entrega {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.cuerpo-entrega-modal {
+    padding: 18px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.texto-detalle-tarea {
+    margin: 0;
+    color: #333;
+    white-space: pre-line;
+}
+
+.meta-entrega {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    padding: 10px 14px;
+    background: var(--fondo);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.estado-entrega-badge {
+    font-weight: 600;
+    color: var(--turquesa-oscuro);
+}
+
+.form-entrega-alumno {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.campo-entrega {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.campo-entrega label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.campo-entrega textarea,
+.campo-entrega input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #8a8a8a;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.campo-entrega textarea:focus,
+.campo-entrega input:focus {
+    outline: 2px solid var(--turquesa);
+    border-color: var(--turquesa);
+}
+
+.acciones-entrega {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-primario-entrega {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #14c9b5;
+    color: #06332f;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primario-entrega:hover:not(:disabled) {
+    filter: brightness(0.94);
+}
+
+.btn-primario-entrega:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.mensaje-entrega-estado {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--turquesa-oscuro);
+}
+
+/* ===== Sección Alumnos e Integrantes en vista de Alumno ===== */
+#barra-acciones-alumnos-vista {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+#titulo-alumnos-vista {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #111;
+}
+
+#contenedor-integrantes-grupo {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.tarjeta-integrante {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 18px;
+    background: #fff;
+    border: 1px solid var(--gris-borde);
+    border-left: 6px solid var(--morado);
+    border-radius: 12px;
+}
+
+.tarjeta-integrante.es-profesor {
+    border-left-color: var(--turquesa-oscuro);
+    background: #f4fbfa;
+}
+
+.integrante-encabezado {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.badge-rol {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--morado);
+}
+
+.badge-rol.profesor {
+    background: var(--turquesa-oscuro);
+}
+
+.integrante-nombre {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111;
+    overflow-wrap: anywhere;
+}
+
+.integrante-matricula {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.mensaje-integrantes {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #555;
+}
+
+/* ===== Tarjetas de examen ===== */
+#contenedor-examenes {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.tarjeta-examen {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 16px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid var(--gris-borde);
+    border-left: 6px solid var(--morado);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.tarjeta-examen:hover {
+    transform: translateY(-2px);
+    border-color: var(--turquesa);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.tarjeta-examen.examen-concluido {
+    border-left-color: #8a8a8a;
+}
+
+.tarjeta-examen.examen-prorroga {
+    border-left-color: var(--turquesa-oscuro);
+}
+
+.examen-titulo-card {
+    grid-column: 1;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #111;
+}
+
+.examen-meta-card {
+    grid-column: 1;
+    margin: 0;
+    font-size: 14px;
+    color: #444;
+}
+
+.examen-fecha-card {
+    grid-column: 1;
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.examen-estado-badge {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    padding: 4px 16px;
+    border-radius: 999px;
+    background: var(--morado);
+    color: #fff;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.tarjeta-examen.examen-concluido .examen-estado-badge {
+    background: #5c5c5c;
+}
+
+.tarjeta-examen.examen-prorroga .examen-estado-badge {
+    background: var(--turquesa-oscuro);
+}
+
+@media (max-width: 600px) {
+    .tarjeta-examen {
+        grid-template-columns: 1fr;
+    }
+
+    .examen-estado-badge {
+        grid-column: 1;
+        grid-row: auto;
+        justify-self: start;
+        margin-top: 4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .tarjeta-tarea-alumno {
+        grid-template-columns: 1fr;
+    }
+
+    .tarea-alumno-estado {
+        grid-column: 1;
+        grid-row: auto;
+        justify-self: start;
+        margin-top: 4px;
+    }
 }
 
 @media (max-width: 768px) {

@@ -215,5 +215,33 @@ public class MensajeControlador {
         );
     }
 
+    // Mensajes recibidos no leídos para un destinatario
+    @GetMapping("/notificaciones")
+    public ResponseEntity<List<Map<String, Object>>> obtenerNotificaciones(
+            @RequestParam String idDestinatario) {
+
+        List<Mensaje> noLeidos =
+                imensaje.findByIdDestinatarioAndLeido(idDestinatario, false);
+
+        List<Map<String, Object>> respuesta = noLeidos.stream().map(msg -> {
+            Map<String, Object> item = new HashMap<>();
+
+            String nombreRemitente = iusuario
+                    .findById(msg.getRemitente())
+                    .map(Usuario::getNombre)
+                    .orElse("Usuario desconocido");
+
+            item.put("id", msg.getId());
+            item.put("fecha", msg.getFecha());
+            item.put("remitente", nombreRemitente);
+            item.put("asunto", msg.getAsunto());
+            item.put("cuerpo", msg.getCuerpo());
+            item.put("leido", msg.getLeido());
+
+            return item;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(respuesta);
+    }
 
 }
