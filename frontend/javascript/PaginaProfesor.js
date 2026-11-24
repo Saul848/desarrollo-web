@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     mostrarModal('areaCursos')
     // Sección con la que arranca la página
     mostrarSeccion("actividades");
+    usuario = sessionStorage.getItem('usuario')
+    document.getElementById("perfil-nombre").append(JSON.parse(usuario).nombre)
+    document.getElementById("perfil-nombre").append(JSON.parse(usuario).matricula)
 })
 
 function mostrarModal(idModal){
@@ -33,9 +36,11 @@ document.getElementById("tituloPagina").addEventListener("click", () => {
 const btnLogout = document.getElementById('logout')
 
 function cerrarSesion (){
-    window.location.href('login.html');
+    sessionStorage.clear();                       // borra "usuario", "matricula" y cualquier otro dato de la sesión
+    window.location.replace("login.html");
 }
 
+btnLogout.addEventListener('click', cerrarSesion)
 const btnPerfil = document.getElementById("btnPerfil");
 const modalPerfil = document.getElementById("modal-perfil");
 
@@ -149,7 +154,8 @@ function mostrarSeccion(nombre) {
 }
 
 const API = "http://localhost:9999";
-const MATRICULA_PROFESOR = sessionStorage.getItem("matricula") || "20230001";
+const MATRICULA_PROFESOR = JSON.parse(sessionStorage.getItem("usuario")).matricula;
+
 const contenedorCursos = document.getElementById("contenedorCursos");
 
 

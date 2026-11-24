@@ -1123,3 +1123,5 @@ function mostrarSeccion(nombre) {
         seccion.style.display = "block";
     }
 }
+
+

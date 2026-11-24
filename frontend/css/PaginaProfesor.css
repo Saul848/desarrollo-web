@@ -64,6 +64,7 @@ body {
 }
 
 #btnCorreo,
+#btnNotificaciones,
 #btnPerfil {
     width: 48px;
     height: 48px;
@@ -74,11 +75,13 @@ body {
     cursor: pointer;
 }
 
-#btnCorreo {
+#btnCorreo,
+#btnNotificaciones{
     background: var(--gris-boton);
     border: 3px solid var(--gris-borde);
     color: #f0f0f0;              /* color del sobre */
 }
+
 
 #btnPerfil {
     background: #fff;
