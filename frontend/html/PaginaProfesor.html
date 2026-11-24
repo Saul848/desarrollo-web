@@ -393,6 +393,28 @@
             </div>
         </form>
     </div>
+
+    <!-- Modal para ver respuestas y administrar un examen -->
+    <div id="modal-detalle-examen" class="modal-overlay-examen" role="dialog" aria-modal="true" aria-labelledby="titulo-detalle-examen" style="display: none;">
+        <div class="panel-crear-examen">
+            <div class="cabecera-modal-examen">
+                <h2 id="titulo-detalle-examen">Detalle del examen</h2>
+                <button type="button" id="btnCerrarDetalleExamenProf" class="btn-cerrar-modal" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <p id="info-detalle-examen" class="tarea-descripcion"></p>
+
+            <hr class="separador-examen">
+
+            <h3>Respuestas de alumnos</h3>
+            <div id="contenedor-respuestas-examen"></div>
+
+            <div class="acciones-modal-examen" style="margin-top: 1.2rem;">
+                <button type="button" id="btnEliminarExamen" class="btn-cancelar-rojo">Eliminar examen</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../javascript/PaginaProfesor.js"></script>
 </body>
 </html>

@@ -817,6 +817,57 @@ body {
     background: var(--turquesa-oscuro);
 }
 
+/* ===== Reactivos dentro del modal de examen (Alumno) ===== */
+.lista-reactivos-alumno {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.tarjeta-reactivo-alumno {
+    padding: 14px 16px;
+    background: #fafafa;
+    border: 1px solid var(--gris-borde);
+    border-left: 5px solid var(--turquesa-oscuro);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.reactivo-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--turquesa-oscuro);
+}
+
+.reactivo-enunciado {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111;
+}
+
+.opciones-reactivo-alumno {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.opcion-radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #222;
+    cursor: pointer;
+}
+
 @media (max-width: 600px) {
     .tarjeta-examen {
         grid-template-columns: 1fr;
