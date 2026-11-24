@@ -39,8 +39,9 @@ Errores en algunas politicas CORS por falta de declaración explicita de permiti
 
 Errores 400 en algunas peticiones de los controladores que tuvieron que adaptarse para poder funcionar
 
+Error 500 (PSQLException 42703) en /tareas/obtenerTareasGrupo/{idGrupo}: la entidad Tarea mapeaba la columna calificacion, que no existe en la tabla desweb.tarea. Se corrigió quitándola de la entidad y limpiando anotaciones duplicadas (@NotBlank y @Pattern en estado).
 
-
+Error 500 (Bad value for type int : 00:35:00) en /examenes/grupo/{idGrupo}: el backend lee con getInt una columna de duración. Pendiente: cambiar el tipo en la entidad de examen (por ejemplo a LocalTime) y reiniciar Spring Boot.
 
 ---
 
@@ -75,7 +76,7 @@ Documentar el uso de herramientas de inteligencia artificial durante el desarrol
 Describir brevemente la contribución de cada integrante.
 
 - **Saúl Ortiz Zarate:** Se implementaron peticiones Fetch en la clase Profesor para el listado de las tareas de un curso;listado de tareas, se implementó la creación y eliminación de tareas de un grupo; busqueda de alumnos dentro un grupo, su inserción o eliminación en un grupo; 
-- **Montserrat Rojas Martinez:** 
+- **Montserrat Rojas Martinez:** Endpoint de grupos del alumno en el backend (consulta con JOIN sobre esta_en_grupo), listado de cursos como alumno (HTML, CSS y JS) con tarjetas estilo "gafete", y depuración de errores de configuración y de nombres de campos y tablas.
 - **Integrante 3:**
 - **Tania Ketzel Gómez Velásquez:**
 - **Integrante 4:**
@@ -90,6 +91,8 @@ Indicar las tareas que se realizarán antes del siguiente reporte.
 - Actividad 2 - Tania:
 - Actividad 3 - Montserrat:
 - Actividad 4 - Gabriel:  Correcciones del css de la pagina correo, asegurar todo el funcionamiento completo de correo 
+- Actividad 3 - Montserrat: Correciones en funcionamiento y errores
+- Actividad 4 - Gabriel: 
 - Actividad 5
 
 ---

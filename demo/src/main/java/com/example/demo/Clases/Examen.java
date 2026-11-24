@@ -1,6 +1,9 @@
 package com.example.demo.Clases;
 
+import java.math.BigDecimal;
 import java.util.Date;
+
+import org.hibernate.annotations.ColumnTransformer;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,15 +19,27 @@ public class Examen {
 	@GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id_examen;
     
+    @Column(nullable = false)
     private Integer id_grupo;
+
+    @Column(length = 150, nullable = false)
     private String titulo;
-    private Integer calificacion;
+
+    @Column(name="calificacion_asignada", precision = 5, scale = 2, nullable = false)
+    private BigDecimal calificacion_asignada;
+
+    @Column(nullable = false)
     private Date fecha_limite;
 
-    @Column(name = "intentos_permitidos")
-    private Integer intentos;
-    
-    private Integer tiempo_limite;
+    @Column(name="intentos_permitidos")
+    private int intentos;
+
+    @Column (name="tiempo_limite", columnDefinition = "INTERVAL")
+    @ColumnTransformer(
+        read = "tiempo_limite::text",
+        write = "make_interval(mins => ?::integer)"
+    )
+    private String tiempo_limite;
     
     //Getters y setters------------------
     public Integer getId_examen() {
@@ -48,11 +63,11 @@ public class Examen {
         this.titulo = titulo;
     }
     
-    public Integer getCalificacion() {
-        return calificacion;
+    public BigDecimal getCalificacion_asignada() {
+        return calificacion_asignada;
     }
-    public void setCalificacion(Integer calificacion) {
-        this.calificacion = calificacion;
+    public void setCalificacion_asignada(BigDecimal calificacion_asignada) {
+        this.calificacion_asignada = calificacion_asignada;
     }
     
     public Date getFecha_limite() {
@@ -62,17 +77,17 @@ public class Examen {
         this.fecha_limite = fecha_limite;
     }
     
-    public Integer getIntentos() {
+    public int getIntentos_permitidos() {
         return intentos;
     }
-    public void setIntentos(Integer intentos) {
+    public void setIntentos_permitidos(int intentos) {
         this.intentos = intentos;
     }
     
-    public Integer getTiempo_limite() {
+    public String getTiempo_limite() {
         return tiempo_limite;
     }
-    public void setTiempo_limite(Integer tiempo_limite) {
+    public void setTiempo_limite(String tiempo_limite) {
         this.tiempo_limite = tiempo_limite;
     }
 }
