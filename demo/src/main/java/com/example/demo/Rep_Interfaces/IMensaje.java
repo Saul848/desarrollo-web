@@ -1,10 +1,11 @@
 package com.example.demo.Rep_Interfaces;
 
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+
 import com.example.demo.Clases.Mensaje;
 
-public interface IMensaje extends JpaRepository<Mensaje, Integer> {
+public interface IMensaje extends CrudRepository<Mensaje, Integer> {
 
     // Devuelve los mensajes enviados por un remitente específico 
     List<Mensaje> findByRemitente(String remitente);
