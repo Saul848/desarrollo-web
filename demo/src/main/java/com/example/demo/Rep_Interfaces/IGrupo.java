@@ -4,11 +4,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.Clases.Grupo;
 
-public interface IGrupo extends JpaRepository<Grupo, Integer> {
+public interface IGrupo extends CrudRepository<Grupo, Integer> {
 
     // Devuelve una lista de grupos impartidos por un profesor según su matrícula (ej. "P001")
     List<Grupo> findByMatriculaProfesor(String matriculaProfesor);
