@@ -916,6 +916,367 @@ async function cargarExamenes(idGrupo) {
     }
 }
 
+let examenSeleccionadoProf = null;
+
+function esExamenVencidoPorDia(fechaLimRaw) {
+    if (!fechaLimRaw) return false;
+    const fechaLim = new Date(fechaLimRaw);
+    if (Number.isNaN(fechaLim.getTime())) return false;
+
+    // Fin del día (23:59:59.999) de la fecha límite para que un examen de hoy no salga concluido hoy mismo
+    const finDiaLimite = new Date(
+        fechaLim.getFullYear(),
+        fechaLim.getMonth(),
+        fechaLim.getDate(),
+        23, 59, 59, 999
+    );
+
+    const ahora = new Date();
+    return ahora > finDiaLimite;
+}
+
+function obtenerIdExamenProf(ex) {
+    return ex.idExamen ?? ex.id_examen ?? ex.id;
+}
+
+function cerrarModalDetalleExamenProf() {
+    examenSeleccionadoProf = null;
+    const modal = document.getElementById("modal-detalle-examen");
+    if (modal) modal.style.display = "none";
+}
+
+document.getElementById("btnCerrarDetalleExamenProf")?.addEventListener("click", cerrarModalDetalleExamenProf);
+document.getElementById("modal-detalle-examen")?.addEventListener("click", (e) => {
+    if (e.target.id === "modal-detalle-examen") cerrarModalDetalleExamenProf();
+});
+
+async function cargarRespuestasExamenParaProfesor(idExamen, idGrupo) {
+    const cont = document.getElementById("contenedor-respuestas-examen");
+    if (!cont) return;
+    cont.replaceChildren(crearElemento("p", "", "Cargando respuestas de alumnos..."));
+
+    let alumnos = [];
+    try {
+        const resAl = await fetch(`${API}/usuarios/grupo/${idGrupo}/alumnos`);
+        if (resAl.ok) alumnos = await resAl.json();
+    } catch (err) {
+        console.error(err);
+    }
+
+    let reactivosExamen = [];
+    let respuestasBD = [];
+    try {
+        const [resReact, resResp] = await Promise.all([
+            fetch(`${API}/reactivos`),
+            fetch(`${API}/respuestas-alumno`)
+        ]);
+        if (resReact.ok) {
+            const todosReactivos = await resReact.json();
+            reactivosExamen = todosReactivos.filter(
+                (r) => String(r.id_examen ?? r.idExamen ?? "") === String(idExamen)
+            );
+        }
+        if (resResp.ok) {
+            respuestasBD = await resResp.json();
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
+    const mapaReactivos = new Map(
+        reactivosExamen.map((r) => [
+            String(r.id_reactivo ?? r.idReactivo ?? r.id),
+            r
+        ])
+    );
+
+    const filas = [];
+    if (alumnos.length > 0) {
+        alumnos.forEach((al) => {
+            const matricula = String(al.matricula);
+            let registro = null;
+
+            try {
+                const rawSession = sessionStorage.getItem(`examen_enviado_${matricula}_${idExamen}`);
+                if (rawSession) registro = JSON.parse(rawSession);
+            } catch {
+                // ignorar error de parseo
+            }
+
+            if (!registro && respuestasBD.length > 0 && mapaReactivos.size > 0) {
+                const filasAlumnoExamen = respuestasBD.filter((rb) => {
+                    const idAl = String(rb.id_alumno ?? rb.idAlumno ?? "");
+                    const idRe = String(rb.id_reactivo ?? rb.idReactivo ?? "");
+                    return idAl === matricula && mapaReactivos.has(idRe);
+                });
+
+                if (filasAlumnoExamen.length > 0) {
+                    const respuestasReconstruidas = filasAlumnoExamen.map((rb) => {
+                        const idRe = String(rb.id_reactivo ?? rb.idReactivo ?? "");
+                        const react = mapaReactivos.get(idRe);
+                        const tipoRaw = String(react?.tipo ?? "").trim().toLowerCase();
+                        const esAbierta = tipoRaw.includes("abierta");
+                        const valorReact = Number(react?.valor) || 0;
+                        const textoResp = rb.respuesta_texto ?? rb.respuestaTexto ?? "";
+                        const opcionElegida = rb.opcion_elegida ?? rb.opcionElegida ?? null;
+                        const esCorrectaRaw = rb.es_correcta ?? rb.esCorrecta ?? false;
+
+                        if (esAbierta) {
+                            return {
+                                idReactivo: idRe,
+                                enunciado: react?.enunciado ?? "",
+                                valorMaximo: valorReact,
+                                tipo: "abierta",
+                                respuesta: textoResp,
+                                puntosObtenidos: null,
+                                pendienteRevision: true
+                            };
+                        }
+
+                        const opciones = [react?.opcion_1, react?.opcion_2, react?.opcion_3, react?.opcion_4];
+                        const idxElegida = Number(opcionElegida);
+                        const textoOpcion =
+                            idxElegida >= 1 && idxElegida <= opciones.length
+                                ? (opciones[idxElegida - 1] ?? `Opción ${idxElegida}`)
+                                : (opcionElegida ? `Opción ${opcionElegida}` : "");
+
+                        const esCorrecta = Boolean(esCorrectaRaw);
+                        return {
+                            idReactivo: idRe,
+                            tipo: tipoRaw,
+                            respuesta: textoOpcion,
+                            puntosObtenidos: esCorrecta ? valorReact : 0,
+                            esCorrecta,
+                            pendienteRevision: false
+                        };
+                    });
+
+                    registro = {
+                        enviado: true,
+                        respuestas: respuestasReconstruidas
+                    };
+                }
+            }
+
+            const card = crearElemento("div", "tarjeta-reactivo");
+            card.append(crearElemento("strong", "", `${al.nombre} (${matricula})`));
+
+            const respuestasLista = registro?.respuestas ?? [];
+            const califGuardada = leerCalificacionExamenProf(matricula, idExamen);
+
+            const puntosCerradas = respuestasLista
+                .filter((item) => !item.pendienteRevision)
+                .reduce((acc, item) => acc + (Number(item.puntosObtenidos) || 0), 0);
+
+            const abiertas = respuestasLista
+                .map((item, idx) => ({ item, numeroReactivo: idx + 1 }))
+                .filter(({ item }) => item.pendienteRevision);
+
+            if (respuestasLista.length > 0) {
+                const lista = crearElemento("ul", "");
+                respuestasLista.forEach((item, idx) => {
+                    let detalleEstado = "";
+                    if (item.pendienteRevision) {
+                        const notaAbierta = califGuardada?.notasAbiertas?.[item.idReactivo];
+                        const maxPts = item.valorMaximo ?? "";
+                        detalleEstado = notaAbierta != null
+                            ? ` (Abierta: ${notaAbierta}${maxPts !== "" ? ` / ${maxPts}` : ""} pts)`
+                            : ` (Abierta${maxPts !== "" ? ` - máx. ${maxPts} pts` : ""} - pendiente de calificar)`;
+                    } else {
+                        detalleEstado = item.esCorrecta
+                            ? ` (${item.puntosObtenidos} pts - automática)`
+                            : " (0 pts - automática)";
+                    }
+
+                    lista.append(
+                        crearElemento(
+                            "li",
+                            "",
+                            `Reactivo #${idx + 1}: ${item.respuesta || "Sin respuesta"}${detalleEstado}`
+                        )
+                    );
+                });
+                card.append(lista);
+            } else {
+                card.append(crearElemento("p", "", "Sin respuestas registradas aún."));
+            }
+
+            if (respuestasLista.length > 0 && abiertas.length > 0) {
+                const formCalif = crearElemento("form", "form-calificar");
+                formCalif.noValidate = true;
+
+                const inputsAbiertas = [];
+
+                abiertas.forEach(({ item, numeroReactivo }) => {
+                    const maxPts = Number(item.valorMaximo) > 0 ? Number(item.valorMaximo) : null;
+                    const valorPrevia = califGuardada?.notasAbiertas?.[item.idReactivo] ?? "";
+
+                    const labelAbierta = crearElemento("label", "campo-form");
+                    const textoLabel = maxPts != null
+                        ? `Calificación Reactivo #${numeroReactivo} (Abierta - máx. ${maxPts} pts):`
+                        : `Calificación Reactivo #${numeroReactivo} (Abierta):`;
+
+                    const inpNota = document.createElement("input");
+                    inpNota.type = "number";
+                    inpNota.min = "0";
+                    if (maxPts != null) inpNota.max = String(maxPts);
+                    inpNota.step = "0.5";
+                    inpNota.className = "input-calificacion";
+                    inpNota.placeholder = maxPts != null ? `0 - ${maxPts}` : "Puntos";
+                    inpNota.value = valorPrevia !== "" ? String(valorPrevia) : "";
+
+                    labelAbierta.append(crearElemento("span", "etiqueta-detalle", textoLabel), inpNota);
+                    formCalif.append(labelAbierta);
+
+                    inputsAbiertas.push({ idReactivo: item.idReactivo, maxPts, inpNota });
+                });
+
+                const inputRetro = document.createElement("textarea");
+                inputRetro.className = "input-retro";
+                inputRetro.rows = 2;
+                inputRetro.placeholder = "Retroalimentación general (opcional)...";
+                inputRetro.value = califGuardada?.retroalimentacion ?? "";
+
+                const totalActualTxt = califGuardada?.calificacion != null
+                    ? `Calificación total actual: ${califGuardada.calificacion}`
+                    : `Puntos automáticos (cerradas): ${puntosCerradas}`;
+
+                const estadoGuardado = crearElemento("p", "estado-guardado", totalActualTxt);
+
+                const btnGuardar = crearElemento("button", "btn-guardar-calificacion", "Guardar calificación");
+                btnGuardar.type = "submit";
+
+                formCalif.append(inputRetro, estadoGuardado, btnGuardar);
+
+                formCalif.addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    let sumaAbiertas = 0;
+                    const notasAbiertas = {};
+
+                    for (const { idReactivo, maxPts, inpNota } of inputsAbiertas) {
+                        const raw = inpNota.value.trim();
+                        const nota = Number(raw);
+
+                        if (raw === "" || Number.isNaN(nota) || nota < 0) {
+                            estadoGuardado.textContent = "Ingresa una calificación válida mayor o igual a 0 en cada pregunta abierta.";
+                            estadoGuardado.classList.add("error");
+                            return;
+                        }
+                        if (maxPts != null && nota > maxPts) {
+                            estadoGuardado.textContent = `La calificación de la pregunta abierta no puede superar ${maxPts} pts.`;
+                            estadoGuardado.classList.add("error");
+                            return;
+                        }
+
+                        notasAbiertas[idReactivo] = nota;
+                        sumaAbiertas += nota;
+                    }
+
+                    const totalFinal = puntosCerradas + sumaAbiertas;
+
+                    const actualizado = {
+                        ...(califGuardada || {}),
+                        calificacion: totalFinal,
+                        puntosAutomaticos: puntosCerradas,
+                        puntosAbiertas: sumaAbiertas,
+                        notasAbiertas,
+                        calificacionManual: totalFinal,
+                        preguntasAbiertasPendientes: 0,
+                        retroalimentacion: inputRetro.value.trim()
+                    };
+
+                    guardarCalificacionExamenProf(matricula, idExamen, actualizado);
+                    estadoGuardado.classList.remove("error");
+                    estadoGuardado.textContent =
+                        `Total guardado: ${totalFinal} (${puntosCerradas} cerradas + ${sumaAbiertas} abiertas)`;
+                });
+
+                card.append(formCalif);
+            } else if (respuestasLista.length > 0 && califGuardada?.calificacion != null) {
+                card.append(
+                    crearElemento(
+                        "p",
+                        "estado-guardado",
+                        `Calificación automática total: ${califGuardada.calificacion}`
+                    )
+                );
+            }
+
+            filas.push(card);
+        });
+    }
+
+    if (filas.length === 0) {
+        cont.replaceChildren(crearElemento("p", "", "No hay respuestas registradas para este examen."));
+        return;
+    }
+
+    cont.replaceChildren(...filas);
+}
+
+async function abrirDetalleExamenProf(ex) {
+    examenSeleccionadoProf = ex;
+    const modal = document.getElementById("modal-detalle-examen");
+    if (!modal) return;
+
+    const idExamen = obtenerIdExamenProf(ex);
+    const puntos = ex.calificacion_asignada ?? ex.calificacionAsignada ?? ex.calificacion ?? 0;
+    const intentos = ex.intentos_permitidos ?? ex.intentosPermitidos ?? ex.intentos ?? 1;
+
+    document.getElementById("titulo-detalle-examen").textContent = ex.titulo ?? "Examen";
+    document.getElementById("info-detalle-examen").textContent =
+        `Puntos: ${puntos} · Intentos: ${intentos}${ex.fecha_limite ? ` · Límite: ${formatearFecha(ex.fecha_limite)}` : ""}`;
+
+    modal.style.display = "flex";
+    await cargarRespuestasExamenParaProfesor(idExamen, grupoSeleccionado?.id);
+}
+
+document.getElementById("btnEliminarExamen")?.addEventListener("click", async () => {
+    if (!examenSeleccionadoProf || !grupoSeleccionado?.id) return;
+    const idExamen = obtenerIdExamenProf(examenSeleccionadoProf);
+    const titulo = examenSeleccionadoProf.titulo ?? "este examen";
+
+    if (!confirm(`¿Seguro que deseas eliminar "${titulo}"?`)) return;
+
+    const btnDel = document.getElementById("btnEliminarExamen");
+    if (btnDel) btnDel.disabled = true;
+
+    try {
+        const res = await fetch(`${API}/examenes/${idExamen}`, { method: "DELETE" });
+        if (!res.ok) {
+            throw new Error(await res.text() || `HTTP ${res.status}`);
+        }
+        cerrarModalDetalleExamenProf();
+        await cargarExamenes(grupoSeleccionado.id);
+    } catch (err) {
+        console.error(err);
+        alert("No se pudo eliminar el examen: " + err.message);
+    } finally {
+        if (btnDel) btnDel.disabled = false;
+    }
+});
+
+function guardarCalificacionExamenProf(matricula, idExamen, data) {
+    try {
+        sessionStorage.setItem(
+            `calificacion_examen_${matricula}_${idExamen}`,
+            JSON.stringify(data)
+        );
+    } catch (err) {
+        console.error("No se pudo guardar la calificación:", err);
+    }
+}
+
+function leerCalificacionExamenProf(matricula, idExamen) {
+    try {
+        const raw = sessionStorage.getItem(`calificacion_examen_${matricula}_${idExamen}`);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
 function renderizarExamenes() {
     if (!contenedorExamenes) return;
     if (!examenesCargados || examenesCargados.length === 0) {
@@ -923,13 +1284,15 @@ function renderizarExamenes() {
         return;
     }
 
-    const ahora = new Date();
     const listaFiltrada = examenesCargados.filter((ex) => {
-        const fecha = ex.fecha_limite ? new Date(ex.fecha_limite) : null;
-        if (!fecha || Number.isNaN(fecha.getTime())) return true;
-        if (filtroExamenes === "actuales") return fecha >= ahora;
-        if (filtroExamenes === "concluidas") return fecha < ahora;
-        return true; // "prorroga" o cualquier otro muestra todos por ahora
+        const estadoRaw = String(ex.estado ?? "").trim().toLowerCase();
+        const esProrroga = estadoRaw.includes("prorroga") || estadoRaw.includes("prórroga");
+        const vencido = esExamenVencidoPorDia(ex.fecha_limite ?? ex.fechaLimite);
+
+        if (filtroExamenes === "actuales") return !vencido && !esProrroga;
+        if (filtroExamenes === "concluidas") return vencido;
+        if (filtroExamenes === "prorroga") return esProrroga && !vencido;
+        return true;
     });
 
     if (listaFiltrada.length === 0) {
@@ -941,8 +1304,9 @@ function renderizarExamenes() {
         const puntos = ex.calificacion_asignada ?? ex.calificacionAsignada ?? ex.calificacion ?? 0;
         const intentos = ex.intentos_permitidos ?? ex.intentosPermitidos ?? ex.intentos ?? 1;
         const tiempoTexto = ex.tiempo_limite ? ` · Duración: ${ex.tiempo_limite}` : "";
-        const fechaTexto = ex.fecha_limite
-            ? `Límite: ${typeof formatearFecha === "function" ? formatearFecha(ex.fecha_limite) : ex.fecha_limite}`
+        const fechaRaw = ex.fecha_limite ?? ex.fechaLimite;
+        const fechaTexto = fechaRaw
+            ? `Límite: ${typeof formatearFecha === "function" ? formatearFecha(fechaRaw) : fechaRaw}`
             : "";
 
         const card = crearElemento("article", "tarea");
@@ -951,11 +1315,23 @@ function renderizarExamenes() {
             crearElemento("p", "tarea-descripcion", `Puntos: ${puntos} · Intentos: ${intentos}${tiempoTexto}`),
             crearElemento("p", "tarea-fechas", fechaTexto)
         );
+
+        const btnBorrarRapido = crearElemento("button", "btn-quitar-reactivo", "Eliminar");
+        btnBorrarRapido.type = "button";
+        btnBorrarRapido.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            examenSeleccionadoProf = ex;
+            document.getElementById("btnEliminarExamen")?.click();
+        });
+        card.append(btnBorrarRapido);
+
+        card.addEventListener("click", () => abrirDetalleExamenProf(ex));
         return card;
     });
 
     contenedorExamenes.replaceChildren(...tarjetas);
 }
+
 const tarjetaTarea = document.querySelector(".tarjeta-tarea");
 const botonesPestanaTarea = document.querySelectorAll("#barra-tarea ul button");
 const listaEntregas = document.getElementById("lista-entregas");

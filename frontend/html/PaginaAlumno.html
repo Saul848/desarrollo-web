@@ -187,6 +187,19 @@
                                     <span id="examen-info"></span>
                                 </div>
                                 <p id="mensaje-examen" class="mensaje-entrega-estado" role="status"></p>
+
+                                <!-- Formulario dinámico para responder los reactivos del examen -->
+                                <form id="form-responder-examen" class="form-entrega-alumno" style="display: none;">
+                                    <div id="contenedor-reactivos-examen" class="lista-reactivos-alumno"></div>
+
+                                    <div class="acciones-entrega">
+                                        <button type="submit" id="btn-enviar-examen" class="btn-primario-entrega">
+                                            Enviar examen
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div id="resultado-examen" class="meta-entrega" style="display: none;"></div>
                             </div>
                         </div>
                     </div>
